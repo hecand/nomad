@@ -11,9 +11,7 @@ import {
   tagName,
   attributeBindings,
 } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 
-@classic
 @tagName('nav')
 @classNames('breadcrumb')
 @attributeBindings('data-test-fs-breadcrumbs')

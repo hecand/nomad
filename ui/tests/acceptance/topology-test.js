@@ -53,10 +53,10 @@ module('Acceptance | topology', function (hooks) {
 
     await percySnapshot(assert);
 
-    assert.equal(Topology.infoPanelTitle, 'Cluster Details');
+    assert.strictEqual(Topology.infoPanelTitle, 'Cluster Details');
     assert.notOk(Topology.filteredNodesWarning.isPresent);
 
-    assert.equal(
+    assert.strictEqual(
       Topology.clusterInfoPanel.nodeCount,
       `${server.schema.nodes.all().length} Clients`
     );
@@ -65,7 +65,7 @@ module('Acceptance | topology', function (hooks) {
     const scheduledAllocs = allocs.filter((alloc) =>
       ['pending', 'running'].includes(alloc.clientStatus)
     );
-    assert.equal(
+    assert.strictEqual(
       Topology.clusterInfoPanel.allocCount,
       `${scheduledAllocs.length} Allocations`
     );
@@ -74,7 +74,7 @@ module('Acceptance | topology', function (hooks) {
     const nodePools = server.schema.nodePools
       .all()
       .models.filter((p) => p.name !== 'all');
-    assert.equal(
+    assert.strictEqual(
       Topology.clusterInfoPanel.nodePoolCount,
       `${nodePools.length} Node Pools`
     );
@@ -92,23 +92,23 @@ module('Acceptance | topology', function (hooks) {
     const reservedMem = sumResources(taskResources, 'Memory.MemoryMB');
     const reservedCPU = sumResources(taskResources, 'Cpu.CpuShares');
 
-    assert.equal(
+    assert.strictEqual(
       Topology.clusterInfoPanel.memoryProgressValue,
       reservedMem / totalMem
     );
-    assert.equal(
+    assert.strictEqual(
       Topology.clusterInfoPanel.cpuProgressValue,
       reservedCPU / totalCPU
     );
 
-    assert.equal(
+    assert.strictEqual(
       Topology.clusterInfoPanel.memoryAbsoluteValue,
       `${formatBytes(reservedMem * 1024 * 1024)} / ${formatBytes(
         totalMem * 1024 * 1024
       )} reserved`
     );
 
-    assert.equal(
+    assert.strictEqual(
       Topology.clusterInfoPanel.cpuAbsoluteValue,
       `${formatHertz(reservedCPU, 'MHz')} / ${formatHertz(
         totalCPU,
@@ -178,36 +178,36 @@ module('Acceptance | topology', function (hooks) {
     };
 
     await reset();
-    assert.equal(Topology.infoPanelTitle, 'Allocation Details');
+    assert.strictEqual(Topology.infoPanelTitle, 'Allocation Details');
 
-    assert.equal(Topology.allocInfoPanel.id, alloc.id.split('-')[0]);
+    assert.strictEqual(Topology.allocInfoPanel.id, alloc.id.split('-')[0]);
 
     const uniqueClients = allocs.mapBy('nodeId').uniq();
-    assert.equal(
+    assert.strictEqual(
       Topology.allocInfoPanel.siblingAllocs,
       `Sibling Allocations: ${allocs.length}`
     );
-    assert.equal(
+    assert.strictEqual(
       Topology.allocInfoPanel.uniquePlacements,
       `Unique Client Placements: ${uniqueClients.length}`
     );
 
-    assert.equal(Topology.allocInfoPanel.job, job.name);
+    assert.strictEqual(Topology.allocInfoPanel.job, job.name);
     assert.ok(Topology.allocInfoPanel.taskGroup.endsWith(alloc.taskGroup));
-    assert.equal(Topology.allocInfoPanel.client, node.id.split('-')[0]);
+    assert.strictEqual(Topology.allocInfoPanel.client, node.id.split('-')[0]);
 
     await Topology.allocInfoPanel.visitAlloc();
-    assert.equal(currentURL(), `/allocations/${alloc.id}`);
+    assert.strictEqual(currentURL(), `/allocations/${alloc.id}`);
 
     await reset();
 
     await Topology.allocInfoPanel.visitJob();
-    assert.equal(currentURL(), `/jobs/${job.id}@default`);
+    assert.strictEqual(currentURL(), `/jobs/${job.id}@default`);
 
     await reset();
 
     await Topology.allocInfoPanel.visitClient();
-    assert.equal(currentURL(), `/clients/${node.id}`);
+    assert.strictEqual(currentURL(), `/clients/${node.id}`);
   });
 
   test('changing which allocation is selected changes the metric charts', async function (assert) {
@@ -257,24 +257,27 @@ module('Acceptance | topology', function (hooks) {
     await Topology.visit();
 
     await Topology.viz.datacenters[0].nodes[0].selectNode();
-    assert.equal(Topology.infoPanelTitle, 'Client Details');
+    assert.strictEqual(Topology.infoPanelTitle, 'Client Details');
 
-    assert.equal(Topology.nodeInfoPanel.id, node.id.split('-')[0]);
-    assert.equal(Topology.nodeInfoPanel.name, `Name: ${node.name}`);
-    assert.equal(Topology.nodeInfoPanel.address, `Address: ${node.httpAddr}`);
-    assert.equal(Topology.nodeInfoPanel.status, `Status: ${node.status}`);
+    assert.strictEqual(Topology.nodeInfoPanel.id, node.id.split('-')[0]);
+    assert.strictEqual(Topology.nodeInfoPanel.name, `Name: ${node.name}`);
+    assert.strictEqual(
+      Topology.nodeInfoPanel.address,
+      `Address: ${node.httpAddr}`
+    );
+    assert.strictEqual(Topology.nodeInfoPanel.status, `Status: ${node.status}`);
 
-    assert.equal(
+    assert.strictEqual(
       Topology.nodeInfoPanel.drainingLabel,
       node.drain ? 'Yes' : 'No'
     );
-    assert.equal(
+    assert.strictEqual(
       Topology.nodeInfoPanel.eligibleLabel,
       node.schedulingEligibility === 'eligible' ? 'Yes' : 'No'
     );
 
-    assert.equal(Topology.nodeInfoPanel.drainingIsAccented, node.drain);
-    assert.equal(
+    assert.strictEqual(Topology.nodeInfoPanel.drainingIsAccented, node.drain);
+    assert.strictEqual(
       Topology.nodeInfoPanel.eligibleIsAccented,
       node.schedulingEligibility !== 'eligible'
     );
@@ -289,23 +292,23 @@ module('Acceptance | topology', function (hooks) {
     const totalMem = node.nodeResources.Memory.MemoryMB;
     const totalCPU = node.nodeResources.Cpu.CpuShares;
 
-    assert.equal(
+    assert.strictEqual(
       Topology.nodeInfoPanel.memoryProgressValue,
       reservedMem / totalMem
     );
-    assert.equal(
+    assert.strictEqual(
       Topology.nodeInfoPanel.cpuProgressValue,
       reservedCPU / totalCPU
     );
 
-    assert.equal(
+    assert.strictEqual(
       Topology.nodeInfoPanel.memoryAbsoluteValue,
       `${formatScheduledBytes(
         reservedMem * 1024 * 1024
       )} / ${formatScheduledBytes(totalMem, 'MiB')} reserved`
     );
 
-    assert.equal(
+    assert.strictEqual(
       Topology.nodeInfoPanel.cpuAbsoluteValue,
       `${formatScheduledHertz(reservedCPU, 'MHz')} / ${formatScheduledHertz(
         totalCPU,
@@ -314,7 +317,7 @@ module('Acceptance | topology', function (hooks) {
     );
 
     await Topology.nodeInfoPanel.visitNode();
-    assert.equal(currentURL(), `/clients/${node.id}`);
+    assert.strictEqual(currentURL(), `/clients/${node.id}`);
   });
 
   test('when one or more nodes lack the NodeResources property, a warning message is shown', async function (assert) {

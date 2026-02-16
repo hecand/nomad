@@ -8,7 +8,6 @@
 import AdapterError from '@ember-data/adapter/error';
 import { run } from '@ember/runloop';
 import { currentURL, click, triggerEvent, waitFor } from '@ember/test-helpers';
-import { assign } from '@ember/polyfills';
 import { module, test } from 'qunit';
 import { setupApplicationTest } from 'ember-qunit';
 import { setupMirage } from 'ember-cli-mirage/test-support';
@@ -42,7 +41,7 @@ module('Acceptance | allocation detail', function (hooks) {
 
     // Make sure the node has an unhealthy driver
     node.update({
-      driver: assign(node.drivers, {
+      driver: Object.assign(node.drivers, {
         docker: {
           detected: true,
           healthy: false,
@@ -67,12 +66,12 @@ module('Acceptance | allocation detail', function (hooks) {
       Allocation.title.includes(allocation.name),
       'Allocation name is in the heading'
     );
-    assert.equal(
+    assert.strictEqual(
       Allocation.details.job,
       job.name,
       'Job name is in the subheading'
     );
-    assert.equal(
+    assert.strictEqual(
       Allocation.details.client,
       node.id.split('-')[0],
       'Node short id is in the subheading'
@@ -82,7 +81,7 @@ module('Acceptance | allocation detail', function (hooks) {
     assert.ok(document.title.includes(`Allocation ${allocation.name} `));
 
     await Allocation.details.visitJob();
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/jobs/${job.id}@default`,
       'Job link navigates to the job'
@@ -91,7 +90,7 @@ module('Acceptance | allocation detail', function (hooks) {
     await Allocation.visit({ id: allocation.id });
 
     await Allocation.details.visitClient();
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/clients/${node.id}`,
       'Client link navigates to the client'
@@ -99,17 +98,17 @@ module('Acceptance | allocation detail', function (hooks) {
   });
 
   test('/allocation/:id should include resource utilization graphs', async function (assert) {
-    assert.equal(
+    assert.strictEqual(
       Allocation.resourceCharts.length,
       2,
       'Two resource utilization graphs'
     );
-    assert.equal(
+    assert.strictEqual(
       Allocation.resourceCharts.objectAt(0).name,
       'CPU',
       'First chart is CPU'
     );
-    assert.equal(
+    assert.strictEqual(
       Allocation.resourceCharts.objectAt(1).name,
       'Memory',
       'Second chart is Memory'
@@ -132,9 +131,12 @@ module('Acceptance | allocation detail', function (hooks) {
     await Allocation.visit({ id: allocation.id });
 
     assert.ok(Allocation.lifecycleChart.isPresent);
-    assert.equal(Allocation.lifecycleChart.title, 'Task Lifecycle Status');
-    assert.equal(Allocation.lifecycleChart.phases.length, 4);
-    assert.equal(Allocation.lifecycleChart.tasks.length, 6);
+    assert.strictEqual(
+      Allocation.lifecycleChart.title,
+      'Task Lifecycle Status'
+    );
+    assert.strictEqual(Allocation.lifecycleChart.phases.length, 4);
+    assert.strictEqual(Allocation.lifecycleChart.tasks.length, 6);
 
     await Allocation.lifecycleChart.tasks[0].visit();
 
@@ -150,14 +152,14 @@ module('Acceptance | allocation detail', function (hooks) {
         );
       });
 
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/allocations/${allocation.id}/${prestartEphemeralTask.name}`
     );
   });
 
   test('/allocation/:id should list all tasks for the allocation', async function (assert) {
-    assert.equal(
+    assert.strictEqual(
       Allocation.tasks.length,
       server.db.taskStates.where({ allocationId: allocation.id }).length,
       'Table lists all tasks'
@@ -207,18 +209,26 @@ module('Acceptance | allocation detail', function (hooks) {
         source: taskGroup.volumes[volume.Volume].Source,
       }));
 
-      assert.equal(taskRow.name, task.name, 'Name');
-      assert.equal(taskRow.state, task.state, 'State');
-      assert.equal(taskRow.message, event.displayMessage, 'Event Message');
-      assert.equal(
+      assert.strictEqual(taskRow.name, task.name, 'Name');
+      assert.strictEqual(taskRow.state, task.state, 'State');
+      assert.strictEqual(
+        taskRow.message,
+        event.displayMessage,
+        'Event Message'
+      );
+      assert.strictEqual(
         taskRow.time,
         moment(event.time / 1000000).format("MMM DD, 'YY HH:mm:ss ZZ"),
         'Event Time'
       );
 
       const expectStats = task.state === 'running';
-      assert.equal(taskRow.hasCpuMetrics, expectStats, 'CPU metrics');
-      assert.equal(taskRow.hasMemoryMetrics, expectStats, 'Memory metrics');
+      assert.strictEqual(taskRow.hasCpuMetrics, expectStats, 'CPU metrics');
+      assert.strictEqual(
+        taskRow.hasMemoryMetrics,
+        expectStats,
+        'Memory metrics'
+      );
 
       const volumesText = taskRow.volumes;
       volumes.forEach((volume) => {
@@ -242,7 +252,7 @@ module('Acceptance | allocation detail', function (hooks) {
     await Allocation.tasks.objectAt(0).clickLink();
 
     // Make sure the allocation is pending in order to ensure there are no tasks
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/allocations/${allocation.id}/${task.name}`,
       'Task name in task row links to task detail'
@@ -251,7 +261,7 @@ module('Acceptance | allocation detail', function (hooks) {
     await Allocation.visit({ id: allocation.id });
     await Allocation.tasks.objectAt(0).clickRow();
 
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/allocations/${allocation.id}/${task.name}`,
       'Task row links to task detail'
@@ -312,9 +322,9 @@ module('Acceptance | allocation detail', function (hooks) {
     allServerPorts.sortBy('Label').forEach((serverPort, index) => {
       const renderedPort = Allocation.ports[index];
 
-      assert.equal(renderedPort.name, serverPort.Label);
-      assert.equal(renderedPort.to, serverPort.To);
-      assert.equal(
+      assert.strictEqual(renderedPort.name, serverPort.Label);
+      assert.strictEqual(renderedPort.to, serverPort.To);
+      assert.strictEqual(
         renderedPort.address,
         formatHost(serverPort.HostIP, serverPort.Value)
       );
@@ -326,34 +336,37 @@ module('Acceptance | allocation detail', function (hooks) {
       name: allocation.taskGroup,
     });
 
-    assert.equal(Allocation.services.length, taskGroup.services.length);
+    assert.strictEqual(Allocation.services.length, taskGroup.services.length);
 
     taskGroup.services.models.sortBy('name').forEach((serverService, index) => {
       const renderedService = Allocation.services[index];
 
-      assert.equal(renderedService.name, serverService.name);
-      assert.equal(renderedService.port, serverService.portLabel);
-      assert.equal(renderedService.tags, (serverService.tags || []).join(' '));
+      assert.strictEqual(renderedService.name, serverService.name);
+      assert.strictEqual(renderedService.port, serverService.portLabel);
+      assert.strictEqual(
+        renderedService.tags,
+        (serverService.tags || []).join(' ')
+      );
     });
   });
 
   test('when the allocation is not found, an error message is shown, but the URL persists', async function (assert) {
     await Allocation.visit({ id: 'not-a-real-allocation' });
 
-    assert.equal(
+    assert.strictEqual(
       server.pretender.handledRequests
         .filter((request) => !request.url.includes('policy'))
         .findBy('status', 404).url,
       '/v1/allocation/not-a-real-allocation',
       'A request to the nonexistent allocation is made'
     );
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       '/allocations/not-a-real-allocation',
       'The URL persists'
     );
     assert.ok(Allocation.error.isShown, 'Error message is shown');
-    assert.equal(
+    assert.strictEqual(
       Allocation.error.title,
       'Not Found',
       'Error message is for 404'
@@ -364,7 +377,7 @@ module('Acceptance | allocation detail', function (hooks) {
     await Allocation.stop.idle();
     await Allocation.stop.confirm();
 
-    assert.equal(
+    assert.strictEqual(
       server.pretender.handledRequests
         .reject((request) => request.url.includes('fuzzy'))
         .findBy('method', 'POST').url,
@@ -378,7 +391,7 @@ module('Acceptance | allocation detail', function (hooks) {
     await Allocation.restart.idle();
     await Allocation.restart.confirm();
 
-    assert.equal(
+    assert.strictEqual(
       server.pretender.handledRequests.findBy('method', 'PUT').url,
       `/v1/client/allocation/${allocation.id}/restart`,
       'Restart request is made for the allocation'
@@ -514,8 +527,12 @@ module('Acceptance | allocation detail (not running)', function (hooks) {
   });
 
   test('when the allocation is not running, the utilization graphs are replaced by an empty message', async function (assert) {
-    assert.equal(Allocation.resourceCharts.length, 0, 'No resource charts');
-    assert.equal(
+    assert.strictEqual(
+      Allocation.resourceCharts.length,
+      0,
+      'No resource charts'
+    );
+    assert.strictEqual(
       Allocation.resourceEmptyMessage,
       "Allocation isn't running",
       'Empty message is appropriate'
@@ -552,24 +569,24 @@ module('Acceptance | allocation detail (preemptions)', function (hooks) {
 
     await Allocation.visit({ id: allocation.id });
     assert.ok(Allocation.wasPreempted, 'Preempted allocation section is shown');
-    assert.equal(
+    assert.strictEqual(
       Allocation.preempter.status,
       preempter.clientStatus,
       'Preempter status matches'
     );
-    assert.equal(
+    assert.strictEqual(
       Allocation.preempter.name,
       preempter.name,
       'Preempter name matches'
     );
-    assert.equal(
+    assert.strictEqual(
       Allocation.preempter.priority,
       preempterJob.priority,
       'Preempter priority matches'
     );
 
     await Allocation.preempter.visit();
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/allocations/${preempter.id}`,
       'Clicking the preempter id navigates to the preempter allocation detail page'
@@ -578,7 +595,7 @@ module('Acceptance | allocation detail (preemptions)', function (hooks) {
     await Allocation.visit({ id: allocation.id });
 
     await Allocation.preempter.visitJob();
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/jobs/${preempterJob.id}@default`,
       'Clicking the preempter job link navigates to the preempter job page'
@@ -586,7 +603,7 @@ module('Acceptance | allocation detail (preemptions)', function (hooks) {
 
     await Allocation.visit({ id: allocation.id });
     await Allocation.preempter.visitClient();
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/clients/${preempterClient.id}`,
       'Clicking the preempter client link navigates to the preempter client page'
@@ -612,45 +629,45 @@ module('Acceptance | allocation detail (preemptions)', function (hooks) {
       .reverse()[0];
     const preemptionRow = Allocation.preemptions.objectAt(0);
 
-    assert.equal(
+    assert.strictEqual(
       Allocation.preemptions.length,
       allocation.preemptedAllocations.length,
       'The preemptions table has a row for each preempted allocation'
     );
 
-    assert.equal(
+    assert.strictEqual(
       preemptionRow.shortId,
       preemption.id.split('-')[0],
       'Preemption short id'
     );
-    assert.equal(
+    assert.strictEqual(
       preemptionRow.createTime,
       moment(preemption.createTime / 1000000).format('MMM DD HH:mm:ss ZZ'),
       'Preemption create time'
     );
-    assert.equal(
+    assert.strictEqual(
       preemptionRow.modifyTime,
       moment(preemption.modifyTime / 1000000).fromNow(),
       'Preemption modify time'
     );
-    assert.equal(
+    assert.strictEqual(
       preemptionRow.status,
       preemption.clientStatus,
       'Client status'
     );
-    assert.equal(
+    assert.strictEqual(
       preemptionRow.jobVersion,
       preemption.jobVersion,
       'Job Version'
     );
-    assert.equal(
+    assert.strictEqual(
       preemptionRow.client,
       server.db.nodes.find(preemption.nodeId).id.split('-')[0],
       'Node ID'
     );
 
     await preemptionRow.visitClient();
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/clients/${preemption.nodeId}`,
       'Node links to node page'

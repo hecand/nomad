@@ -5,7 +5,9 @@
 
 {{page-title "Storage"}}
 
-<Breadcrumb @crumb={{hash label="Storage" args=(array "storage.index")}} />{{outlet}}
+<Breadcrumb @label="Storage" @route="storage.index" />
+
+{{outlet}}
 
 <StorageSubnav />
 <section class="section storage-index">

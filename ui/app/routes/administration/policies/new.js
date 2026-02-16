@@ -90,11 +90,12 @@ operator {
 `;
 
 export default class AccessControlPoliciesNewRoute extends Route {
-  @service can;
+  @service abilities;
   @service router;
+  @service store;
 
   beforeModel() {
-    if (this.can.cannot('write policy')) {
+    if (this.abilities.cannot('write policy')) {
       this.router.transitionTo('/administration/policies');
     }
   }

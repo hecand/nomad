@@ -34,7 +34,7 @@ module('Acceptance | job evaluations', function (hooks) {
   });
 
   test('lists all evaluations for the job', async function (assert) {
-    assert.equal(
+    assert.strictEqual(
       Evaluations.evaluations.length,
       evaluations.length,
       'All evaluations are listed'
@@ -44,16 +44,20 @@ module('Acceptance | job evaluations', function (hooks) {
 
     Evaluations.evaluations.forEach((evaluation, index) => {
       const shortId = sortedEvaluations[index].id.split('-')[0];
-      assert.equal(evaluation.id, shortId, `Evaluation ${index} is ${shortId}`);
+      assert.strictEqual(
+        evaluation.id,
+        shortId,
+        `Evaluation ${index} is ${shortId}`
+      );
     });
 
-    assert.equal(document.title, `Job ${job.name} evaluations - Nomad`);
+    assert.strictEqual(document.title, `Job ${job.name} evaluations - Nomad`);
   });
 
   test('evaluations table is sortable', async function (assert) {
     await Evaluations.sortBy('priority');
 
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/jobs/${job.id}/evaluations?sort=priority`,
       'the URL persists the sort parameter'
@@ -61,7 +65,7 @@ module('Acceptance | job evaluations', function (hooks) {
     const sortedEvaluations = evaluations.sortBy('priority').reverse();
     Evaluations.evaluations.forEach((evaluation, index) => {
       const shortId = sortedEvaluations[index].id.split('-')[0];
-      assert.equal(
+      assert.strictEqual(
         evaluation.id,
         shortId,
         `Evaluation ${index} is ${shortId} with priority ${sortedEvaluations[index].priority}`
@@ -72,20 +76,20 @@ module('Acceptance | job evaluations', function (hooks) {
   test('when the job for the evaluations is not found, an error message is shown, but the URL persists', async function (assert) {
     await Evaluations.visit({ id: 'not-a-real-job' });
 
-    assert.equal(
+    assert.strictEqual(
       server.pretender.handledRequests
         .filter((request) => !request.url.includes('policy'))
         .findBy('status', 404).url,
       '/v1/job/not-a-real-job',
       'A request to the nonexistent job is made'
     );
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       '/jobs/not-a-real-job/evaluations',
       'The URL persists'
     );
     assert.ok(Evaluations.error.isPresent, 'Error message is shown');
-    assert.equal(
+    assert.strictEqual(
       Evaluations.error.title,
       'Not Found',
       'Error message is for 404'

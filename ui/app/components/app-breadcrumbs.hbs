@@ -5,7 +5,7 @@
 
 <Breadcrumbs as |breadcrumbs|>
   {{#each breadcrumbs as |crumb iter|}}
-    {{#let crumb.args.crumb as |c|}}
+    {{#let crumb.args as |c|}}
       {{component (concat "breadcrumbs/" (or c.type "default")) crumb=c isOneCrumbUp=(action this.isOneCrumbUp iter breadcrumbs.length)}}
     {{/let}}
   {{/each}}

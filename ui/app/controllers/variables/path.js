@@ -11,6 +11,7 @@ const ALL_NAMESPACE_WILDCARD = '*';
 
 export default class VariablesPathController extends Controller {
   @service router;
+  @service store;
 
   get absolutePath() {
     return this.model?.absolutePath || '';

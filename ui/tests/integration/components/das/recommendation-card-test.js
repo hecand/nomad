@@ -102,32 +102,44 @@ module('Integration | Component | das/recommendation-card', function (hooks) {
 
     await render(hbs`<Das::RecommendationCard @summary={{this.summary}} />`);
 
-    assert.equal(RecommendationCard.slug.jobName, 'job-name');
-    assert.equal(RecommendationCard.slug.groupName, 'group-name');
+    assert.strictEqual(RecommendationCard.slug.jobName, 'job-name');
+    assert.strictEqual(RecommendationCard.slug.groupName, 'group-name');
 
-    assert.equal(RecommendationCard.namespace, 'namespace');
+    assert.strictEqual(RecommendationCard.namespace, 'namespace');
 
-    assert.equal(RecommendationCard.totalsTable.current.cpu.text, '275 MHz');
-    assert.equal(RecommendationCard.totalsTable.current.memory.text, '384 MiB');
+    assert.strictEqual(
+      RecommendationCard.totalsTable.current.cpu.text,
+      '275 MHz'
+    );
+    assert.strictEqual(
+      RecommendationCard.totalsTable.current.memory.text,
+      '384 MiB'
+    );
 
     RecommendationCard.totalsTable.recommended.cpu.as((RecommendedCpu) => {
-      assert.equal(RecommendedCpu.text, '200 MHz');
+      assert.strictEqual(RecommendedCpu.text, '200 MHz');
       assert.ok(RecommendedCpu.isDecrease);
     });
 
     RecommendationCard.totalsTable.recommended.memory.as(
       (RecommendedMemory) => {
-        assert.equal(RecommendedMemory.text, '512 MiB');
+        assert.strictEqual(RecommendedMemory.text, '512 MiB');
         assert.ok(RecommendedMemory.isIncrease);
       }
     );
 
-    assert.equal(RecommendationCard.totalsTable.unitDiff.cpu, '-75 MHz');
-    assert.equal(RecommendationCard.totalsTable.unitDiff.memory, '+128 MiB');
+    assert.strictEqual(RecommendationCard.totalsTable.unitDiff.cpu, '-75 MHz');
+    assert.strictEqual(
+      RecommendationCard.totalsTable.unitDiff.memory,
+      '+128 MiB'
+    );
 
     // Expected signal has a minus character, not a hyphen.
-    assert.equal(RecommendationCard.totalsTable.percentDiff.cpu, '−27%');
-    assert.equal(RecommendationCard.totalsTable.percentDiff.memory, '+33%');
+    assert.strictEqual(RecommendationCard.totalsTable.percentDiff.cpu, '−27%');
+    assert.strictEqual(
+      RecommendationCard.totalsTable.percentDiff.memory,
+      '+33%'
+    );
 
     assert.dom('.copy-button').hasTextContaining('job-name / group-name');
 
@@ -140,31 +152,31 @@ module('Integration | Component | das/recommendation-card', function (hooks) {
       )
     );
 
-    assert.equal(
+    assert.strictEqual(
       RecommendationCard.activeTask.totalsTable.current.cpu.text,
       '150 MHz'
     );
-    assert.equal(
+    assert.strictEqual(
       RecommendationCard.activeTask.totalsTable.current.memory.text,
       '128 MiB'
     );
 
     RecommendationCard.activeTask.totalsTable.recommended.cpu.as(
       (RecommendedCpu) => {
-        assert.equal(RecommendedCpu.text, '50 MHz');
+        assert.strictEqual(RecommendedCpu.text, '50 MHz');
         assert.ok(RecommendedCpu.isDecrease);
       }
     );
 
     RecommendationCard.activeTask.totalsTable.recommended.memory.as(
       (RecommendedMemory) => {
-        assert.equal(RecommendedMemory.text, '192 MiB');
+        assert.strictEqual(RecommendedMemory.text, '192 MiB');
         assert.ok(RecommendedMemory.isIncrease);
       }
     );
 
-    assert.equal(RecommendationCard.activeTask.charts.length, 2);
-    assert.equal(
+    assert.strictEqual(RecommendationCard.activeTask.charts.length, 2);
+    assert.strictEqual(
       RecommendationCard.activeTask.charts[0].resource,
       'CPU',
       'CPU chart should be first when present'
@@ -173,16 +185,16 @@ module('Integration | Component | das/recommendation-card', function (hooks) {
     assert.ok(RecommendationCard.activeTask.cpuChart.isDecrease);
     assert.ok(RecommendationCard.activeTask.memoryChart.isIncrease);
 
-    assert.equal(RecommendationCard.togglesTable.tasks.length, 2);
+    assert.strictEqual(RecommendationCard.togglesTable.tasks.length, 2);
 
     await RecommendationCard.togglesTable.tasks[0].as(async (FirstTask) => {
-      assert.equal(FirstTask.name, 'jortle');
+      assert.strictEqual(FirstTask.name, 'jortle');
       assert.ok(FirstTask.isActive);
 
-      assert.equal(FirstTask.cpu.title, 'CPU for jortle');
+      assert.strictEqual(FirstTask.cpu.title, 'CPU for jortle');
       assert.ok(FirstTask.cpu.isActive);
 
-      assert.equal(FirstTask.memory.title, 'Memory for jortle');
+      assert.strictEqual(FirstTask.memory.title, 'Memory for jortle');
       assert.ok(FirstTask.memory.isActive);
 
       await FirstTask.cpu.toggle();
@@ -193,16 +205,16 @@ module('Integration | Component | das/recommendation-card', function (hooks) {
 
     assert.notOk(RecommendationCard.togglesTable.tasks[1].isActive);
 
-    assert.equal(RecommendationCard.activeTask.name, 'jortle task');
+    assert.strictEqual(RecommendationCard.activeTask.name, 'jortle task');
 
     RecommendationCard.totalsTable.recommended.cpu.as((RecommendedCpu) => {
-      assert.equal(RecommendedCpu.text, '300 MHz');
+      assert.strictEqual(RecommendedCpu.text, '300 MHz');
       assert.ok(RecommendedCpu.isIncrease);
     });
 
     RecommendationCard.activeTask.totalsTable.recommended.cpu.as(
       (RecommendedCpu) => {
-        assert.equal(RecommendedCpu.text, '150 MHz');
+        assert.strictEqual(RecommendedCpu.text, '150 MHz');
         assert.ok(RecommendedCpu.isNeutral);
       }
     );
@@ -214,7 +226,7 @@ module('Integration | Component | das/recommendation-card', function (hooks) {
 
     RecommendationCard.totalsTable.recommended.memory.as(
       (RecommendedMemory) => {
-        assert.equal(RecommendedMemory.text, '384 MiB');
+        assert.strictEqual(RecommendedMemory.text, '384 MiB');
         assert.ok(RecommendedMemory.isNeutral);
       }
     );
@@ -224,8 +236,8 @@ module('Integration | Component | das/recommendation-card', function (hooks) {
     assert.notOk(RecommendationCard.togglesTable.tasks[0].isActive);
     assert.ok(RecommendationCard.togglesTable.tasks[1].isActive);
 
-    assert.equal(RecommendationCard.activeTask.name, 'tortle task');
-    assert.equal(
+    assert.strictEqual(RecommendationCard.activeTask.name, 'tortle task');
+    assert.strictEqual(
       RecommendationCard.activeTask.totalsTable.current.cpu.text,
       '125 MHz'
     );
@@ -347,14 +359,17 @@ module('Integration | Component | das/recommendation-card', function (hooks) {
 
     await render(hbs`<Das::RecommendationCard @summary={{this.summary}} />`);
 
-    assert.equal(
+    assert.strictEqual(
       RecommendationCard.totalsTable.recommended.memory.text,
       '128 MiB'
     );
-    assert.equal(RecommendationCard.totalsTable.unitDiff.memory, '0 MiB');
-    assert.equal(RecommendationCard.totalsTable.percentDiff.memory, '+0%');
+    assert.strictEqual(RecommendationCard.totalsTable.unitDiff.memory, '0 MiB');
+    assert.strictEqual(
+      RecommendationCard.totalsTable.percentDiff.memory,
+      '+0%'
+    );
 
-    assert.equal(
+    assert.strictEqual(
       RecommendationCard.narrative.trim(),
       'Applying the selected recommendations will save an aggregate 200 MHz of CPU across 2 allocations.'
     );
@@ -479,7 +494,7 @@ module('Integration | Component | das/recommendation-card', function (hooks) {
 
     const [cpuRec1, memRec1, cpuRec2, memRec2] = this.summary.recommendations;
 
-    assert.equal(
+    assert.strictEqual(
       RecommendationCard.narrative.trim(),
       'Applying the selected recommendations will save an aggregate 750 MHz of CPU and add an aggregate 1.25 GiB of memory across 10 allocations.'
     );
@@ -487,7 +502,7 @@ module('Integration | Component | das/recommendation-card', function (hooks) {
     this.summary.toggleRecommendation(cpuRec1);
     await settled();
 
-    assert.equal(
+    assert.strictEqual(
       RecommendationCard.narrative.trim(),
       'Applying the selected recommendations will add an aggregate 250 MHz of CPU and 1.25 GiB of memory across 10 allocations.'
     );
@@ -495,7 +510,7 @@ module('Integration | Component | das/recommendation-card', function (hooks) {
     this.summary.toggleRecommendation(memRec1);
     await settled();
 
-    assert.equal(
+    assert.strictEqual(
       RecommendationCard.narrative.trim(),
       'Applying the selected recommendations will add an aggregate 250 MHz of CPU and 640 MiB of memory across 10 allocations.'
     );
@@ -503,7 +518,7 @@ module('Integration | Component | das/recommendation-card', function (hooks) {
     this.summary.toggleRecommendation(cpuRec2);
     await settled();
 
-    assert.equal(
+    assert.strictEqual(
       RecommendationCard.narrative.trim(),
       'Applying the selected recommendations will add an aggregate 640 MiB of memory across 10 allocations.'
     );
@@ -512,7 +527,7 @@ module('Integration | Component | das/recommendation-card', function (hooks) {
     this.summary.toggleRecommendation(memRec2);
     await settled();
 
-    assert.equal(
+    assert.strictEqual(
       RecommendationCard.narrative.trim(),
       'Applying the selected recommendations will save an aggregate 1 GHz of CPU across 10 allocations.'
     );
@@ -520,12 +535,12 @@ module('Integration | Component | das/recommendation-card', function (hooks) {
     this.summary.toggleRecommendation(cpuRec1);
     await settled();
 
-    assert.equal(RecommendationCard.narrative.trim(), '');
+    assert.strictEqual(RecommendationCard.narrative.trim(), '');
 
     this.summary.toggleRecommendation(cpuRec1);
     await settled();
 
-    assert.equal(
+    assert.strictEqual(
       RecommendationCard.narrative.trim(),
       'Applying the selected recommendations will save an aggregate 1 GHz of CPU across 10 allocations.'
     );
@@ -534,7 +549,7 @@ module('Integration | Component | das/recommendation-card', function (hooks) {
     set(memRec2, 'value', 128);
     await settled();
 
-    assert.equal(
+    assert.strictEqual(
       RecommendationCard.narrative.trim(),
       'Applying the selected recommendations will save an aggregate 1 GHz of CPU and 1.25 GiB of memory across 10 allocations.'
     );
@@ -604,7 +619,7 @@ module('Integration | Component | das/recommendation-card', function (hooks) {
 
     await render(hbs`<Das::RecommendationCard @summary={{this.summary}} />`);
 
-    assert.equal(
+    assert.strictEqual(
       RecommendationCard.narrative.trim(),
       'Applying the selected recommendations will save 75 MHz of CPU and add 128 MiB of memory.'
     );

@@ -34,9 +34,9 @@ module('Acceptance | plugin detail', function (hooks) {
   test('/storage/plugins/:id should have a breadcrumb trail linking back to Plugins and Storage', async function (assert) {
     await PluginDetail.visit({ id: plugin.id });
 
-    assert.equal(Layout.breadcrumbFor('storage.index').text, 'Storage');
-    assert.equal(Layout.breadcrumbFor('storage.plugins').text, 'Plugins');
-    assert.equal(
+    assert.strictEqual(Layout.breadcrumbFor('storage.index').text, 'Storage');
+    assert.strictEqual(Layout.breadcrumbFor('storage.plugins').text, 'Plugins');
+    assert.strictEqual(
       Layout.breadcrumbFor('storage.plugins.plugin').text,
       plugin.id
     );
@@ -45,8 +45,8 @@ module('Acceptance | plugin detail', function (hooks) {
   test('/storage/plugins/:id should show the plugin name in the title', async function (assert) {
     await PluginDetail.visit({ id: plugin.id });
 
-    assert.equal(document.title, `CSI Plugin ${plugin.id} - Nomad`);
-    assert.equal(PluginDetail.title, plugin.id);
+    assert.strictEqual(document.title, `CSI Plugin ${plugin.id} - Nomad`);
+    assert.strictEqual(PluginDetail.title, plugin.id);
   });
 
   test('/storage/plugins/:id should list additional details for the plugin below the title', async function (assert) {
@@ -80,7 +80,7 @@ module('Acceptance | plugin detail', function (hooks) {
   test('/storage/plugins/:id should list all the controller plugin allocations for the plugin', async function (assert) {
     await PluginDetail.visit({ id: plugin.id });
 
-    assert.equal(
+    assert.strictEqual(
       PluginDetail.controllerAllocations.length,
       plugin.controllers.length
     );
@@ -88,7 +88,7 @@ module('Acceptance | plugin detail', function (hooks) {
       .sortBy('updateTime')
       .reverse()
       .forEach((allocation, idx) => {
-        assert.equal(
+        assert.strictEqual(
           PluginDetail.controllerAllocations.objectAt(idx).id,
           allocation.allocID
         );
@@ -98,12 +98,15 @@ module('Acceptance | plugin detail', function (hooks) {
   test('/storage/plugins/:id should list all the node plugin allocations for the plugin', async function (assert) {
     await PluginDetail.visit({ id: plugin.id });
 
-    assert.equal(PluginDetail.nodeAllocations.length, plugin.nodes.length);
+    assert.strictEqual(
+      PluginDetail.nodeAllocations.length,
+      plugin.nodes.length
+    );
     plugin.nodes.models
       .sortBy('updateTime')
       .reverse()
       .forEach((allocation, idx) => {
-        assert.equal(
+        assert.strictEqual(
           PluginDetail.nodeAllocations.objectAt(idx).id,
           allocation.allocID
         );
@@ -131,45 +134,45 @@ module('Acceptance | plugin detail', function (hooks) {
     await PluginDetail.visit({ id: plugin.id });
 
     PluginDetail.controllerAllocations.objectAt(0).as((allocationRow) => {
-      assert.equal(
+      assert.strictEqual(
         allocationRow.shortId,
         allocation.id.split('-')[0],
         'Allocation short ID'
       );
-      assert.equal(
+      assert.strictEqual(
         allocationRow.createTime,
         moment(allocation.createTime / 1000000).format('MMM D')
       );
-      assert.equal(
+      assert.strictEqual(
         allocationRow.createTooltip,
         moment(allocation.createTime / 1000000).format('MMM DD HH:mm:ss ZZ')
       );
-      assert.equal(
+      assert.strictEqual(
         allocationRow.modifyTime,
         moment(allocation.modifyTime / 1000000).fromNow()
       );
-      assert.equal(
+      assert.strictEqual(
         allocationRow.health,
         controller.healthy ? 'Healthy' : 'Unhealthy'
       );
-      assert.equal(
+      assert.strictEqual(
         allocationRow.client,
         server.db.nodes.find(allocation.nodeId).id.split('-')[0],
         'Node ID'
       );
-      assert.equal(
+      assert.strictEqual(
         allocationRow.clientTooltip.substr(0, 15),
         server.db.nodes.find(allocation.nodeId).name.substr(0, 15),
         'Node Name'
       );
-      assert.equal(
+      assert.strictEqual(
         allocationRow.job,
         server.db.jobs.find(allocation.jobId).name,
         'Job name'
       );
       assert.ok(allocationRow.taskGroup, 'Task group name');
       assert.ok(allocationRow.jobVersion, 'Job Version');
-      assert.equal(
+      assert.strictEqual(
         allocationRow.cpu,
         Math.floor(allocStats.resourceUsage.CpuStats.TotalTicks) / cpuUsed,
         'CPU %'
@@ -177,17 +180,17 @@ module('Acceptance | plugin detail', function (hooks) {
       const roundedTicks = Math.floor(
         allocStats.resourceUsage.CpuStats.TotalTicks
       );
-      assert.equal(
+      assert.strictEqual(
         allocationRow.cpuTooltip,
         `${formatHertz(roundedTicks, 'MHz')} / ${formatHertz(cpuUsed, 'MHz')}`,
         'Detailed CPU information is in a tooltip'
       );
-      assert.equal(
+      assert.strictEqual(
         allocationRow.mem,
         allocStats.resourceUsage.MemoryStats.RSS / 1024 / 1024 / memoryUsed,
         'Memory used'
       );
-      assert.equal(
+      assert.strictEqual(
         allocationRow.memTooltip,
         `${formatBytes(
           allocStats.resourceUsage.MemoryStats.RSS
@@ -205,7 +208,7 @@ module('Acceptance | plugin detail', function (hooks) {
     await PluginDetail.visit({ id: plugin.id });
     await PluginDetail.controllerAllocations.objectAt(0).visit();
 
-    assert.equal(currentURL(), `/allocations/${controller.allocID}`);
+    assert.strictEqual(currentURL(), `/allocations/${controller.allocID}`);
   });
 
   test('when there are no plugin allocations, the tables present empty states', async function (assert) {
@@ -220,13 +223,13 @@ module('Acceptance | plugin detail', function (hooks) {
     await PluginDetail.visit({ id: emptyPlugin.id });
 
     assert.ok(PluginDetail.controllerTableIsEmpty);
-    assert.equal(
+    assert.strictEqual(
       PluginDetail.controllerEmptyState.headline,
       'No Controller Plugin Allocations'
     );
 
     assert.ok(PluginDetail.nodeTableIsEmpty);
-    assert.equal(
+    assert.strictEqual(
       PluginDetail.nodeEmptyState.headline,
       'No Node Plugin Allocations'
     );
@@ -255,7 +258,7 @@ module('Acceptance | plugin detail', function (hooks) {
 
     await PluginDetail.visit({ id: manyAllocationsPlugin.id });
 
-    assert.equal(PluginDetail.nodeAllocations.length, 10);
+    assert.strictEqual(PluginDetail.nodeAllocations.length, 10);
   });
 
   test('the View All links under each allocation table link to a filtered view of the plugins allocation list', async function (assert) {
@@ -268,7 +271,7 @@ module('Acceptance | plugin detail', function (hooks) {
       )
     );
     await PluginDetail.goToControllerAllocations();
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/storage/plugins/${plugin.id}/allocations?type=${serialize([
         'controller',
@@ -280,7 +283,7 @@ module('Acceptance | plugin detail', function (hooks) {
       PluginDetail.goToNodeAllocationsText.includes(plugin.nodes.models.length)
     );
     await PluginDetail.goToNodeAllocations();
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/storage/plugins/${plugin.id}/allocations?type=${serialize(['node'])}`
     );

@@ -3,8 +3,7 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import { assign } from '@ember/polyfills';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 import { findAll, find, render } from '@ember/test-helpers';
 import { module, test } from 'qunit';
 import { startMirage } from 'nomad-ui/initializers/ember-cli-mirage';
@@ -33,7 +32,7 @@ module(
     });
 
     const props = (job, options = {}) =>
-      assign(
+      Object.assign(
         {
           job,
           sortProperty: 'name',
@@ -57,14 +56,14 @@ module(
       this.setProperties(props(job));
 
       await render(hbs`
-      <JobPage::Parts::TaskGroups
-        @job={{this.job}}
-        @sortProperty={{this.sortProperty}}
-        @sortDescending={{this.sortDescending}}
-      />
-    `);
+    <JobPage::Parts::TaskGroups
+      @job={{this.job}}
+      @sortProperty={{this.sortProperty}}
+      @sortDescending={{this.sortDescending}}
+    />
+  `);
 
-      assert.equal(
+      assert.strictEqual(
         findAll('[data-test-task-group]').length,
         job.get('taskGroups.length'),
         'One row per task group'
@@ -88,51 +87,51 @@ module(
       this.setProperties(props(job));
 
       await render(hbs`
-      <JobPage::Parts::TaskGroups
-        @job={{this.job}}
-        @sortProperty={{this.sortProperty}}
-        @sortDescending={{this.sortDescending}}
-      />
-    `);
+    <JobPage::Parts::TaskGroups
+      @job={{this.job}}
+      @sortProperty={{this.sortProperty}}
+      @sortDescending={{this.sortDescending}}
+    />
+  `);
 
       const taskGroupRow = find('[data-test-task-group]');
 
-      assert.equal(
+      assert.strictEqual(
         taskGroupRow
           .querySelector('[data-test-task-group-name]')
           .textContent.trim(),
         taskGroup.get('name'),
         'Name'
       );
-      assert.equal(
+      assert.strictEqual(
         taskGroupRow
           .querySelector('[data-test-task-group-count]')
           .textContent.trim(),
         taskGroup.get('count'),
         'Count'
       );
-      assert.equal(
+      assert.strictEqual(
         taskGroupRow
           .querySelector('[data-test-task-group-volume]')
           .textContent.trim(),
         taskGroup.get('volumes.length') ? 'Yes' : '',
         'Volumes'
       );
-      assert.equal(
+      assert.strictEqual(
         taskGroupRow
           .querySelector('[data-test-task-group-cpu]')
           .textContent.trim(),
         `${formatScheduledHertz(taskGroup.get('reservedCPU'), 'MHz')}`,
         'Reserved CPU'
       );
-      assert.equal(
+      assert.strictEqual(
         taskGroupRow
           .querySelector('[data-test-task-group-mem]')
           .textContent.trim(),
         `${formatScheduledBytes(taskGroup.get('reservedMemory'), 'MiB')}`,
         'Reserved Memory'
       );
-      assert.equal(
+      assert.strictEqual(
         taskGroupRow
           .querySelector('[data-test-task-group-disk]')
           .textContent.trim(),

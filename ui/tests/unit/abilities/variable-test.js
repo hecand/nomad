@@ -533,7 +533,7 @@ module('Unit | Ability | variable', function (hooks) {
 
       const nearestMatchingPath = this.ability._nearestMatchingPath(path);
 
-      assert.equal(
+      assert.strictEqual(
         nearestMatchingPath,
         'foo',
         'It should return the exact path match.'
@@ -569,7 +569,7 @@ module('Unit | Ability | variable', function (hooks) {
 
       const nearestMatchingPath = this.ability._nearestMatchingPath(path);
 
-      assert.equal(
+      assert.strictEqual(
         nearestMatchingPath,
         'foo/bar/*',
         'It should return the nearest fuzzy matching path.'
@@ -602,7 +602,7 @@ module('Unit | Ability | variable', function (hooks) {
 
       const nearestMatchingPath = this.ability._nearestMatchingPath(path);
 
-      assert.equal(
+      assert.strictEqual(
         nearestMatchingPath,
         'foo/*',
         'It should handle wildcard glob.'
@@ -638,7 +638,7 @@ module('Unit | Ability | variable', function (hooks) {
 
       const nearestMatchingPath = this.ability._nearestMatchingPath(path);
 
-      assert.equal(
+      assert.strictEqual(
         nearestMatchingPath,
         '*/bar/baz',
         'It should return the nearest ancestor matching path.'
@@ -674,7 +674,7 @@ module('Unit | Ability | variable', function (hooks) {
 
       const nearestMatchingPath = this.ability._nearestMatchingPath(path);
 
-      assert.equal(
+      assert.strictEqual(
         nearestMatchingPath,
         'foo/*',
         'It should prioritize suffix glob wildcard of prefix glob wildcard.'
@@ -712,7 +712,7 @@ module('Unit | Ability | variable', function (hooks) {
 
       const nearestMatchingPath = this.ability._nearestMatchingPath(path);
 
-      assert.equal(
+      assert.strictEqual(
         nearestMatchingPath,
         '*',
         'It should default to glob wildcard if no matches.'
@@ -730,7 +730,7 @@ module('Unit | Ability | variable', function (hooks) {
       const result = this.ability._computeLengthDiff(pattern, path);
 
       // assert
-      assert.equal(
+      assert.strictEqual(
         result,
         0,
         'it returns the difference in length between path and pattern'
@@ -746,7 +746,7 @@ module('Unit | Ability | variable', function (hooks) {
       const result = this.ability._computeLengthDiff(pattern, path);
 
       // assert
-      assert.equal(
+      assert.strictEqual(
         result,
         1,
         'it adds the number of globs in the pattern to the difference'
@@ -765,7 +765,7 @@ module('Unit | Ability | variable', function (hooks) {
       const result = this.ability._smallestDifference(matches, path);
 
       // assert
-      assert.equal(
+      assert.strictEqual(
         result,
         matchingPath,
         'It should return the smallest difference path.'

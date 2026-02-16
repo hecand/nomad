@@ -75,9 +75,9 @@ module('Acceptance | exec', function (hooks) {
 
     assert.ok(document.title.includes('Exec - region-2'));
 
-    assert.equal(Exec.header.region.text, this.job.region);
-    assert.equal(Exec.header.namespace.text, this.job.namespace);
-    assert.equal(Exec.header.job, this.job.name);
+    assert.strictEqual(Exec.header.region.text, this.job.region);
+    assert.strictEqual(Exec.header.namespace.text, this.job.namespace);
+    assert.strictEqual(Exec.header.job, this.job.name);
 
     assert.notOk(Exec.jobDead.isPresent);
   });
@@ -93,28 +93,31 @@ module('Acceptance | exec', function (hooks) {
     const firstTaskGroup = this.job.taskGroups.models.sortBy('name')[0];
     await Exec.visitJob({ job: this.job.id });
 
-    assert.equal(Exec.taskGroups.length, this.job.taskGroups.length);
+    assert.strictEqual(Exec.taskGroups.length, this.job.taskGroups.length);
 
-    assert.equal(Exec.taskGroups[0].name, firstTaskGroup.name);
-    assert.equal(Exec.taskGroups[0].tasks.length, 0);
+    assert.strictEqual(Exec.taskGroups[0].name, firstTaskGroup.name);
+    assert.strictEqual(Exec.taskGroups[0].tasks.length, 0);
     assert.ok(Exec.taskGroups[0].chevron.isRight);
     assert.notOk(Exec.taskGroups[0].isLoading);
 
     await Exec.taskGroups[0].click();
-    assert.equal(Exec.taskGroups[0].tasks.length, firstTaskGroup.tasks.length);
+    assert.strictEqual(
+      Exec.taskGroups[0].tasks.length,
+      firstTaskGroup.tasks.length
+    );
     assert.notOk(Exec.taskGroups[0].tasks[0].isActive);
     assert.ok(Exec.taskGroups[0].chevron.isDown);
 
     await percySnapshot(assert);
 
     await Exec.taskGroups[0].click();
-    assert.equal(Exec.taskGroups[0].tasks.length, 0);
+    assert.strictEqual(Exec.taskGroups[0].tasks.length, 0);
   });
 
   test('/exec/:job should require selecting a task', async function (assert) {
     await Exec.visitJob({ job: this.job.id });
 
-    assert.equal(
+    assert.strictEqual(
       window.execTerminal.buffer.active.getLine(0).translateToString().trim(),
       'Select a task to start your session.'
     );
@@ -161,7 +164,7 @@ module('Acceptance | exec', function (hooks) {
     await Exec.visitJob({ job: this.job.id });
     await Exec.taskGroups[0].click();
 
-    assert.equal(Exec.taskGroups[0].tasks.length, 1);
+    assert.strictEqual(Exec.taskGroups[0].tasks.length, 1);
   });
 
   test('a task that becomes active should appear', async function (assert) {
@@ -188,7 +191,7 @@ module('Acceptance | exec', function (hooks) {
     await Exec.visitJob({ job: this.job.id });
     await Exec.taskGroups[0].click();
 
-    assert.equal(Exec.taskGroups[0].tasks.length, 1);
+    assert.strictEqual(Exec.taskGroups[0].tasks.length, 1);
 
     // Approximate new task arrival via polling by changing a finished task state to be not finished
     this.owner
@@ -207,8 +210,8 @@ module('Acceptance | exec', function (hooks) {
 
     await settled();
 
-    assert.equal(Exec.taskGroups[0].tasks.length, 2);
-    assert.equal(Exec.taskGroups[0].tasks[1].name, changingTaskStateName);
+    assert.strictEqual(Exec.taskGroups[0].tasks.length, 2);
+    assert.strictEqual(Exec.taskGroups[0].tasks[1].name, changingTaskStateName);
   });
 
   test('a dead job has an inert window', async function (assert) {
@@ -227,7 +230,7 @@ module('Acceptance | exec', function (hooks) {
     });
 
     assert.ok(Exec.jobDead.isPresent);
-    assert.equal(
+    assert.strictEqual(
       Exec.jobDead.message,
       `Job ${this.job.name} is dead and cannot host an exec session.`
     );
@@ -251,7 +254,7 @@ module('Acceptance | exec', function (hooks) {
     let taskGroup = this.job.taskGroups.models.sortBy('name')[0];
     await Exec.visitTaskGroup({ job: this.job.id, task_group: taskGroup.name });
 
-    assert.equal(Exec.taskGroups[0].tasks.length, taskGroup.tasks.length);
+    assert.strictEqual(Exec.taskGroups[0].tasks.length, taskGroup.tasks.length);
     assert.ok(Exec.taskGroups[0].chevron.isDown);
 
     let task = taskGroup.tasks.models.sortBy('name')[0];
@@ -261,7 +264,7 @@ module('Acceptance | exec', function (hooks) {
       task_name: task.name,
     });
 
-    assert.equal(Exec.taskGroups[0].tasks.length, taskGroup.tasks.length);
+    assert.strictEqual(Exec.taskGroups[0].tasks.length, taskGroup.tasks.length);
     assert.ok(Exec.taskGroups[0].chevron.isDown);
   });
 
@@ -280,23 +283,23 @@ module('Acceptance | exec', function (hooks) {
 
     await settled();
 
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/exec/${this.job.id}/${taskGroup.name}/${task.name}?namespace=${this.job.namespaceId}`
     );
     assert.ok(Exec.taskGroups[0].tasks[0].isActive);
 
-    assert.equal(
+    assert.strictEqual(
       window.execTerminal.buffer.active.getLine(2).translateToString().trim(),
       'Multiple instances of this task are running. The allocation below was selected by random draw.'
     );
 
-    assert.equal(
+    assert.strictEqual(
       window.execTerminal.buffer.active.getLine(4).translateToString().trim(),
       'Customize your command, then hit ‘return’ to run.'
     );
 
-    assert.equal(
+    assert.strictEqual(
       window.execTerminal.buffer.active.getLine(6).translateToString().trim(),
       `$ nomad alloc exec -i -t -task ${task.name} ${
         allocationId.split('-')[0]
@@ -337,7 +340,7 @@ module('Acceptance | exec', function (hooks) {
 
     await settled();
 
-    assert.equal(
+    assert.strictEqual(
       window.execTerminal.buffer.active.getLine(4).translateToString().trim(),
       `$ nomad alloc exec -i -t -task spaced\\ name\\! ${
         allocation.id.split('-')[0]
@@ -374,7 +377,7 @@ module('Acceptance | exec', function (hooks) {
 
     await settled();
 
-    assert.equal(
+    assert.strictEqual(
       window.execTerminal.buffer.active.getLine(4).translateToString().trim(),
       `$ nomad alloc exec -i -t -namespace should-show-in-example-string -task ${
         task.name
@@ -386,10 +389,10 @@ module('Acceptance | exec', function (hooks) {
     let mockSocket = new MockSocket();
     let mockSockets = Service.extend({
       getTaskStateSocket(taskState, command) {
-        assert.equal(taskState.name, task.name);
-        assert.equal(taskState.allocation.id, allocation.id);
+        assert.strictEqual(taskState.name, task.name);
+        assert.strictEqual(taskState.allocation.id, allocation.id);
 
-        assert.equal(command, '/bin/bash');
+        assert.strictEqual(command, '/bin/bash');
 
         assert.step('Socket built');
 
@@ -428,7 +431,7 @@ module('Acceptance | exec', function (hooks) {
 
     await settled();
 
-    assert.equal(
+    assert.strictEqual(
       window.execTerminal.buffer.active.getLine(5).translateToString().trim(),
       'sh-3.2 🥳$'
     );
@@ -445,7 +448,7 @@ module('Acceptance | exec', function (hooks) {
     await mockSocket.onclose();
     await settled();
 
-    assert.equal(
+    assert.strictEqual(
       window.execTerminal.buffer.active.getLine(6).translateToString().trim(),
       'The connection has closed.'
     );
@@ -486,7 +489,7 @@ module('Acceptance | exec', function (hooks) {
     await Exec.terminal.pressEnter();
     await settled();
 
-    assert.equal(
+    assert.strictEqual(
       mockSocket.sent[0],
       `{"version":1,"auth_token":"${secretId}"}`
     );
@@ -522,7 +525,7 @@ module('Acceptance | exec', function (hooks) {
   test('the command can be customised', async function (assert) {
     let mockSockets = Service.extend({
       getTaskStateSocket(taskState, command) {
-        assert.equal(command, '/sh');
+        assert.strictEqual(command, '/sh');
         window.localStorage.getItem('nomadExecCommand', JSON.stringify('/sh'));
 
         assert.step('Socket built');
@@ -564,7 +567,7 @@ module('Acceptance | exec', function (hooks) {
 
     await settled();
 
-    assert.equal(
+    assert.strictEqual(
       window.execTerminal.buffer.active.getLine(6).translateToString().trim(),
       `$ nomad alloc exec -i -t -task ${task.name} ${
         allocation.id.split('-')[0]
@@ -600,7 +603,7 @@ module('Acceptance | exec', function (hooks) {
 
     await settled();
 
-    assert.equal(
+    assert.strictEqual(
       window.execTerminal.buffer.active.getLine(4).translateToString().trim(),
       `$ nomad alloc exec -i -t -task ${task.name} ${
         allocation.id.split('-')[0]
@@ -627,7 +630,7 @@ module('Acceptance | exec', function (hooks) {
     await Exec.terminal.pressEnter();
     await settled();
 
-    assert.equal(
+    assert.strictEqual(
       window.execTerminal.buffer.active.getLine(7).translateToString().trim(),
       `Failed to open a socket because task ${task.name} is not active.`
     );

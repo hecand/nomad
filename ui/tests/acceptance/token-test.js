@@ -72,7 +72,7 @@ module('Acceptance | tokens', function (hooks) {
     const { secretId } = managementToken;
 
     await Tokens.visit();
-    assert.equal(
+    assert.strictEqual(
       window.localStorage.nomadTokenSecret,
       null,
       'No token secret set'
@@ -80,7 +80,7 @@ module('Acceptance | tokens', function (hooks) {
     assert.ok(document.title.includes('Sign In'));
 
     await Tokens.secret(secretId).submit();
-    assert.equal(
+    assert.strictEqual(
       window.localStorage.nomadTokenSecret,
       secretId,
       'Token secret was set'
@@ -116,7 +116,7 @@ module('Acceptance | tokens', function (hooks) {
 
     // Cross-origin requests can't have a token
     newRequests.forEach((req) => {
-      assert.equal(
+      assert.strictEqual(
         getHeader(req, 'x-nomad-token'),
         secretId,
         `Token set for ${req.url}`
@@ -136,14 +136,18 @@ module('Acceptance | tokens', function (hooks) {
     await Tokens.visit();
     await Tokens.secret(bogusSecret).submit();
 
-    assert.equal(
+    assert.strictEqual(
       window.localStorage.nomadTokenSecret,
       null,
       'Token secret is discarded on failure'
     );
     assert.ok(Tokens.errorMessage, 'Token error message is shown');
     assert.notOk(Tokens.successMessage, 'Token success message is not shown');
-    assert.equal(Tokens.policies.length, 0, 'No token policies are shown');
+    assert.strictEqual(
+      Tokens.policies.length,
+      0,
+      'No token policies are shown'
+    );
   });
 
   test('a success message and a special management token message are shown when authenticating succeeds', async function (assert) {
@@ -157,7 +161,11 @@ module('Acceptance | tokens', function (hooks) {
     assert.ok(Tokens.successMessage, 'Token success message is shown');
     assert.notOk(Tokens.errorMessage, 'Token error message is not shown');
     assert.ok(Tokens.managementMessage, 'Token management message is shown');
-    assert.equal(Tokens.policies.length, 0, 'No token policies are shown');
+    assert.strictEqual(
+      Tokens.policies.length,
+      0,
+      'No token policies are shown'
+    );
   });
 
   test('a success message and associated policies are shown when authenticating succeeds', async function (assert) {
@@ -174,7 +182,7 @@ module('Acceptance | tokens', function (hooks) {
       Tokens.managementMessage,
       'Token management message is not shown'
     );
-    assert.equal(
+    assert.strictEqual(
       Tokens.policies.length,
       clientToken.policies.length,
       'Each policy associated with the token is listed'
@@ -182,13 +190,13 @@ module('Acceptance | tokens', function (hooks) {
 
     const policyElement = Tokens.policies.objectAt(0);
 
-    assert.equal(policyElement.name, policy.name, 'Policy Name');
-    assert.equal(
+    assert.strictEqual(policyElement.name, policy.name, 'Policy Name');
+    assert.strictEqual(
       policyElement.description,
       policy.description,
       'Policy Description'
     );
-    assert.equal(policyElement.rules, policy.rules, 'Policy Rules');
+    assert.strictEqual(policyElement.rules, policy.rules, 'Policy Rules');
   });
 
   test('setting a token clears the store', async function (assert) {
@@ -242,7 +250,7 @@ module('Acceptance | tokens', function (hooks) {
       .exists('A global alert exists and has a clickable button');
 
     await click('.flash-message.alert-warning button');
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       '/settings/tokens',
       'Redirected to tokens page on notification action'
@@ -282,7 +290,7 @@ module('Acceptance | tokens', function (hooks) {
     });
 
     await Jobs.visit();
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       '/settings/tokens',
       'Redirected to tokens page due to an expired token'
@@ -308,7 +316,7 @@ module('Acceptance | tokens', function (hooks) {
     });
 
     await Jobs.visit();
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       '/settings/tokens',
       'Redirected to tokens page due to a token not being found'
@@ -322,7 +330,7 @@ module('Acceptance | tokens', function (hooks) {
     let notificationRendered = assert.async();
     let notificationNotRendered = assert.async();
     window.localStorage.clear();
-    assert.equal(
+    assert.strictEqual(
       window.localStorage.nomadTokenSecret,
       null,
       'No token secret set'
@@ -371,7 +379,7 @@ module('Acceptance | tokens', function (hooks) {
 
     await Tokens.visit();
 
-    assert.equal(
+    assert.strictEqual(
       window.localStorage.nomadTokenSecret,
       secretId,
       'Token secret was set'
@@ -441,7 +449,11 @@ module('Acceptance | tokens', function (hooks) {
     await visit('/settings/tokens?state=failure');
     assert.ok(Tokens.ssoErrorMessage);
     await Tokens.clearSSOError();
-    assert.equal(currentURL(), '/settings/tokens', 'State query param cleared');
+    assert.strictEqual(
+      currentURL(),
+      '/settings/tokens',
+      'State query param cleared'
+    );
     assert.notOk(Tokens.ssoErrorMessage);
 
     await click('button[data-test-auth-method]');
@@ -450,7 +462,7 @@ module('Acceptance | tokens', function (hooks) {
     let failureButton = find('.button.error');
     assert.dom(failureButton).exists();
     await click(failureButton);
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       '/settings/tokens?state=failure',
       'Redirected with failure state'
@@ -594,7 +606,7 @@ module('Acceptance | tokens', function (hooks) {
       .dom('[data-test-select-jwt]')
       .exists({ count: 1 }, 'JWT selector shown with multiple JWT methods');
 
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       '/settings/tokens?jwtAuthMethod=JWT-Global',
       'Default JWT method is selected'
@@ -603,7 +615,7 @@ module('Acceptance | tokens', function (hooks) {
     assert.dom('.dropdown-options').exists('Dropdown options are shown');
 
     await selectChoose('[data-test-select-jwt]', 'JWT-Regional');
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       '/settings/tokens?jwtAuthMethod=JWT-Regional',
       'Selected JWT method is shown'
@@ -614,8 +626,8 @@ module('Acceptance | tokens', function (hooks) {
     await visit('/?ott=fake');
 
     assert.ok(Layout.error.isPresent);
-    assert.equal(Layout.error.title, 'Token Exchange Error');
-    assert.equal(
+    assert.strictEqual(Layout.error.title, 'Token Exchange Error');
+    assert.strictEqual(
       Layout.error.message,
       'Failed to exchange the one-time token.'
     );
@@ -631,7 +643,7 @@ module('Acceptance | tokens', function (hooks) {
       },
     });
     await visit('/settings/tokens');
-    assert.equal(currentURL(), '/settings/user-settings');
+    assert.strictEqual(currentURL(), '/settings/user-settings');
   });
 
   test('Tokens are shown on the Access Control Policies index page', async function (assert) {
@@ -677,7 +689,10 @@ module('Acceptance | tokens', function (hooks) {
     window.localStorage.nomadTokenSecret = server.db.tokens[0].secretId;
     await visit('/administration/policies');
     await click('[data-test-policy-name]');
-    assert.equal(currentURL(), `/administration/policies/${firstPolicy.name}`);
+    assert.strictEqual(
+      currentURL(),
+      `/administration/policies/${firstPolicy.name}`
+    );
 
     const expectedFirstPolicyTokens = server.db.tokens.filter((token) => {
       return token.policyIds.includes(firstPolicy.name);
@@ -722,7 +737,10 @@ module('Acceptance | tokens', function (hooks) {
     await visit('/administration/policies');
 
     await click('[data-test-policy-name]:first-child');
-    assert.equal(currentURL(), `/administration/policies/${testPolicy.name}`);
+    assert.strictEqual(
+      currentURL(),
+      `/administration/policies/${testPolicy.name}`
+    );
     assert
       .dom('[data-test-policy-token-row]')
       .exists(
@@ -760,7 +778,10 @@ module('Acceptance | tokens', function (hooks) {
     await visit('/administration/policies');
 
     await click('[data-test-policy-name]');
-    assert.equal(currentURL(), `/administration/policies/${testPolicy.name}`);
+    assert.strictEqual(
+      currentURL(),
+      `/administration/policies/${testPolicy.name}`
+    );
 
     assert
       .dom('[data-test-policy-token-row]')
@@ -804,7 +825,7 @@ module('Acceptance | tokens', function (hooks) {
       .dom('[data-test-error]')
       .exists('Error message is shown on the Jobs page');
     await click('[data-test-permission-link]');
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       '/settings/tokens',
       'Redirected to the tokens page'
@@ -816,7 +837,7 @@ module('Acceptance | tokens', function (hooks) {
     await Tokens.visit();
 
     await Tokens.secret(recentlyExpiredToken.secretId).submit();
-    assert.equal(currentURL(), '/jobs');
+    assert.strictEqual(currentURL(), '/jobs');
 
     assert.dom('.flash-message.alert-success').exists();
   });
@@ -835,7 +856,7 @@ module('Acceptance | tokens', function (hooks) {
       .dom('[data-test-error]')
       .exists('Error message is shown on the Evaluations page');
     await click('[data-test-error-acl-link]');
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       '/settings/tokens',
       'Redirected to the tokens page'
@@ -847,7 +868,7 @@ module('Acceptance | tokens', function (hooks) {
 
     await Tokens.secret(managementToken.secretId).submit();
 
-    assert.equal(currentURL(), '/evaluations');
+    assert.strictEqual(currentURL(), '/evaluations');
 
     assert.dom('.flash-message.alert-success').exists();
   });
@@ -860,7 +881,7 @@ module('Acceptance | tokens', function (hooks) {
     test('When a token expires while the user is on a page, the notification saves redirect route', async function (assert) {
       // window.localStorage.nomadTokenSecret = soonExpiringToken.secretId;
       await Jobs.visit();
-      assert.equal(currentURL(), '/jobs');
+      assert.strictEqual(currentURL(), '/jobs');
 
       assert
         .dom('.flash-message.alert-warning button')
@@ -868,7 +889,7 @@ module('Acceptance | tokens', function (hooks) {
 
       await click('.flash-message.alert-warning button');
 
-      assert.equal(
+      assert.strictEqual(
         currentURL(),
         '/settings/tokens',
         'Redirected to tokens page on notification action'
@@ -879,7 +900,7 @@ module('Acceptance | tokens', function (hooks) {
         .exists('Notification is rendered');
 
       await Tokens.secret(managementToken.secretId).submit();
-      assert.equal(
+      assert.strictEqual(
         currentURL(),
         '/jobs',
         'Redirected to initial route on manager sign in'
@@ -957,8 +978,8 @@ module('Acceptance | tokens', function (hooks) {
       );
       await Tokens.secret(token.secretId).submit();
 
-      assert.equal(token.roleIds.length, 2);
-      assert.equal(token.policyIds.length, 1);
+      assert.strictEqual(token.roleIds.length, 2);
+      assert.strictEqual(token.policyIds.length, 1);
 
       assert.dom('[data-test-token-role]').exists({ count: 2 });
       assert.dom('[data-test-token-policy]').exists({ count: 2 });
@@ -1024,7 +1045,7 @@ module('Acceptance | tokens', function (hooks) {
     });
 
     test('Tokens index, general', async function (assert) {
-      assert.equal(currentURL(), '/administration/tokens');
+      assert.strictEqual(currentURL(), '/administration/tokens');
       // Number of token rows equivalent to number in db
       assert
         .dom('[data-test-token-row]')
@@ -1132,7 +1153,10 @@ module('Acceptance | tokens', function (hooks) {
         (row) => row.textContent.includes(tokenToClick.name)
       );
       await click(tokenRowToClick.querySelector('[data-test-token-name] a'));
-      assert.equal(currentURL(), `/administration/tokens/${tokenToClick.id}`);
+      assert.strictEqual(
+        currentURL(),
+        `/administration/tokens/${tokenToClick.id}`
+      );
       assert.dom('[data-test-token-name-input]').hasValue(tokenToClick.name);
     });
 
@@ -1159,8 +1183,8 @@ module('Acceptance | tokens', function (hooks) {
       const policiesCellTags = policiesCell
         .querySelector('.tag-group')
         .querySelectorAll('span');
-      assert.equal(rolesCellTags.length, 2);
-      assert.equal(policiesCellTags.length, 1);
+      assert.strictEqual(rolesCellTags.length, 2);
+      assert.strictEqual(policiesCellTags.length, 1);
 
       const policyLessToken = server.db.tokens.findBy(
         (t) => t.name === 'High Level Role Token'
@@ -1183,8 +1207,8 @@ module('Acceptance | tokens', function (hooks) {
       const policiesCellTags2 = policiesCell2
         .querySelector('.tag-group')
         .querySelectorAll('span');
-      assert.equal(rolesCellTags2.length, 1);
-      assert.equal(policiesCellTags2.length, 0);
+      assert.strictEqual(rolesCellTags2.length, 1);
+      assert.strictEqual(policiesCellTags2.length, 0);
     });
 
     test('Token page, general', async function (assert) {
@@ -1204,7 +1228,7 @@ module('Acceptance | tokens', function (hooks) {
       // All possible policies are shown
       const allPolicies = server.db.policies;
       const allPolicyRows = findAll('[data-test-token-policies] tbody tr');
-      assert.equal(
+      assert.strictEqual(
         allPolicyRows.length,
         allPolicies.length,
         'All policies are shown'
@@ -1217,7 +1241,7 @@ module('Acceptance | tokens', function (hooks) {
         '[data-test-token-policies] tbody tr input:checked'
       );
 
-      assert.equal(
+      assert.strictEqual(
         checkedPolicyRows.length,
         tokenPolicies.length,
         'All policies belonging to this token are checked'
@@ -1237,7 +1261,11 @@ module('Acceptance | tokens', function (hooks) {
 
       const allRoles = server.db.roles;
       const allRoleRows = findAll('[data-test-token-roles] tbody tr');
-      assert.equal(allRoleRows.length, allRoles.length, 'All roles are shown');
+      assert.strictEqual(
+        allRoleRows.length,
+        allRoles.length,
+        'All roles are shown'
+      );
 
       const tokenRoles = token.roleIds;
 
@@ -1245,7 +1273,7 @@ module('Acceptance | tokens', function (hooks) {
         '[data-test-token-roles] tbody tr input:checked'
       );
 
-      assert.equal(
+      assert.strictEqual(
         checkedRoleRows.length,
         tokenRoles.length,
         'All roles belonging to this token are checked'
@@ -1286,7 +1314,7 @@ module('Acceptance | tokens', function (hooks) {
         '[data-test-token-policies] tbody tr input:checked'
       );
 
-      assert.equal(
+      assert.strictEqual(
         checkedPolicyRows.length,
         tokenPolicies.length,
         'All policies belonging to this token are checked'
@@ -1346,7 +1374,7 @@ module('Acceptance | tokens', function (hooks) {
       const rolesCellTags = rolesCell
         .querySelector('.tag-group')
         .querySelectorAll('span');
-      assert.equal(rolesCellTags.length, 1);
+      assert.strictEqual(rolesCellTags.length, 1);
     });
     test('Token can be deleted', async function (assert) {
       const token = server.db.tokens.findBy((t) => t.id === 'cl4y-t0k3n');
@@ -1366,7 +1394,7 @@ module('Acceptance | tokens', function (hooks) {
     });
     test('New Token creation', async function (assert) {
       await click('[data-test-create-token]');
-      assert.equal(currentURL(), '/administration/tokens/new');
+      assert.strictEqual(currentURL(), '/administration/tokens/new');
       await fillIn('[data-test-token-name-input]', 'Timeless Token');
       await click('[data-test-token-save]');
       assert.dom('.flash-message.alert-success').exists();
@@ -1384,7 +1412,7 @@ module('Acceptance | tokens', function (hooks) {
 
       // Now create one with a TTL
       await click('[data-test-create-token]');
-      assert.equal(currentURL(), '/administration/tokens/new');
+      assert.strictEqual(currentURL(), '/administration/tokens/new');
       await fillIn('[data-test-token-name-input]', 'TTL Token');
       // Select the "8 hours" radio within the .expiration-time div
       await click('.expiration-time input[value="8h"]');
@@ -1402,7 +1430,7 @@ module('Acceptance | tokens', function (hooks) {
 
       // Now create one with an expiration time
       await click('[data-test-create-token]');
-      assert.equal(currentURL(), '/administration/tokens/new');
+      assert.strictEqual(currentURL(), '/administration/tokens/new');
       await fillIn('[data-test-token-name-input]', 'Expiring Token');
       // select the Custom radio button
       await click('.expiration-time input[value="custom"]');
@@ -1518,7 +1546,7 @@ module('Tokens and Regions', function (hooks) {
     let tokenRequest = server.pretender.handledRequests.find((req) => {
       return req.url.includes('acl/token') && req.method === 'POST';
     });
-    assert.equal(
+    assert.strictEqual(
       tokenRequest.queryParams.region,
       'america',
       'Global token is saved in the authoritative region, regardless of active UI region'
@@ -1557,7 +1585,7 @@ module('Tokens and Regions', function (hooks) {
       return req.url.includes('acl/token') && req.method === 'POST';
     });
 
-    assert.equal(
+    assert.strictEqual(
       tokenRequest.queryParams.region,
       'alien-ship',
       'Token is saved in the selected region'
@@ -1590,7 +1618,7 @@ module('Tokens and Regions', function (hooks) {
       return req.url.includes('acl/token') && req.method === 'POST';
     });
 
-    assert.equal(
+    assert.strictEqual(
       tokenRequest.queryParams.region,
       'america',
       'Token is saved in the authoritative region'

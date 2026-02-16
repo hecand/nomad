@@ -3,11 +3,10 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import Component from '@ember/component';
-import { tagName } from '@ember-decorators/component';
+import Component from '@glimmer/component';
+
 import { inject as service } from '@ember/service';
 
-@tagName('')
 export default class AdministrationSubnav extends Component {
   @service keyboard;
 }

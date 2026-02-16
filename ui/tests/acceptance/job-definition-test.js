@@ -35,8 +35,8 @@ module('Acceptance | job definition', function (hooks) {
   });
 
   test('visiting /jobs/:job_id/definition', async function (assert) {
-    assert.equal(currentURL(), `/jobs/${job.id}/definition`);
-    assert.equal(document.title, `Job ${job.name} definition - Nomad`);
+    assert.strictEqual(currentURL(), `/jobs/${job.id}/definition`);
+    assert.strictEqual(document.title, `Job ${job.name} definition - Nomad`);
   });
 
   test('the job definition page starts in read-only view', async function (assert) {
@@ -90,7 +90,7 @@ module('Acceptance | job definition', function (hooks) {
     await Definition.edit();
     await percySnapshot(assert);
 
-    assert.equal(
+    assert.strictEqual(
       Definition.editor.editor.contents,
       formattedJobDefinition,
       'The editor already has the job definition in it'
@@ -105,7 +105,7 @@ module('Acceptance | job definition', function (hooks) {
 
     await click('[data-test-plan]');
     await Definition.editor.run();
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/jobs/${job.id}@default`,
       'Now on the job overview page'
@@ -117,20 +117,20 @@ module('Acceptance | job definition', function (hooks) {
     await Definition.visit({ id: 'not-a-real-job' });
     await percySnapshot(assert);
 
-    assert.equal(
+    assert.strictEqual(
       server.pretender.handledRequests
         .filter((request) => !request.url.includes('policy'))
         .findBy('status', 404).url,
       '/v1/job/not-a-real-job',
       'A request to the nonexistent job is made'
     );
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       '/jobs/not-a-real-job/definition',
       'The URL persists'
     );
     assert.ok(Definition.error.isPresent, 'Error message is shown');
-    assert.equal(
+    assert.strictEqual(
       Definition.error.title,
       'Not Found',
       'Error message is for 404'
@@ -173,7 +173,7 @@ module('Acceptance | job definition | full specification', function (hooks) {
       .dom('[data-test-select="job-spec"]')
       .exists('A select button exists and defaults to full definition');
     let codeMirror = getCodeMirrorInstance('[data-test-editor]');
-    assert.equal(
+    assert.strictEqual(
       codeMirror.getValue(),
       specification_response.Source,
       'Shows the full definition as written by the user'

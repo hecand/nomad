@@ -6,7 +6,7 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { click, find, findAll, render } from '@ember/test-helpers';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 import { startMirage } from 'nomad-ui/initializers/ember-cli-mirage';
 import setupCodeMirror from 'nomad-ui/tests/helpers/codemirror';
 import { initialize as fragmentSerializerInitializer } from 'nomad-ui/initializers/fragment-serializer';
@@ -55,7 +55,7 @@ module('Integration | Component | scale-events-accordion', function (hooks) {
 
     await render(commonTemplate);
 
-    assert.equal(
+    assert.strictEqual(
       findAll('[data-test-scale-events] [data-test-accordion-head]').length,
       eventCount
     );
@@ -92,7 +92,7 @@ module('Integration | Component | scale-events-accordion', function (hooks) {
     await render(commonTemplate);
 
     assert.notOk(find('[data-test-error]'));
-    assert.equal(find('[data-test-count]').textContent, count);
+    assert.strictEqual(find('[data-test-count]').textContent, count);
     await componentA11yAudit(this.element, assert);
   });
 
@@ -110,7 +110,7 @@ module('Integration | Component | scale-events-accordion', function (hooks) {
     await render(commonTemplate);
 
     assert.notOk(find('[data-test-error]'));
-    assert.equal(find('[data-test-count]').textContent, count);
+    assert.strictEqual(find('[data-test-count]').textContent, count);
   });
 
   test('when an event has no count, the count is omitted', async function (assert) {
@@ -163,7 +163,7 @@ module('Integration | Component | scale-events-accordion', function (hooks) {
     await click('[data-test-accordion-toggle]');
     assert.ok(find('[data-test-accordion-body]'));
 
-    assert.equal(
+    assert.strictEqual(
       getCodeMirrorInstance('[data-test-json-viewer]').getValue(),
       JSON.stringify(meta, null, 2)
     );

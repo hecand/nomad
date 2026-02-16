@@ -6,7 +6,7 @@
 import { find, render, settled } from '@ember/test-helpers';
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 import { componentA11yAudit } from 'nomad-ui/tests/helpers/a11y-audit';
 import sinon from 'sinon';
 import { create } from 'ember-cli-page-object';
@@ -40,16 +40,20 @@ module('Integration | Component | toggle', function (hooks) {
     this.setProperties(props);
     await render(commonTemplate);
 
-    assert.equal(Toggle.label, props.label, `Label should be ${props.label}`);
+    assert.strictEqual(
+      Toggle.label,
+      props.label,
+      `Label should be ${props.label}`
+    );
     assert.ok(Toggle.isPresent);
     assert.notOk(Toggle.isActive);
     assert.ok(find('[data-test-toggler]'));
-    assert.equal(
+    assert.strictEqual(
       find('[data-test-input]').tagName.toLowerCase(),
       'input',
       'The input is a real HTML input'
     );
-    assert.equal(
+    assert.strictEqual(
       find('[data-test-input]').getAttribute('type'),
       'checkbox',
       'The input type is checkbox'
@@ -102,6 +106,6 @@ module('Integration | Component | toggle', function (hooks) {
     await render(commonTemplate);
 
     await Toggle.toggle();
-    assert.equal(props.onToggle.callCount, 1);
+    assert.strictEqual(props.onToggle.callCount, 1);
   });
 });

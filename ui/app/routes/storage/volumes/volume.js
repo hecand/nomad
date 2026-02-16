@@ -10,9 +10,7 @@ import RSVP from 'rsvp';
 import notifyError from 'nomad-ui/utils/notify-error';
 import { watchRecord } from 'nomad-ui/utils/properties/watch';
 import WithWatchers from 'nomad-ui/mixins/with-watchers';
-import classic from 'ember-classic-decorator';
 
-@classic
 export default class VolumeRoute extends Route.extend(WithWatchers) {
   @service store;
   @service system;

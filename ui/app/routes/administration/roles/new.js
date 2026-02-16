@@ -7,11 +7,12 @@ import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
 
 export default class AccessControlRolesNewRoute extends Route {
-  @service can;
+  @service abilities;
   @service router;
+  @service store;
 
   beforeModel() {
-    if (this.can.cannot('write role')) {
+    if (this.abilities.cannot('write role')) {
       this.router.transitionTo('/administration/roles');
     }
   }

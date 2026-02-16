@@ -3,8 +3,6 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-// @ts-check
-
 import Ember from 'ember';
 import { get } from '@ember/object';
 import { assert } from '@ember/debug';

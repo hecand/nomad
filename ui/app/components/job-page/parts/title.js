@@ -3,20 +3,16 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-// @ts-check
-import Component from '@ember/component';
+import Component from '@glimmer/component';
 import { task } from 'ember-concurrency';
 import { inject as service } from '@ember/service';
 import messageFromAdapterError from 'nomad-ui/utils/message-from-adapter-error';
-import { tagName } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
+
 import jsonToHcl from 'nomad-ui/utils/json-to-hcl';
 import { marked } from 'marked';
 import { htmlSafe } from '@ember/template';
 import DOMPurify from 'dompurify';
 
-@classic
-@tagName('')
 export default class Title extends Component {
   @service router;
   @service notifications;
@@ -31,7 +27,7 @@ export default class Title extends Component {
    */
   @task(function* (withNotifications = false) {
     try {
-      const job = this.job;
+      const job = this.args.job;
       yield job.stop();
       // Eagerly update the job status to avoid flickering
       job.set('status', 'dead');
@@ -53,7 +49,7 @@ export default class Title extends Component {
 
   @task(function* () {
     try {
-      const job = this.job;
+      const job = this.args.job;
       yield job.purge();
       this.notifications.add({
         title: 'Job Purged',
@@ -74,7 +70,7 @@ export default class Title extends Component {
    * @param {boolean} withNotifications - Whether to show a toast on success, as when triggered by keyboard shortcut
    */
   @task(function* (withNotifications = false) {
-    const job = this.job;
+    const job = this.args.job;
 
     // Try to get the submission/hcl sourced specification first.
     // In the event that this fails, fall back to the raw definition.
@@ -127,7 +123,7 @@ export default class Title extends Component {
   revertTo;
 
   get description() {
-    if (!this.job.ui?.Description) {
+    if (!this.args.job.ui?.Description) {
       return null;
     }
 
@@ -141,7 +137,7 @@ export default class Title extends Component {
       FORBID_TAGS: ['script', 'style'],
       FORBID_ATTR: ['onerror', 'onload'],
     };
-    const rawDescription = marked.parse(this.job.ui.Description);
+    const rawDescription = marked.parse(this.args.job.ui.Description);
     if (typeof rawDescription !== 'string') {
       console.error(
         'Expected a string from marked.parse(), received:',
@@ -154,6 +150,6 @@ export default class Title extends Component {
   }
 
   get links() {
-    return this.job.ui?.Links;
+    return this.args.job.ui?.Links;
   }
 }

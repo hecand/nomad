@@ -6,7 +6,7 @@
 import { findAll, find, render } from '@ember/test-helpers';
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 import cleanWhitespace from '../../utils/clean-whitespace';
 import { componentA11yAudit } from 'nomad-ui/tests/helpers/a11y-audit';
 
@@ -37,12 +37,12 @@ module('Integration | Component | job diff', function (hooks) {
 
     await render(commonTemplate);
 
-    assert.equal(
+    assert.strictEqual(
       findAll('[data-test-diff-section-label]').length,
       5,
       'A section label for each line, plus one for the group'
     );
-    assert.equal(
+    assert.strictEqual(
       cleanWhitespace(
         find(
           '[data-test-diff-section-label="field"][data-test-diff-field="added"]'
@@ -51,7 +51,7 @@ module('Integration | Component | job diff', function (hooks) {
       '+ Added Field: "Foobar"',
       'Added field is rendered correctly'
     );
-    assert.equal(
+    assert.strictEqual(
       cleanWhitespace(
         find(
           '[data-test-diff-section-label="field"][data-test-diff-field="edited"]'
@@ -60,7 +60,7 @@ module('Integration | Component | job diff', function (hooks) {
       '+/- Edited Field: "256" => "512"',
       'Edited field is rendered correctly'
     );
-    assert.equal(
+    assert.strictEqual(
       cleanWhitespace(
         find(
           '[data-test-diff-section-label="field"][data-test-diff-field="deleted"]'
@@ -171,7 +171,7 @@ module('Integration | Component | job diff', function (hooks) {
       'Removed object ends the JSON block'
     );
 
-    assert.equal(
+    assert.strictEqual(
       findAll(
         '[data-test-diff-section-label="object"][data-test-diff-field="added"] > [data-test-diff-section-label]'
       ).length,
@@ -179,7 +179,7 @@ module('Integration | Component | job diff', function (hooks) {
       'Edited block contains each nested field and object'
     );
 
-    assert.equal(
+    assert.strictEqual(
       findAll(
         '[data-test-diff-section-label="object"][data-test-diff-field="added"] [data-test-diff-section-label="object"] [data-test-diff-section-label="field"]'
       ).length,

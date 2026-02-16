@@ -33,7 +33,11 @@ module('Acceptance | server detail', function (hooks) {
   });
 
   test('visiting /servers/:server_name', async function (assert) {
-    assert.equal(currentURL(), `/servers/${encodeURIComponent(agent.name)}`);
+    assert.strictEqual(
+      currentURL(),
+      `/servers/${encodeURIComponent(agent.name)}`
+    );
+
     assert.ok(document.title.includes(`Server ${agent.name}`));
   });
 
@@ -57,11 +61,11 @@ module('Acceptance | server detail', function (hooks) {
       .map((name) => ({ name, value: agent.member.Tags[name] }))
       .sortBy('name');
 
-    assert.equal(ServerDetail.tags.length, tags.length, '# of tags');
+    assert.strictEqual(ServerDetail.tags.length, tags.length, '# of tags');
     ServerDetail.tags.forEach((tagRow, index) => {
       const tag = tags[index];
-      assert.equal(tagRow.name, tag.name, `Label: ${tag.name}`);
-      assert.equal(tagRow.value, tag.value, `Value: ${tag.value}`);
+      assert.strictEqual(tagRow.name, tag.name, `Label: ${tag.name}`);
+      assert.strictEqual(tagRow.value, tag.value, `Value: ${tag.value}`);
     });
   });
 
@@ -73,12 +77,12 @@ module('Acceptance | server detail', function (hooks) {
   test('when the server is not found, an error message is shown, but the URL persists', async function (assert) {
     await ServerDetail.visit({ name: 'not-a-real-server' });
 
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       '/servers/not-a-real-server',
       'The URL persists'
     );
-    assert.equal(
+    assert.strictEqual(
       ServerDetail.error.title,
       'Not Found',
       'Error message is for 404'

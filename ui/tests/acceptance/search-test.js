@@ -12,7 +12,7 @@ import { setupMirage } from 'ember-cli-mirage/test-support';
 import Layout from 'nomad-ui/tests/pages/layout';
 import JobsList from 'nomad-ui/tests/pages/jobs/list';
 import { selectSearch } from 'ember-power-select/test-support';
-import Response from 'ember-cli-mirage/response';
+import { Response } from 'miragejs';
 
 module('Acceptance | search', function (hooks) {
   setupApplicationTest(hooks);
@@ -64,77 +64,83 @@ module('Acceptance | search', function (hooks) {
     await selectSearch(Layout.navbar.search.scope, 'xy');
 
     Layout.navbar.search.as((search) => {
-      assert.equal(search.groups.length, 5);
+      assert.strictEqual(search.groups.length, 5);
 
       search.groups[0].as((jobs) => {
-        assert.equal(jobs.name, 'Jobs (3)');
-        assert.equal(jobs.options.length, 3);
-        assert.equal(jobs.options[0].text, 'default > vwxyz');
-        assert.equal(jobs.options[1].text, 'default > xyz job');
-        assert.equal(jobs.options[2].text, 'dev > xyzw job');
+        assert.strictEqual(jobs.name, 'Jobs (3)');
+        assert.strictEqual(jobs.options.length, 3);
+        assert.strictEqual(jobs.options[0].text, 'default > vwxyz');
+        assert.strictEqual(jobs.options[1].text, 'default > xyz job');
+        assert.strictEqual(jobs.options[2].text, 'dev > xyzw job');
       });
 
       search.groups[1].as((clients) => {
-        assert.equal(clients.name, 'Clients (1)');
-        assert.equal(clients.options.length, 1);
-        assert.equal(clients.options[0].text, 'xyz');
+        assert.strictEqual(clients.name, 'Clients (1)');
+        assert.strictEqual(clients.options.length, 1);
+        assert.strictEqual(clients.options[0].text, 'xyz');
       });
 
       search.groups[2].as((allocs) => {
-        assert.equal(allocs.name, 'Allocations (0)');
-        assert.equal(allocs.options.length, 0);
+        assert.strictEqual(allocs.name, 'Allocations (0)');
+        assert.strictEqual(allocs.options.length, 0);
       });
 
       search.groups[3].as((groups) => {
-        assert.equal(groups.name, 'Task Groups (0)');
-        assert.equal(groups.options.length, 0);
+        assert.strictEqual(groups.name, 'Task Groups (0)');
+        assert.strictEqual(groups.options.length, 0);
       });
 
       search.groups[4].as((plugins) => {
-        assert.equal(plugins.name, 'CSI Plugins (1)');
-        assert.equal(plugins.options.length, 1);
-        assert.equal(plugins.options[0].text, 'xyz-plugin');
+        assert.strictEqual(plugins.name, 'CSI Plugins (1)');
+        assert.strictEqual(plugins.options.length, 1);
+        assert.strictEqual(plugins.options[0].text, 'xyz-plugin');
       });
     });
 
     await Layout.navbar.search.groups[0].options[1].click();
-    assert.equal(currentURL(), '/jobs/xyz@default');
+    assert.strictEqual(currentURL(), '/jobs/xyz@default');
 
     await selectSearch(Layout.navbar.search.scope, 'xy');
     await Layout.navbar.search.groups[0].options[2].click();
-    assert.equal(currentURL(), '/jobs/xyzw@dev');
+    assert.strictEqual(currentURL(), '/jobs/xyzw@dev');
 
     await selectSearch(Layout.navbar.search.scope, otherNode.name);
     await Layout.navbar.search.groups[1].options[0].click();
-    assert.equal(currentURL(), `/clients/${otherNode.id}`);
+    assert.strictEqual(currentURL(), `/clients/${otherNode.id}`);
 
     await selectSearch(Layout.navbar.search.scope, firstAllocation.name);
-    assert.equal(
+    assert.strictEqual(
       Layout.navbar.search.groups[2].options[0].text,
       `${firstAllocation.namespace} > ${firstAllocation.name}`
     );
     await Layout.navbar.search.groups[2].options[0].click();
-    assert.equal(currentURL(), `/allocations/${firstAllocation.id}`);
+    assert.strictEqual(currentURL(), `/allocations/${firstAllocation.id}`);
 
     await selectSearch(Layout.navbar.search.scope, firstTaskGroup.name);
-    assert.equal(
+    assert.strictEqual(
       Layout.navbar.search.groups[3].options[0].text,
       `default > vwxyz > ${firstTaskGroup.name}`
     );
     await Layout.navbar.search.groups[3].options[0].click();
-    assert.equal(currentURL(), `/jobs/vwxyz@default/${firstTaskGroup.name}`);
+    assert.strictEqual(
+      currentURL(),
+      `/jobs/vwxyz@default/${firstTaskGroup.name}`
+    );
 
     await selectSearch(Layout.navbar.search.scope, namespacedTaskGroup.name);
-    assert.equal(
+    assert.strictEqual(
       Layout.navbar.search.groups[3].options[0].text,
       `dev > xyzw > ${namespacedTaskGroup.name}`
     );
     await Layout.navbar.search.groups[3].options[0].click();
-    assert.equal(currentURL(), `/jobs/xyzw@dev/${namespacedTaskGroup.name}`);
+    assert.strictEqual(
+      currentURL(),
+      `/jobs/xyzw@dev/${namespacedTaskGroup.name}`
+    );
 
     await selectSearch(Layout.navbar.search.scope, 'xy');
     await Layout.navbar.search.groups[4].options[0].click();
-    assert.equal(currentURL(), '/storage/plugins/xyz-plugin');
+    assert.strictEqual(currentURL(), '/storage/plugins/xyz-plugin');
 
     const fuzzySearchQueries = server.pretender.handledRequests.filterBy(
       'url',
@@ -145,7 +151,7 @@ module('Acceptance | search', function (hooks) {
       request.requestBody.includes('feature-detection-query')
     );
 
-    assert.equal(
+    assert.strictEqual(
       featureDetectionQueries.length,
       1,
       'expect the feature detection query to only run once'
@@ -166,7 +172,7 @@ module('Acceptance | search', function (hooks) {
     await selectSearch(Layout.navbar.search.scope, 'q');
 
     assert.ok(Layout.navbar.search.noOptionsShown);
-    assert.equal(
+    assert.strictEqual(
       server.pretender.handledRequests.filterBy('url', '/v1/search/fuzzy')
         .length,
       1,
@@ -198,8 +204,8 @@ module('Acceptance | search', function (hooks) {
 
     Layout.navbar.search.as((search) => {
       search.groups[0].as((jobs) => {
-        assert.equal(jobs.name, 'Jobs (showing 10 of 11)');
-        assert.equal(jobs.options.length, 10);
+        assert.strictEqual(jobs.name, 'Jobs (showing 10 of 11)');
+        assert.strictEqual(jobs.options.length, 10);
       });
     });
   });
@@ -218,7 +224,7 @@ module('Acceptance | search', function (hooks) {
 
     Layout.navbar.search.as((search) => {
       search.groups[0].as((jobs) => {
-        assert.equal(jobs.name, 'Jobs (showing 10 of 20+)');
+        assert.strictEqual(jobs.name, 'Jobs (showing 10 of 20+)');
       });
     });
   });

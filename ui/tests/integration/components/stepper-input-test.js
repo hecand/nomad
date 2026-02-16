@@ -12,7 +12,7 @@ import {
 } from '@ember/test-helpers';
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 import { componentA11yAudit } from 'nomad-ui/tests/helpers/a11y-audit';
 import sinon from 'sinon';
 import { create } from 'ember-cli-page-object';
@@ -39,7 +39,7 @@ module('Integration | Component | stepper input', function (hooks) {
 
   const commonTemplate = hbs`
     <StepperInput
-      @debounce=50
+      @debounce="50"
       @min={{min}}
       @max={{max}}
       @value={{value}}
@@ -57,8 +57,8 @@ module('Integration | Component | stepper input', function (hooks) {
 
     await render(commonTemplate);
 
-    assert.equal(StepperInput.label, this.label);
-    assert.equal(StepperInput.input.value, this.value);
+    assert.strictEqual(StepperInput.label, this.label);
+    assert.strictEqual(StepperInput.input.value, this.value);
     assert.ok(StepperInput.decrement.isPresent);
     assert.ok(StepperInput.increment.isPresent);
     assert.ok(
@@ -80,17 +80,17 @@ module('Integration | Component | stepper input', function (hooks) {
 
     StepperInput.increment.click();
     await waitUntil(valueChange());
-    assert.equal(StepperInput.input.value, baseValue + 1);
+    assert.strictEqual(StepperInput.input.value, baseValue + 1);
     assert.notOk(this.onChange.called);
 
     StepperInput.decrement.click();
     await waitUntil(valueChange());
-    assert.equal(StepperInput.input.value, baseValue);
+    assert.strictEqual(StepperInput.input.value, baseValue);
     assert.notOk(this.onChange.called);
 
     StepperInput.decrement.click();
     await waitUntil(valueChange());
-    assert.equal(StepperInput.input.value, baseValue - 1);
+    assert.strictEqual(StepperInput.input.value, baseValue - 1);
     assert.notOk(this.onChange.called);
 
     await settled();
@@ -124,15 +124,15 @@ module('Integration | Component | stepper input', function (hooks) {
     const input = find('[data-test-stepper-input]');
 
     input.value = newValue;
-    assert.equal(StepperInput.input.value, newValue);
+    assert.strictEqual(StepperInput.input.value, newValue);
     assert.notOk(this.onChange.called);
 
     await triggerEvent(input, 'input');
-    assert.equal(StepperInput.input.value, newValue);
+    assert.strictEqual(StepperInput.input.value, newValue);
     assert.notOk(this.onChange.called);
 
     await triggerEvent(input, 'change');
-    assert.equal(StepperInput.input.value, newValue);
+    assert.strictEqual(StepperInput.input.value, newValue);
     assert.ok(this.onChange.calledWith(newValue));
   });
 
@@ -145,7 +145,7 @@ module('Integration | Component | stepper input', function (hooks) {
     await StepperInput.input.fill(newValue);
 
     await settled();
-    assert.equal(StepperInput.input.value, newValue);
+    assert.strictEqual(StepperInput.input.value, newValue);
     assert.ok(this.onChange.calledWith(newValue));
   });
 
@@ -158,7 +158,7 @@ module('Integration | Component | stepper input', function (hooks) {
     await StepperInput.input.fill(newValue);
     await settled();
 
-    assert.equal(StepperInput.input.value, this.max);
+    assert.strictEqual(StepperInput.input.value, this.max);
     assert.ok(this.onChange.calledWith(this.max));
 
     newValue = this.min - 1;
@@ -166,7 +166,7 @@ module('Integration | Component | stepper input', function (hooks) {
     await StepperInput.input.fill(newValue);
     await settled();
 
-    assert.equal(StepperInput.input.value, this.min);
+    assert.strictEqual(StepperInput.input.value, this.min);
     assert.ok(this.onChange.calledWith(this.min));
   });
 
@@ -179,10 +179,10 @@ module('Integration | Component | stepper input', function (hooks) {
     const input = find('[data-test-stepper-input]');
 
     input.value = newValue;
-    assert.equal(StepperInput.input.value, newValue);
+    assert.strictEqual(StepperInput.input.value, newValue);
 
     await StepperInput.input.esc();
-    assert.equal(StepperInput.input.value, this.value);
+    assert.strictEqual(StepperInput.input.value, this.value);
   });
 
   test('clicking the label focuses in the input', async function (assert) {
@@ -192,7 +192,7 @@ module('Integration | Component | stepper input', function (hooks) {
     await StepperInput.clickLabel();
 
     const input = find('[data-test-stepper-input]');
-    assert.equal(document.activeElement, input);
+    assert.strictEqual(document.activeElement, input);
   });
 
   test('focusing the input selects the input value', async function (assert) {
@@ -201,7 +201,7 @@ module('Integration | Component | stepper input', function (hooks) {
     await render(commonTemplate);
     await StepperInput.input.focus();
 
-    assert.equal(
+    assert.strictEqual(
       window.getSelection().toString().trim(),
       this.value.toString()
     );
@@ -216,7 +216,7 @@ module('Integration | Component | stepper input', function (hooks) {
     await StepperInput.input.fill(newValue);
 
     await settled();
-    assert.equal(StepperInput.input.value, Math.floor(newValue));
+    assert.strictEqual(StepperInput.input.value, Math.floor(newValue));
     assert.ok(this.onChange.calledWith(Math.floor(newValue)));
   });
 
@@ -229,7 +229,7 @@ module('Integration | Component | stepper input', function (hooks) {
     await StepperInput.input.fill(newValue);
 
     await settled();
-    assert.equal(StepperInput.input.value, this.value);
+    assert.strictEqual(StepperInput.input.value, this.value);
     assert.notOk(this.onChange.called);
   });
 });

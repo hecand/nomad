@@ -6,7 +6,7 @@
 import { find, render } from '@ember/test-helpers';
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 import { componentA11yAudit } from 'nomad-ui/tests/helpers/a11y-audit';
 import { create } from 'ember-cli-page-object';
 import gaugeChart from 'nomad-ui/tests/pages/components/gauge-chart';
@@ -35,8 +35,8 @@ module('Integration | Component | gauge chart', function (hooks) {
         @label={{label}} />
     `);
 
-    assert.equal(GaugeChart.label, props.label);
-    assert.equal(GaugeChart.percentage, '50%');
+    assert.strictEqual(GaugeChart.label, props.label);
+    assert.strictEqual(GaugeChart.percentage, '50%');
     assert.ok(GaugeChart.svgIsPresent);
 
     await componentA11yAudit(this.element, assert);
@@ -57,7 +57,7 @@ module('Integration | Component | gauge chart', function (hooks) {
 
     const svg = find('[data-test-gauge-svg]');
 
-    assert.equal(window.getComputedStyle(svg).width, '100px');
-    assert.equal(svg.getAttribute('height'), 50);
+    assert.strictEqual(window.getComputedStyle(svg).width, '100px');
+    assert.strictEqual(svg.getAttribute('height'), 50);
   });
 });

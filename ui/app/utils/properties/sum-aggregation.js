@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import { computed } from '@ember/object';
+import { computed, get } from '@ember/object';
 
 // An Ember.Computed property for summating all properties from a
 // set of objects.
@@ -12,7 +12,7 @@ import { computed } from '@ember/object';
 //     sum: sumAggregationProperty('list', 'foo') // 4
 export default function sumAggregationProperty(listKey, propKey) {
   return computed(`${listKey}.@each.${propKey}`, function () {
-    return this.get(listKey)
+    return get(this, listKey)
       .mapBy(propKey)
       .reduce((sum, count) => sum + count, 0);
   });

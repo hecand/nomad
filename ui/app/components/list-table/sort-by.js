@@ -11,9 +11,7 @@ import {
   classNameBindings,
   tagName,
 } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 
-@classic
 @tagName('th')
 @attributeBindings('title')
 @classNames('is-selectable')

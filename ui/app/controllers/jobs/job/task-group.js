@@ -7,7 +7,7 @@
 import { inject as service } from '@ember/service';
 import { alias, readOnly } from '@ember/object/computed';
 import Controller from '@ember/controller';
-import { action, computed, get } from '@ember/object';
+import { action, computed, get, set } from '@ember/object';
 import { scheduleOnce } from '@ember/runloop';
 import intersection from 'lodash.intersection';
 import Sortable from 'nomad-ui/mixins/sortable';
@@ -17,17 +17,16 @@ import {
   serialize,
   deserializedQueryParam as selection,
 } from 'nomad-ui/utils/qp-serialize';
-import classic from 'ember-classic-decorator';
+
 import localStorageProperty from 'nomad-ui/utils/properties/local-storage';
 
-@classic
 export default class TaskGroupController extends Controller.extend(
   Sortable,
   Searchable,
   WithNamespaceResetting
 ) {
   @service userSettings;
-  @service can;
+  @service abilities;
 
   queryParams = [
     {
@@ -70,12 +69,12 @@ export default class TaskGroupController extends Controller.extend(
   @action
   toggleShowSubTasks(e) {
     e.preventDefault();
-    this.set('showSubTasks', !this.get('showSubTasks'));
+    set(this, 'showSubTasks', !this.showSubTasks);
   }
 
   @computed('model.allocations.[]')
   get allocations() {
-    return this.get('model.allocations') || [];
+    return get(this, 'model.allocations') || [];
   }
 
   @computed('allocations.[]', 'selectionStatus', 'selectionClient')
@@ -125,10 +124,10 @@ export default class TaskGroupController extends Controller.extend(
   })
   shouldShowScaleEventTimeline;
 
-  @computed('model.job.{namespace,runningDeployment}')
+  @computed('can', 'model.job.{namespace,runningDeployment}')
   get tooltipText() {
     if (
-      this.can.cannot('scale job', null, {
+      this.abilities.cannot('scale job', null, {
         namespace: this.model.job.namespace.get('name'),
       })
     )
@@ -168,7 +167,8 @@ export default class TaskGroupController extends Controller.extend(
     // Update query param when the list of clients changes.
     scheduleOnce('actions', () => {
       // eslint-disable-next-line ember/no-side-effects
-      this.set(
+      set(
+        this,
         'qpClient',
         serialize(intersection(clients, this.selectionClient))
       );
@@ -178,7 +178,7 @@ export default class TaskGroupController extends Controller.extend(
   }
 
   setFacetQueryParam(queryParam, selection) {
-    this.set(queryParam, serialize(selection));
+    set(this, queryParam, serialize(selection));
   }
 
   get taskGroup() {
@@ -197,9 +197,9 @@ export default class TaskGroupController extends Controller.extend(
   @action
   setActiveTaskQueryParam(task) {
     if (task) {
-      this.set('activeTask', `${task.allocation.id}-${task.name}`);
+      set(this, 'activeTask', `${task.allocation.id}-${task.name}`);
     } else {
-      this.set('activeTask', null);
+      set(this, 'activeTask', null);
     }
   }
 }

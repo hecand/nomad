@@ -4,7 +4,6 @@
  */
 
 import EmberObject from '@ember/object';
-import { assign } from '@ember/polyfills';
 import { module, test } from 'qunit';
 import sinon from 'sinon';
 import Pretender from 'pretender';
@@ -21,7 +20,7 @@ module('Unit | Util | NodeStatsTracker', function () {
   const makeDate = (ts) => new Date(ts / 1000000);
 
   const MockNode = (overrides) =>
-    assign(
+    Object.assign(
       {
         id: 'some-identifier',
         resources: {
@@ -55,7 +54,7 @@ module('Unit | Util | NodeStatsTracker', function () {
     const node = MockNode();
     const tracker = NodeStatsTracker.create({ fetch, node });
 
-    assert.equal(
+    assert.strictEqual(
       tracker.get('url'),
       `/v1/client/stats?node_id=${node.id}`,
       'Url is derived from the node id'
@@ -66,12 +65,12 @@ module('Unit | Util | NodeStatsTracker', function () {
     const node = MockNode();
     const tracker = NodeStatsTracker.create({ fetch, node });
 
-    assert.equal(
+    assert.strictEqual(
       tracker.get('reservedCPU'),
       node.resources.cpu,
       'reservedCPU comes from the node'
     );
-    assert.equal(
+    assert.strictEqual(
       tracker.get('reservedMemory'),
       node.resources.memory,
       'reservedMemory comes from the node'
@@ -98,8 +97,12 @@ module('Unit | Util | NodeStatsTracker', function () {
 
     tracker.get('poll').perform();
 
-    assert.equal(server.handledRequests.length, 1, 'Only one request was made');
-    assert.equal(
+    assert.strictEqual(
+      server.handledRequests.length,
+      1,
+      'Only one request was made'
+    );
+    assert.strictEqual(
       server.handledRequests[0].url,
       `/v1/client/stats?node_id=${node.id}`,
       'The correct URL was requested'
@@ -179,23 +182,23 @@ module('Unit | Util | NodeStatsTracker', function () {
       tracker.append(mockFrame(i));
     }
 
-    assert.equal(
+    assert.strictEqual(
       tracker.get('cpu.length'),
       bufferSize,
       `20 calls to append, only ${bufferSize} frames in the stats array`
     );
-    assert.equal(
+    assert.strictEqual(
       tracker.get('memory.length'),
       bufferSize,
       `20 calls to append, only ${bufferSize} frames in the stats array`
     );
 
-    assert.equal(
+    assert.strictEqual(
       +tracker.get('cpu')[0].timestamp,
       +makeDate(refDate + 11),
       'Old frames are removed in favor of newer ones'
     );
-    assert.equal(
+    assert.strictEqual(
       +tracker.get('memory')[0].timestamp,
       +makeDate(refDate + 11),
       'Old frames are removed in favor of newer ones'
@@ -215,7 +218,7 @@ module('Unit | Util | NodeStatsTracker', function () {
       theNode: node,
     });
 
-    assert.equal(
+    assert.strictEqual(
       someObject.get('stats.url'),
       `/v1/client/stats?node_id=${node.id}`,
       'stats computed property macro creates a NodeStatsTracker'

@@ -11,6 +11,7 @@ import { task } from 'ember-concurrency';
 export default class SentinelPoliciesIndexController extends Controller {
   @service router;
   @service notifications;
+  @service store;
 
   @action openPolicy(policy) {
     this.router.transitionTo(

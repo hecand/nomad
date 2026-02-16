@@ -51,17 +51,17 @@ module('Unit | Model | task-group', function (hooks) {
       })
     );
 
-    assert.equal(
+    assert.strictEqual(
       taskGroup.get('reservedCPU'),
       sum(taskGroup.get('tasks'), 'reservedCPU'),
       'reservedCPU is an aggregate sum of task CPU reservations'
     );
-    assert.equal(
+    assert.strictEqual(
       taskGroup.get('reservedMemory'),
       sum(taskGroup.get('tasks'), 'reservedMemory'),
       'reservedMemory is an aggregate sum of task memory reservations'
     );
-    assert.equal(
+    assert.strictEqual(
       taskGroup.get('reservedDisk'),
       sum(taskGroup.get('tasks'), 'reservedDisk'),
       'reservedDisk is an aggregate sum of task disk reservations'

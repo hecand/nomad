@@ -5,7 +5,7 @@
 
 /* eslint-disable ember/no-incorrect-calls-with-inline-anonymous-functions */
 import Controller from '@ember/controller';
-import { action, computed } from '@ember/object';
+import { action, computed, set } from '@ember/object';
 import { scheduleOnce } from '@ember/runloop';
 import intersection from 'lodash.intersection';
 import { alias } from '@ember/object/computed';
@@ -17,10 +17,9 @@ import {
   serialize,
   deserializedQueryParam as selection,
 } from 'nomad-ui/utils/qp-serialize';
-import classic from 'ember-classic-decorator';
+
 import { inject as service } from '@ember/service';
 
-@classic
 export default class ClientsController extends Controller.extend(
   SortableFactory(['id', 'name', 'jobStatus']),
   Searchable,
@@ -159,7 +158,8 @@ export default class ClientsController extends Controller.extend(
     // Update query param when the list of datacenters changes.
     scheduleOnce('actions', () => {
       // eslint-disable-next-line ember/no-side-effects
-      this.set(
+      set(
+        this,
         'qpDatacenter',
         serialize(intersection(datacenters, this.selectionDatacenter))
       );
@@ -177,7 +177,8 @@ export default class ClientsController extends Controller.extend(
     // Update query param when the list of datacenters changes.
     scheduleOnce('actions', () => {
       // eslint-disable-next-line ember/no-side-effects
-      this.set(
+      set(
+        this,
         'qpClientClass',
         serialize(intersection(clientClasses, this.selectionClientClass))
       );
@@ -194,7 +195,7 @@ export default class ClientsController extends Controller.extend(
   }
 
   setFacetQueryParam(queryParam, selection) {
-    this.set(queryParam, serialize(selection));
+    set(this, queryParam, serialize(selection));
   }
 }
 

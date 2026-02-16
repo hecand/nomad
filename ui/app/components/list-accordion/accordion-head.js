@@ -9,9 +9,7 @@ import {
   classNameBindings,
   attributeBindings,
 } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 
-@classic
 @classNames('accordion-head')
 @classNameBindings('isOpen::is-light', 'isExpandable::is-inactive')
 @attributeBindings('data-test-accordion-head')

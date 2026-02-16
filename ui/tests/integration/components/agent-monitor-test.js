@@ -8,7 +8,7 @@ import { run } from '@ember/runloop';
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { find, render, settled } from '@ember/test-helpers';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 import Pretender from 'pretender';
 import sinon from 'sinon';
 import { logEncode } from '../../../mirage/data/logs';
@@ -153,7 +153,7 @@ module('Integration | Component | agent-monitor', function (hooks) {
 
     await render(commonTemplate);
 
-    assert.equal(
+    assert.strictEqual(
       find('[data-test-log-cli]').textContent,
       `[INFO] ${LOG_MESSAGE}\n`
     );
@@ -163,7 +163,7 @@ module('Integration | Component | agent-monitor', function (hooks) {
     await selectOpenChoose(contentId, capitalize(newLevel));
     await settled();
 
-    assert.equal(
+    assert.strictEqual(
       find('[data-test-log-cli]').textContent,
       `[INFO] ${LOG_MESSAGE}\n\n...changing log level to ${newLevel}...\n\n[TRACE] ${LOG_MESSAGE}\n`
     );
@@ -199,14 +199,14 @@ module('Integration | Component | agent-monitor', function (hooks) {
 
     await render(commonTemplate);
 
-    assert.equal(find('[data-test-log-cli]').textContent, '');
+    assert.strictEqual(find('[data-test-log-cli]').textContent, '');
 
     const contentId = await selectOpen('[data-test-level-switcher-parent]');
     run.later(run, run.cancelTimers, INTERVAL);
     await selectOpenChoose(contentId, capitalize(newLevel));
     await settled();
 
-    assert.equal(
+    assert.strictEqual(
       find('[data-test-log-cli]').textContent,
       `[TRACE] ${LOG_MESSAGE}\n`
     );

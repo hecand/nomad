@@ -4,11 +4,11 @@
  */
 
 import Component from '@ember/component';
+import { set } from '@ember/object';
 import { action } from '@ember/object';
 import { computed as overridable } from 'ember-overridable-computed';
 import { scheduleOnce } from '@ember/runloop';
 import { classNames } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 
 const TAB = 9;
 const ESC = 27;
@@ -16,7 +16,6 @@ const SPACE = 32;
 const ARROW_UP = 38;
 const ARROW_DOWN = 40;
 
-@classic
 @classNames('dropdown')
 export default class MultiSelectDropdown extends Component {
   @overridable(() => []) options;
@@ -31,7 +30,7 @@ export default class MultiSelectDropdown extends Component {
     // It's not a good idea to grab a dropdown reference like this, but it's necessary
     // in order to invoke dropdown.actions.close in traverseList as well as
     // dropdown.actions.reposition when the label or selection length changes.
-    this.set('dropdown', dropdown);
+    set(this, 'dropdown', dropdown);
   }
 
   didReceiveAttrs() {
@@ -90,7 +89,7 @@ export default class MultiSelectDropdown extends Component {
         const trigger = this.element.querySelector('.dropdown-trigger');
         if (trigger) trigger.focus();
         e.preventDefault();
-        this.set('dropdown', null);
+        set(this, 'dropdown', null);
       }
     } else if (e.keyCode === ARROW_UP) {
       // previous item

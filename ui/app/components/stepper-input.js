@@ -4,15 +4,14 @@
  */
 
 import Component from '@ember/component';
+import { set } from '@ember/object';
 import { action } from '@ember/object';
 import { debounce } from '@ember/runloop';
 import { oneWay } from '@ember/object/computed';
 import { classNames, classNameBindings } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 
 const ESC = 27;
 
-@classic
 @classNames('stepper-input')
 @classNameBindings(
   'class',
@@ -54,7 +53,7 @@ export default class StepperInput extends Component {
       const newValue = Math.floor(
         Math.min(this.max, Math.max(this.min, e.target.value))
       );
-      this.set('internalValue', newValue);
+      set(this, 'internalValue', newValue);
       this.update(this.internalValue);
     } else {
       e.target.value = this.internalValue;

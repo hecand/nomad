@@ -4,15 +4,13 @@
  */
 
 import { inject as service } from '@ember/service';
-import { computed } from '@ember/object';
+import { computed, get, set } from '@ember/object';
 import { equal, none } from '@ember/object/computed';
-import Model from '@ember-data/model';
-import { attr, belongsTo, hasMany } from '@ember-data/model';
+import Model, { attr, belongsTo, hasMany } from '@ember-data/model';
 import { fragment, fragmentArray } from 'ember-data-model-fragments/attributes';
 import isEqual from 'lodash.isequal';
 import intersection from 'lodash.intersection';
 import shortUUIDProperty from '../utils/properties/short-uuid';
-import classic from 'ember-classic-decorator';
 
 const STATUS_ORDER = {
   pending: 1,
@@ -23,7 +21,6 @@ const STATUS_ORDER = {
   lost: 6,
 };
 
-@classic
 export default class Allocation extends Model {
   @service token;
   @service store;
@@ -71,13 +68,13 @@ export default class Allocation extends Model {
   get willNotReschedule() {
     return (
       this.willNotRestart &&
-      !this.get('nextAllocation.content') &&
-      !this.get('followUpEvaluation.content')
+      !get(this, 'nextAllocation.content') &&
+      !get(this, 'followUpEvaluation.content')
     );
   }
 
   get hasBeenRescheduled() {
-    return this.get('followUpEvaluation.content');
+    return get(this, 'followUpEvaluation.content');
   }
 
   get hasBeenRestarted() {
@@ -94,7 +91,7 @@ export default class Allocation extends Model {
 
     // Compare Results
     if (!isEqual(this.healthChecks, data)) {
-      this.set('healthChecks', data);
+      set(this, 'healthChecks', data);
     }
   }
 
@@ -150,7 +147,7 @@ export default class Allocation extends Model {
 
   @computed('jobVersion', 'job.version')
   get isOld() {
-    return this.jobVersion !== this.get('job.version');
+    return this.jobVersion !== get(this, 'job.version');
   }
 
   @computed('isOld', 'jobTaskGroup', 'allocationTaskGroup')
@@ -161,7 +158,7 @@ export default class Allocation extends Model {
 
   @computed('taskGroupName', 'job.taskGroups.[]')
   get jobTaskGroup() {
-    const taskGroups = this.get('job.taskGroups');
+    const taskGroups = get(this, 'job.taskGroups');
     return taskGroups && taskGroups.findBy('name', this.taskGroupName);
   }
 
@@ -169,8 +166,8 @@ export default class Allocation extends Model {
 
   @computed('taskGroup.drivers.[]', 'node.unhealthyDriverNames.[]')
   get unhealthyDrivers() {
-    const taskGroupUnhealthyDrivers = this.get('taskGroup.drivers');
-    const nodeUnhealthyDrivers = this.get('node.unhealthyDriverNames');
+    const taskGroupUnhealthyDrivers = get(this, 'taskGroup.drivers');
+    const nodeUnhealthyDrivers = get(this, 'node.unhealthyDriverNames');
 
     if (taskGroupUnhealthyDrivers && nodeUnhealthyDrivers) {
       return intersection(taskGroupUnhealthyDrivers, nodeUnhealthyDrivers);
@@ -191,7 +188,7 @@ export default class Allocation extends Model {
 
   @computed('rescheduleEvents.length', 'nextAllocation')
   get hasRescheduleEvents() {
-    return this.get('rescheduleEvents.length') > 0 || this.nextAllocation;
+    return get(this, 'rescheduleEvents.length') > 0 || this.nextAllocation;
   }
 
   @computed(
@@ -201,8 +198,8 @@ export default class Allocation extends Model {
   )
   get hasStoppedRescheduling() {
     return (
-      !this.get('nextAllocation.content') &&
-      !this.get('followUpEvaluation.content') &&
+      !get(this, 'nextAllocation.content') &&
+      !get(this, 'followUpEvaluation.content') &&
       this.clientStatus === 'failed'
     );
   }

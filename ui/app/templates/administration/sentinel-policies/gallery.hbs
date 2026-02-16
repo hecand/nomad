@@ -3,8 +3,10 @@
   SPDX-License-Identifier: BUSL-1.1
 ~}}
 
-<Breadcrumb @crumb={{hash label="Gallery" args=(array "administration.sentinel-policies.gallery" )}} />
 {{page-title "Sentinel Policy Gallery"}}
+
+<Breadcrumb @label="Gallery" @route="administration.sentinel-policies.gallery" />
+
 <section class="section">
   <Hds::PageHeader class="variable-title" as |PH|>
     <PH.Title>Choose a Template</PH.Title>

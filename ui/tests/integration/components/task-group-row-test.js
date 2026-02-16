@@ -6,7 +6,7 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { click, find, render, settled, waitUntil } from '@ember/test-helpers';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 import { startMirage } from 'nomad-ui/initializers/ember-cli-mirage';
 import { initialize as fragmentSerializerInitializer } from 'nomad-ui/initializers/fragment-serializer';
 import { componentA11yAudit } from 'nomad-ui/tests/helpers/a11y-audit';
@@ -108,15 +108,15 @@ module('Integration | Component | task group row', function (hooks) {
     this.set('group', job.taskGroups.findBy('name', 'scaling'));
 
     await render(commonTemplate);
-    assert.equal(find('[data-test-task-group-count]').textContent, 2);
+    assert.strictEqual(find('[data-test-task-group-count]').textContent, 2);
 
     click('[data-test-scale="increment"]');
     await waitUntil(countChange());
-    assert.equal(find('[data-test-task-group-count]').textContent, 3);
+    assert.strictEqual(find('[data-test-task-group-count]').textContent, 3);
 
     click('[data-test-scale="increment"]');
     await waitUntil(countChange());
-    assert.equal(find('[data-test-task-group-count]').textContent, 4);
+    assert.strictEqual(find('[data-test-task-group-count]').textContent, 4);
 
     assert.notOk(
       server.pretender.handledRequests.find(
@@ -128,8 +128,8 @@ module('Integration | Component | task group row', function (hooks) {
     const scaleRequests = server.pretender.handledRequests.filter(
       (req) => req.method === 'POST' && req.url.endsWith('/scale')
     );
-    assert.equal(scaleRequests.length, 1);
-    assert.equal(JSON.parse(scaleRequests[0].requestBody).Count, 4);
+    assert.strictEqual(scaleRequests.length, 1);
+    assert.strictEqual(JSON.parse(scaleRequests[0].requestBody).Count, 4);
   });
 
   test('When the current count is equal to the max count, the increment count button is disabled', async function (assert) {

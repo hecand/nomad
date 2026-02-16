@@ -4,11 +4,9 @@
  */
 
 import { inject as service } from '@ember/service';
-import { computed } from '@ember/object';
-import Model from '@ember-data/model';
-import { attr } from '@ember-data/model';
+import { computed, action } from '@ember/object';
+import Model, { attr } from '@ember-data/model';
 import { tracked } from '@glimmer/tracking';
-import { action } from '@ember/object';
 import formatHost from 'nomad-ui/utils/format-host';
 
 export default class Agent extends Model {

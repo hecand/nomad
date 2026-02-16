@@ -3,8 +3,10 @@
   SPDX-License-Identifier: BUSL-1.1
 ~}}
 
-<Breadcrumb @crumb={{hash label="New" args=(array "administration.policies.new")}} />
 {{page-title "Create Policy"}}
+
+<Breadcrumb @label="New" @route="administration.policies.new" />
+
 <section class="section">
   <Hds::PageHeader as |PH|>
     <PH.Title>Create Policy</PH.Title>

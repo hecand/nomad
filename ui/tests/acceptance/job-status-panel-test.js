@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-// @ts-check
 import { module, test } from 'qunit';
 import { setupApplicationTest } from 'ember-qunit';
 
@@ -116,7 +115,7 @@ module('Acceptance | job status panel', function (hooks) {
       jobId: job.id,
     }).length;
 
-    assert.equal(
+    assert.strictEqual(
       jobAllocCount,
       groupAllocCount * job.taskGroups.length,
       'Correect number of allocs generated (metatest)'
@@ -160,7 +159,7 @@ module('Acceptance | job status panel', function (hooks) {
       clientStatus: 'failed',
     }).length;
 
-    assert.equal(
+    assert.strictEqual(
       runningAllocCount + failedAllocCount,
       groupAllocCount * job.taskGroups.length,
       'Correect number of allocs generated (metatest)'
@@ -786,7 +785,7 @@ module('Acceptance | job status panel', function (hooks) {
       });
       const shownEvents = findAll('.timeline-object');
       const jobAllocations = server.db.allocations.where({ jobId: job.id });
-      assert.equal(
+      assert.strictEqual(
         shownEvents.length,
         serverEvents.length * jobAllocations.length,
         'All events are shown'
@@ -796,7 +795,7 @@ module('Acceptance | job status panel', function (hooks) {
         '[data-test-history-search] input',
         serverEvents.models[0].displayMessage
       );
-      assert.equal(
+      assert.strictEqual(
         findAll('.timeline-object').length,
         jobAllocations.length,
         'Only events matching the search are shown'

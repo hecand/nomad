@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import { computed } from '@ember/object';
+import { computed, get } from '@ember/object';
 
 // An unattractive but robust way to encode query params
 export const serialize = (val) => {
@@ -22,5 +22,5 @@ export const deserialize = (str) => {
 // A computed property macro for deserializing a query param
 export const deserializedQueryParam = (qpKey) =>
   computed(qpKey, function () {
-    return deserialize(this.get(qpKey));
+    return deserialize(get(this, qpKey));
   });

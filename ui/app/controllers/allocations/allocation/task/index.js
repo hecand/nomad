@@ -6,11 +6,11 @@
 import Controller from '@ember/controller';
 import { computed as overridable } from 'ember-overridable-computed';
 import { task } from 'ember-concurrency';
-import classic from 'ember-classic-decorator';
+import { set } from '@ember/object';
+
 import messageForError from 'nomad-ui/utils/message-from-adapter-error';
 import { inject as service } from '@ember/service';
 
-@classic
 export default class IndexController extends Controller {
   @service nomadActions;
   @service notifications;
@@ -21,14 +21,14 @@ export default class IndexController extends Controller {
   error;
 
   onDismiss() {
-    this.set('error', null);
+    set(this, 'error', null);
   }
 
   @task(function* () {
     try {
       yield this.model.restart();
     } catch (err) {
-      this.set('error', {
+      set(this, 'error', {
         title: 'Could Not Restart Task',
         description: messageForError(err, 'manage allocation lifecycle'),
       });
@@ -53,7 +53,7 @@ export default class IndexController extends Controller {
         color: 'success',
       });
     } catch (err) {
-      this.set('error', {
+      set(this, 'error', {
         title: 'Could Not Force Pause Task',
       });
     }
@@ -69,7 +69,7 @@ export default class IndexController extends Controller {
         color: 'success',
       });
     } catch (err) {
-      this.set('error', {
+      set(this, 'error', {
         title: 'Could Not Force Run Task',
       });
     }
@@ -85,7 +85,7 @@ export default class IndexController extends Controller {
         color: 'success',
       });
     } catch (err) {
-      this.set('error', {
+      set(this, 'error', {
         title: 'Could Not put back on schedule',
       });
     }

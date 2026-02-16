@@ -6,7 +6,7 @@
 /* eslint-disable ember/no-incorrect-calls-with-inline-anonymous-functions */
 import { alias } from '@ember/object/computed';
 import Controller from '@ember/controller';
-import { action, computed } from '@ember/object';
+import { action, computed, get, set } from '@ember/object';
 import { scheduleOnce } from '@ember/runloop';
 import intersection from 'lodash.intersection';
 import Sortable from 'nomad-ui/mixins/sortable';
@@ -16,9 +16,7 @@ import {
   serialize,
   deserializedQueryParam as selection,
 } from 'nomad-ui/utils/qp-serialize';
-import classic from 'ember-classic-decorator';
 
-@classic
 export default class AllocationsController extends Controller.extend(
   Sortable,
   Searchable,
@@ -76,7 +74,7 @@ export default class AllocationsController extends Controller.extend(
 
   @computed('model.allocations.[]')
   get allocations() {
-    return this.get('model.allocations') || [];
+    return get(this, 'model.allocations') || [];
   }
 
   @computed(
@@ -189,7 +187,8 @@ export default class AllocationsController extends Controller.extend(
     // Update query param when the list of clients changes.
     scheduleOnce('actions', () => {
       // eslint-disable-next-line ember/no-side-effects
-      this.set(
+      set(
+        this,
         'qpClient',
         serialize(intersection(clients, this.selectionClient))
       );
@@ -207,7 +206,8 @@ export default class AllocationsController extends Controller.extend(
     // Update query param when the list of task groups changes.
     scheduleOnce('actions', () => {
       // eslint-disable-next-line ember/no-side-effects
-      this.set(
+      set(
+        this,
         'qpTaskGroup',
         serialize(intersection(taskGroups, this.selectionTaskGroup))
       );
@@ -225,7 +225,8 @@ export default class AllocationsController extends Controller.extend(
     // Update query param when the list of versions changes.
     scheduleOnce('actions', () => {
       // eslint-disable-next-line ember/no-side-effects
-      this.set(
+      set(
+        this,
         'qpVersion',
         serialize(intersection(versions, this.selectionVersion))
       );
@@ -257,15 +258,15 @@ export default class AllocationsController extends Controller.extend(
   }
 
   setFacetQueryParam(queryParam, selection) {
-    this.set(queryParam, serialize(selection));
+    set(this, queryParam, serialize(selection));
   }
 
   @action
   setActiveTaskQueryParam(task) {
     if (task) {
-      this.set('activeTask', `${task.allocation.id}-${task.name}`);
+      set(this, 'activeTask', `${task.allocation.id}-${task.name}`);
     } else {
-      this.set('activeTask', null);
+      set(this, 'activeTask', null);
     }
   }
 }

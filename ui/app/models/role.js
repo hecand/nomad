@@ -3,9 +3,7 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-// @ts-check
-import Model from '@ember-data/model';
-import { attr, hasMany } from '@ember-data/model';
+import Model, { attr, hasMany } from '@ember-data/model';
 
 export default class Role extends Model {
   @attr('string') name;

@@ -4,10 +4,9 @@
  */
 
 import Component from '@ember/component';
-import { action } from '@ember/object';
+import { action, set } from '@ember/object';
 import { scheduleOnce } from '@ember/runloop';
 import { classNames } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 
 const TAB = 9;
 const ARROW_DOWN = 40;
@@ -19,7 +18,6 @@ const FOCUSABLE = [
   '[tabindex]:not([disabled]):not([tabindex="-1"])',
 ].join(', ');
 
-@classic
 @classNames('popover')
 export default class PopoverMenu extends Component {
   triggerClass = '';
@@ -33,7 +31,7 @@ export default class PopoverMenu extends Component {
     // It's not a good idea to grab a dropdown reference like this, but it's necessary
     // in order to invoke dropdown.actions.close in traverseList as well as
     // dropdown.actions.reposition when the label or selection length changes.
-    this.set('dropdown', dropdown);
+    set(this, 'dropdown', dropdown);
   }
 
   didReceiveAttrs() {

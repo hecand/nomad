@@ -10,9 +10,7 @@ import {
   tagName,
   attributeBindings,
 } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 
-@classic
 @tagName('label')
 @classNames('toggle')
 @classNameBindings('isDisabled:is-disabled', 'isActive:is-active')

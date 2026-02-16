@@ -4,10 +4,9 @@
  */
 
 /* eslint-disable ember/no-incorrect-calls-with-inline-anonymous-functions */
-import Controller from '@ember/controller';
-import { action } from '@ember/object';
+import Controller, { inject as controller } from '@ember/controller';
+import EmberObject, { action, computed } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
-import { inject as controller } from '@ember/controller';
 import { inject as service } from '@ember/service';
 import { scheduleOnce } from '@ember/runloop';
 import { task } from 'ember-concurrency';
@@ -17,10 +16,8 @@ import {
   deserializedQueryParam as selection,
 } from 'nomad-ui/utils/qp-serialize';
 
-import EmberObject, { computed } from '@ember/object';
 import { alias } from '@ember/object/computed';
 import Searchable from 'nomad-ui/mixins/searchable';
-import classic from 'ember-classic-decorator';
 
 export default class OptimizeController extends Controller {
   @controller('optimize/summary') summaryController;
@@ -277,7 +274,6 @@ export default class OptimizeController extends Controller {
   }
 }
 
-@classic
 class RecommendationSummarySearch extends EmberObject.extend(Searchable) {
   @computed
   get fuzzySearchProps() {

@@ -7,7 +7,6 @@ import EmberObject, { get, computed } from '@ember/object';
 import { alias } from '@ember/object/computed';
 import RollingArray from 'nomad-ui/utils/classes/rolling-array';
 import AbstractStatsTracker from 'nomad-ui/utils/classes/abstract-stats-tracker';
-import classic from 'ember-classic-decorator';
 
 const percent = (numerator, denominator) => {
   if (!numerator || !denominator) {
@@ -41,14 +40,13 @@ const memoryUsed = (frame) =>
   frame.ResourceUsage.MemoryStats.Usage ||
   0;
 
-@classic
 class AllocationStatsTracker extends EmberObject.extend(AbstractStatsTracker) {
   // Set via the stats computed property macro
   allocation = null;
 
   @computed('allocation.id')
   get url() {
-    return `/v1/client/allocation/${this.get('allocation.id')}/stats`;
+    return `/v1/client/allocation/${get(this, 'allocation.id')}/stats`;
   }
 
   append(frame) {
@@ -139,7 +137,7 @@ class AllocationStatsTracker extends EmberObject.extend(AbstractStatsTracker) {
   @computed('allocation.taskGroup.tasks', 'bufferSize')
   get tasks() {
     const bufferSize = this.bufferSize;
-    const tasks = this.get('allocation.taskGroup.tasks') || [];
+    const tasks = get(this, 'allocation.taskGroup.tasks') || [];
     return tasks
       .slice()
       .sort(taskPrioritySort)
@@ -164,7 +162,7 @@ export function stats(allocationProp, fetch) {
   return computed(allocationProp, function () {
     return AllocationStatsTracker.create({
       fetch: fetch.call(this),
-      allocation: this.get(allocationProp),
+      allocation: get(this, allocationProp),
     });
   });
 }

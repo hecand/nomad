@@ -42,7 +42,7 @@ module('Unit | Adapter | Node', function (hooks) {
     // Fetch the model and related allocations
     let node = await run(() => this.store.findRecord('node', 'node-1'));
     let allocations = await run(() => findHasMany(node, 'allocations'));
-    assert.equal(
+    assert.strictEqual(
       allocations.get('length'),
       this.server.db.allocations.where({ nodeId: node.get('id') }).length,
       'Allocations returned from the findHasMany matches the db state'
@@ -55,12 +55,12 @@ module('Unit | Adapter | Node', function (hooks) {
     const dbAllocations = this.server.db.allocations.where({
       nodeId: node.get('id'),
     });
-    assert.equal(
+    assert.strictEqual(
       allocations.get('length'),
       dbAllocations.length,
       'Allocations returned from the findHasMany matches the db state'
     );
-    assert.equal(
+    assert.strictEqual(
       this.store.peekAll('allocation').get('length'),
       dbAllocations.length,
       'Server-side deleted allocation was removed from the store'
@@ -121,7 +121,10 @@ module('Unit | Adapter | Node', function (hooks) {
       await this.subject().setEligible(node);
 
       const request = pretender.handledRequests.lastObject;
-      assert.equal(`${request.method} ${request.url}`, testCase.eligibility);
+      assert.strictEqual(
+        `${request.method} ${request.url}`,
+        testCase.eligibility
+      );
       assert.deepEqual(JSON.parse(request.requestBody), {
         NodeID: node.id,
         Eligibility: 'eligible',
@@ -137,7 +140,10 @@ module('Unit | Adapter | Node', function (hooks) {
       await this.subject().setIneligible(node);
 
       const request = pretender.handledRequests.lastObject;
-      assert.equal(`${request.method} ${request.url}`, testCase.eligibility);
+      assert.strictEqual(
+        `${request.method} ${request.url}`,
+        testCase.eligibility
+      );
       assert.deepEqual(JSON.parse(request.requestBody), {
         NodeID: node.id,
         Eligibility: 'ineligible',
@@ -153,7 +159,7 @@ module('Unit | Adapter | Node', function (hooks) {
       await this.subject().drain(node);
 
       const request = pretender.handledRequests.lastObject;
-      assert.equal(`${request.method} ${request.url}`, testCase.drain);
+      assert.strictEqual(`${request.method} ${request.url}`, testCase.drain);
       assert.deepEqual(JSON.parse(request.requestBody), {
         NodeID: node.id,
         DrainSpec: {
@@ -174,7 +180,7 @@ module('Unit | Adapter | Node', function (hooks) {
       await this.subject().drain(node, spec);
 
       const request = pretender.handledRequests.lastObject;
-      assert.equal(`${request.method} ${request.url}`, testCase.drain);
+      assert.strictEqual(`${request.method} ${request.url}`, testCase.drain);
       assert.deepEqual(JSON.parse(request.requestBody), {
         NodeID: node.id,
         DrainSpec: {
@@ -194,7 +200,7 @@ module('Unit | Adapter | Node', function (hooks) {
       await this.subject().forceDrain(node);
 
       const request = pretender.handledRequests.lastObject;
-      assert.equal(`${request.method} ${request.url}`, testCase.drain);
+      assert.strictEqual(`${request.method} ${request.url}`, testCase.drain);
       assert.deepEqual(JSON.parse(request.requestBody), {
         NodeID: node.id,
         DrainSpec: {
@@ -215,7 +221,7 @@ module('Unit | Adapter | Node', function (hooks) {
       await this.subject().forceDrain(node, spec);
 
       const request = pretender.handledRequests.lastObject;
-      assert.equal(`${request.method} ${request.url}`, testCase.drain);
+      assert.strictEqual(`${request.method} ${request.url}`, testCase.drain);
       assert.deepEqual(JSON.parse(request.requestBody), {
         NodeID: node.id,
         DrainSpec: {
@@ -235,7 +241,7 @@ module('Unit | Adapter | Node', function (hooks) {
       await this.subject().cancelDrain(node);
 
       const request = pretender.handledRequests.lastObject;
-      assert.equal(`${request.method} ${request.url}`, testCase.drain);
+      assert.strictEqual(`${request.method} ${request.url}`, testCase.drain);
       assert.deepEqual(JSON.parse(request.requestBody), {
         NodeID: node.id,
         DrainSpec: null,

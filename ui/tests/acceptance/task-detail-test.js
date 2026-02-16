@@ -69,7 +69,7 @@ module('Acceptance | task detail', function (hooks) {
       lifecycleName = 'poststop';
     }
 
-    assert.equal(Task.lifecycle, lifecycleName);
+    assert.strictEqual(Task.lifecycle, lifecycleName);
 
     assert.ok(document.title.includes(`Task ${task.name}`));
   });
@@ -79,40 +79,44 @@ module('Acceptance | task detail', function (hooks) {
     const job = server.db.jobs.find(jobId);
 
     const shortId = allocation.id.split('-')[0];
-    assert.equal(
+    assert.strictEqual(
       Layout.breadcrumbFor('jobs.index').text,
       'Jobs',
       'Jobs is the first breadcrumb'
     );
 
     await waitFor('[data-test-job-breadcrumb]');
-    assert.equal(
+    assert.strictEqual(
       Layout.breadcrumbFor('jobs.job.index').text,
       `Job ${job.name}`,
       'Job is the second breadcrumb'
     );
-    assert.equal(
+    assert.strictEqual(
       Layout.breadcrumbFor('jobs.job.task-group').text,
       `Task Group ${taskGroup}`,
       'Task Group is the third breadcrumb'
     );
-    assert.equal(
+    assert.strictEqual(
       Layout.breadcrumbFor('allocations.allocation').text,
       `Allocation ${shortId}`,
       'Allocation short id is the fourth breadcrumb'
     );
-    assert.equal(
+    assert.strictEqual(
       Layout.breadcrumbFor('allocations.allocation.task').text,
       `Task ${task.name}`,
       'Task name is the fifth breadcrumb'
     );
 
     await Layout.breadcrumbFor('jobs.index').visit();
-    assert.equal(currentURL(), '/jobs', 'Jobs breadcrumb links correctly');
+    assert.strictEqual(
+      currentURL(),
+      '/jobs',
+      'Jobs breadcrumb links correctly'
+    );
 
     await Task.visit({ id: allocation.id, name: task.name });
     await Layout.breadcrumbFor('jobs.job.index').visit();
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/jobs/${job.id}@default`,
       'Job breadcrumb links correctly'
@@ -120,7 +124,7 @@ module('Acceptance | task detail', function (hooks) {
 
     await Task.visit({ id: allocation.id, name: task.name });
     await Layout.breadcrumbFor('jobs.job.task-group').visit();
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/jobs/${job.id}@default/${taskGroup}`,
       'Task Group breadcrumb links correctly'
@@ -128,7 +132,7 @@ module('Acceptance | task detail', function (hooks) {
 
     await Task.visit({ id: allocation.id, name: task.name });
     await Layout.breadcrumbFor('allocations.allocation').visit();
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/allocations/${allocation.id}`,
       'Allocations breadcrumb links correctly'
@@ -136,17 +140,17 @@ module('Acceptance | task detail', function (hooks) {
   });
 
   test('/allocation/:id/:task_name should include resource utilization graphs', async function (assert) {
-    assert.equal(
+    assert.strictEqual(
       Task.resourceCharts.length,
       2,
       'Two resource utilization graphs'
     );
-    assert.equal(
+    assert.strictEqual(
       Task.resourceCharts.objectAt(0).name,
       'CPU',
       'First chart is CPU'
     );
-    assert.equal(
+    assert.strictEqual(
       Task.resourceCharts.objectAt(1).name,
       'Memory',
       'Second chart is Memory'
@@ -156,7 +160,7 @@ module('Acceptance | task detail', function (hooks) {
   test('the events table lists all recent events', async function (assert) {
     const events = server.db.taskEvents.where({ taskStateId: task.id });
 
-    assert.equal(
+    assert.strictEqual(
       Task.events.length,
       events.length,
       `Lists ${events.length} events`
@@ -172,7 +176,7 @@ module('Acceptance | task detail', function (hooks) {
     const jobTask = taskGroup.tasks.models.find((m) => m.name === task.name);
 
     assert.ok(Task.hasVolumes);
-    assert.equal(Task.volumes.length, jobTask.volumeMounts.length);
+    assert.strictEqual(Task.volumes.length, jobTask.volumeMounts.length);
   });
 
   test('when a task does not have volumes, the volumes table is not shown', async function (assert) {
@@ -200,13 +204,13 @@ module('Acceptance | task detail', function (hooks) {
     const volume = jobTask.volumeMounts[0];
 
     Task.volumes[0].as((volumeRow) => {
-      assert.equal(volumeRow.name, volume.Volume);
-      assert.equal(volumeRow.destination, volume.Destination);
-      assert.equal(
+      assert.strictEqual(volumeRow.name, volume.Volume);
+      assert.strictEqual(volumeRow.destination, volume.Destination);
+      assert.strictEqual(
         volumeRow.permissions,
         volume.ReadOnly ? 'Read' : 'Read/Write'
       );
-      assert.equal(
+      assert.strictEqual(
         volumeRow.clientSource,
         taskGroup.volumes[volume.Volume].Source
       );
@@ -240,32 +244,40 @@ module('Acceptance | task detail', function (hooks) {
     const event = server.db.taskEvents.where({ taskStateId: task.id })[0];
     const recentEvent = Task.events.objectAt(Task.events.length - 1);
 
-    assert.equal(
+    assert.strictEqual(
       recentEvent.time,
       moment(event.time / 1000000).format("MMM DD, 'YY HH:mm:ss ZZ"),
       'Event timestamp'
     );
-    assert.equal(recentEvent.type, event.type, 'Event type');
-    assert.equal(recentEvent.message, event.displayMessage, 'Event message');
+    assert.strictEqual(recentEvent.type, event.type, 'Event type');
+    assert.strictEqual(
+      recentEvent.message,
+      event.displayMessage,
+      'Event message'
+    );
   });
 
   test('when the allocation is not found, the application errors', async function (assert) {
     await Task.visit({ id: 'not-a-real-allocation', name: task.name });
 
-    assert.equal(
+    assert.strictEqual(
       server.pretender.handledRequests
         .filter((request) => !request.url.includes('policy'))
         .findBy('status', 404).url,
       '/v1/allocation/not-a-real-allocation',
       'A request to the nonexistent allocation is made'
     );
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/allocations/not-a-real-allocation/${task.name}`,
       'The URL persists'
     );
     assert.ok(Task.error.isPresent, 'Error message is shown');
-    assert.equal(Task.error.title, 'Not Found', 'Error message is for 404');
+    assert.strictEqual(
+      Task.error.title,
+      'Not Found',
+      'Error message is for 404'
+    );
   });
 
   test('when the allocation is found but the task is not, the application errors', async function (assert) {
@@ -278,13 +290,17 @@ module('Acceptance | task detail', function (hooks) {
         .includes(`/v1/allocation/${allocation.id}`),
       'A request to the allocation is made successfully'
     );
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/allocations/${allocation.id}/not-a-real-task-name`,
       'The URL persists'
     );
     assert.ok(Task.error.isPresent, 'Error message is shown');
-    assert.equal(Task.error.title, 'Not Found', 'Error message is for 404');
+    assert.strictEqual(
+      Task.error.title,
+      'Not Found',
+      'Error message is for 404'
+    );
   });
 
   test('task can be restarted', async function (assert) {
@@ -292,7 +308,7 @@ module('Acceptance | task detail', function (hooks) {
     await Task.restart.confirm();
 
     const request = server.pretender.handledRequests.findBy('method', 'PUT');
-    assert.equal(
+    assert.strictEqual(
       request.url,
       `/v1/client/allocation/${allocation.id}/restart`,
       'Restart request is made for the allocation'
@@ -343,7 +359,7 @@ module('Acceptance | task detail', function (hooks) {
 
     assert.ok(Task.inlineError.isShown);
     assert.ok(Task.inlineError.title.includes('Could Not Restart Task'));
-    assert.equal(Task.inlineError.message, message);
+    assert.strictEqual(Task.inlineError.message, message);
 
     await Task.inlineError.dismiss();
 
@@ -400,11 +416,15 @@ module('Acceptance | task detail (different namespace)', function (hooks) {
     const job = server.db.jobs.find(jobId);
 
     await Layout.breadcrumbFor('jobs.index').visit();
-    assert.equal(currentURL(), '/jobs', 'Jobs breadcrumb links correctly');
+    assert.strictEqual(
+      currentURL(),
+      '/jobs',
+      'Jobs breadcrumb links correctly'
+    );
 
     await Task.visit({ id: allocation.id, name: task.name });
     await Layout.breadcrumbFor('jobs.job.index').visit();
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/jobs/${job.id}@other-namespace`,
       'Job breadcrumb links correctly'
@@ -412,7 +432,7 @@ module('Acceptance | task detail (different namespace)', function (hooks) {
 
     await Task.visit({ id: allocation.id, name: task.name });
     await Layout.breadcrumbFor('jobs.job.task-group').visit();
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/jobs/${job.id}@other-namespace/${taskGroup}`,
       'Task Group breadcrumb links correctly'
@@ -420,7 +440,7 @@ module('Acceptance | task detail (different namespace)', function (hooks) {
 
     await Task.visit({ id: allocation.id, name: task.name });
     await Layout.breadcrumbFor('allocations.allocation').visit();
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/allocations/${allocation.id}`,
       'Allocations breadcrumb links correctly'
@@ -451,8 +471,8 @@ module('Acceptance | task detail (not running)', function (hooks) {
   });
 
   test('when the allocation for a task is not running, the resource utilization graphs are replaced by an empty message', async function (assert) {
-    assert.equal(Task.resourceCharts.length, 0, 'No resource charts');
-    assert.equal(
+    assert.strictEqual(Task.resourceCharts.length, 0, 'No resource charts');
+    assert.strictEqual(
       Task.resourceEmptyMessage,
       "Task isn't running",
       'Empty message is appropriate'

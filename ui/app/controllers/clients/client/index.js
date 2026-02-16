@@ -7,7 +7,7 @@
 /* eslint-disable ember/no-incorrect-calls-with-inline-anonymous-functions */
 import { alias } from '@ember/object/computed';
 import Controller from '@ember/controller';
-import { action, computed } from '@ember/object';
+import { action, computed, get, set } from '@ember/object';
 import { observes } from '@ember-decorators/object';
 import { scheduleOnce } from '@ember/runloop';
 import { task } from 'ember-concurrency';
@@ -19,12 +19,11 @@ import {
   serialize,
   deserializedQueryParam as selection,
 } from 'nomad-ui/utils/qp-serialize';
-import classic from 'ember-classic-decorator';
+
 import localStorageProperty from 'nomad-ui/utils/properties/local-storage';
 import { inject as service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 
-@classic
 export default class ClientController extends Controller.extend(
   Sortable,
   Searchable
@@ -77,7 +76,7 @@ export default class ClientController extends Controller.extend(
   @action
   toggleShowSubTasks(e) {
     e.preventDefault();
-    this.set('showSubTasks', !this.get('showSubTasks'));
+    set(this, 'showSubTasks', !this.showSubTasks);
   }
 
   @computed()
@@ -146,12 +145,12 @@ export default class ClientController extends Controller.extend(
 
   @computed('model.events.@each.time')
   get sortedEvents() {
-    return this.get('model.events').sortBy('time').reverse();
+    return get(this, 'model.events').sortBy('time').reverse();
   }
 
   @computed('model.drivers.@each.name')
   get sortedDrivers() {
-    return this.get('model.drivers').sortBy('name');
+    return get(this, 'model.drivers').sortBy('name');
   }
 
   @computed('model.hostVolumes.@each.name')
@@ -164,20 +163,20 @@ export default class ClientController extends Controller.extend(
       yield value ? this.model.setEligible() : this.model.setIneligible();
     } catch (err) {
       const error = messageFromAdapterError(err) || 'Could not set eligibility';
-      this.set('eligibilityError', error);
+      set(this, 'eligibilityError', error);
     }
   }).drop())
   setEligibility;
 
   @(task(function* () {
     try {
-      this.set('flagAsDraining', false);
+      set(this, 'flagAsDraining', false);
       yield this.model.cancelDrain();
-      this.set('showDrainStoppedNotification', true);
+      set(this, 'showDrainStoppedNotification', true);
     } catch (err) {
-      this.set('flagAsDraining', true);
+      set(this, 'flagAsDraining', true);
       const error = messageFromAdapterError(err) || 'Could not stop drain';
-      this.set('stopDrainError', error);
+      set(this, 'stopDrainError', error);
     }
   }).drop())
   stopDrain;
@@ -189,7 +188,7 @@ export default class ClientController extends Controller.extend(
       });
     } catch (err) {
       const error = messageFromAdapterError(err) || 'Could not force drain';
-      this.set('drainError', error);
+      set(this, 'drainError', error);
     }
   }).drop())
   forceDrain;
@@ -197,10 +196,10 @@ export default class ClientController extends Controller.extend(
   @observes('model.isDraining')
   triggerDrainNotification() {
     if (!this.model.isDraining && this.flagAsDraining) {
-      this.set('showDrainNotification', true);
+      set(this, 'showDrainNotification', true);
     }
 
-    this.set('flagAsDraining', this.model.isDraining);
+    set(this, 'flagAsDraining', this.model.isDraining);
   }
 
   @action
@@ -210,18 +209,18 @@ export default class ClientController extends Controller.extend(
 
   @action
   setPreemptionFilter(value) {
-    this.set('onlyPreemptions', value);
+    set(this, 'onlyPreemptions', value);
   }
 
   @action
   drainNotify(isUpdating) {
-    this.set('showDrainUpdateNotification', isUpdating);
+    set(this, 'showDrainUpdateNotification', isUpdating);
   }
 
   @action
   setDrainError(err) {
     const error = messageFromAdapterError(err) || 'Could not run drain';
-    this.set('drainError', error);
+    set(this, 'drainError', error);
   }
 
   get optionsAllocationStatus() {
@@ -250,7 +249,7 @@ export default class ClientController extends Controller.extend(
     // Update query param when the list of jobs changes.
     scheduleOnce('actions', () => {
       // eslint-disable-next-line ember/no-side-effects
-      this.set('qpJob', serialize(intersection(jobs, this.selectionJob)));
+      set(this, 'qpJob', serialize(intersection(jobs, this.selectionJob)));
     });
 
     return jobs.sort().map((job) => ({ key: job, label: job }));
@@ -265,7 +264,8 @@ export default class ClientController extends Controller.extend(
     // Update query param when the list of namespaces changes.
     scheduleOnce('actions', () => {
       // eslint-disable-next-line ember/no-side-effects
-      this.set(
+      set(
+        this,
         'qpNamespace',
         serialize(intersection(ns, this.selectionNamespace))
       );
@@ -275,15 +275,15 @@ export default class ClientController extends Controller.extend(
   }
 
   setFacetQueryParam(queryParam, selection) {
-    this.set(queryParam, serialize(selection));
+    set(this, queryParam, serialize(selection));
   }
 
   @action
   setActiveTaskQueryParam(task) {
     if (task) {
-      this.set('activeTask', `${task.allocation.id}-${task.name}`);
+      set(this, 'activeTask', `${task.allocation.id}-${task.name}`);
     } else {
-      this.set('activeTask', null);
+      set(this, 'activeTask', null);
     }
   }
 

@@ -62,7 +62,7 @@ module('Acceptance | reverse proxy', function (hooks) {
     const { secretId } = managementToken;
 
     await Jobs.visit();
-    assert.equal(
+    assert.strictEqual(
       window.localStorage.nomadTokenSecret,
       secretId,
       'Token secret was set'

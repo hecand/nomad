@@ -3,10 +3,8 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import Model from '@ember-data/model';
-import { attr, belongsTo, hasMany } from '@ember-data/model';
-import { get } from '@ember/object';
-import { action } from '@ember/object';
+import Model, { attr, belongsTo, hasMany } from '@ember-data/model';
+import { get, action } from '@ember/object';
 
 export default class RecommendationSummary extends Model {
   @hasMany('recommendation') recommendations;

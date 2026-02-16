@@ -7,7 +7,7 @@ import { setupRenderingTest } from 'ember-qunit';
 import { module, test } from 'qunit';
 import { find, render } from '@ember/test-helpers';
 import { initialize as fragmentSerializerInitializer } from 'nomad-ui/initializers/fragment-serializer';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 import { setupPrimaryMetricMocks, primaryMetric } from './primary-metric';
 import { componentA11yAudit } from 'nomad-ui/tests/helpers/a11y-audit';
 import { startMirage } from 'nomad-ui/initializers/ember-cli-mirage';
@@ -64,7 +64,7 @@ module('Integration | Component | PrimaryMetric::Node', function (hooks) {
     await render(template);
 
     assert.ok(find('[data-test-annotation]'));
-    assert.equal(
+    assert.strictEqual(
       find('[data-test-annotation]').textContent.trim(),
       `${formatScheduledHertz(resource.reserved.cpu, 'MHz')} reserved`
     );

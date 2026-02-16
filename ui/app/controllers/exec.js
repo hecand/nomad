@@ -5,18 +5,16 @@
 
 import { inject as service } from '@ember/service';
 import Controller from '@ember/controller';
-import { action, computed } from '@ember/object';
+import { action, computed, set, setProperties } from '@ember/object';
 import { alias, mapBy, sort, uniq } from '@ember/object/computed';
 import escapeTaskName from 'nomad-ui/utils/escape-task-name';
 import ExecCommandEditorXtermAdapter from 'nomad-ui/utils/classes/exec-command-editor-xterm-adapter';
 import ExecSocketXtermAdapter from 'nomad-ui/utils/classes/exec-socket-xterm-adapter';
 import localStorageProperty from 'nomad-ui/utils/properties/local-storage';
-import classic from 'ember-classic-decorator';
 
 const ANSI_UI_GRAY_400 = '\x1b[38;2;142;150;163m';
 const ANSI_WHITE = '\x1b[0m';
 
-@classic
 export default class ExecController extends Controller {
   @service sockets;
   @service system;
@@ -100,7 +98,7 @@ export default class ExecController extends Controller {
 
   @action
   setTaskProperties({ allocationShortId, taskName, taskGroupName }) {
-    this.setProperties({
+    setProperties(this, {
       allocationShortId,
       taskName,
       taskGroupName,
@@ -151,8 +149,8 @@ export default class ExecController extends Controller {
 
   openAndConnectSocket(command) {
     if (this.taskState) {
-      this.set('socketOpen', true);
-      this.set('command', command);
+      set(this, 'socketOpen', true);
+      set(this, 'command', command);
       this.socket = this.sockets.getTaskStateSocket(this.taskState, command);
 
       new ExecSocketXtermAdapter(this.terminal, this.socket, this.token.secret);

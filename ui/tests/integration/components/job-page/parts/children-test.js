@@ -3,8 +3,7 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import { assign } from '@ember/polyfills';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 import { findAll, find, render } from '@ember/test-helpers';
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
@@ -28,7 +27,7 @@ module('Integration | Component | job-page/parts/children', function (hooks) {
   });
 
   const props = (job, children, options = {}) =>
-    assign(
+    Object.assign(
       {
         job,
         sortProperty: 'name',
@@ -63,7 +62,7 @@ module('Integration | Component | job-page/parts/children', function (hooks) {
         @jobs={{children}} />
     `);
 
-    assert.equal(
+    assert.strictEqual(
       findAll('[data-test-job-name]').length,
       parent.get('children.length'),
       'A row for each child'
@@ -104,7 +103,7 @@ module('Integration | Component | job-page/parts/children', function (hooks) {
       childrenCount > pageSize,
       'Parent has more children than one page size'
     );
-    assert.equal(
+    assert.strictEqual(
       findAll('[data-test-job-name]').length,
       pageSize,
       'Table length maxes out at 10'
@@ -151,7 +150,7 @@ module('Integration | Component | job-page/parts/children', function (hooks) {
     const childRows = findAll('[data-test-job-name]');
 
     sortedChildren.reverse().forEach((child, index) => {
-      assert.equal(
+      assert.strictEqual(
         childRows[index].textContent.trim(),
         child.get('name'),
         `Child ${index} is ${child.get('name')}`
@@ -161,7 +160,7 @@ module('Integration | Component | job-page/parts/children', function (hooks) {
     await this.set('sortDescending', false);
 
     sortedChildren.forEach((child, index) => {
-      assert.equal(
+      assert.strictEqual(
         childRows[index].textContent.trim(),
         child.get('name'),
         `Child ${index} is ${child.get('name')}`

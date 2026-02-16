@@ -4,13 +4,10 @@
  */
 
 import { collect, sum } from '@ember/object/computed';
-import Model from '@ember-data/model';
-import { attr, belongsTo } from '@ember-data/model';
+import Model, { attr, belongsTo } from '@ember-data/model';
 import { fragmentArray } from 'ember-data-model-fragments/attributes';
 import sumAggregation from '../utils/properties/sum-aggregation';
-import classic from 'ember-classic-decorator';
 
-@classic
 export default class JobSummary extends Model {
   @belongsTo('job') job;
 

@@ -39,7 +39,7 @@ module('Acceptance | sentinel policies', function (hooks) {
     assert.expect(3);
     await a11yAudit(assert);
 
-    assert.equal(currentURL(), '/administration/sentinel-policies');
+    assert.strictEqual(currentURL(), '/administration/sentinel-policies');
     assert
       .dom('[data-test-sentinel-policy-row]')
       .exists({ count: server.db.sentinelPolicies.length });
@@ -79,7 +79,7 @@ module('Acceptance | sentinel policies', function (hooks) {
       (sp) => sp.name === 'policy-1'
     );
     await click('[data-test-sentinel-policy-name="policy-1"]');
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/administration/sentinel-policies/${policy.id}`
     );
@@ -100,7 +100,7 @@ module('Acceptance | sentinel policies', function (hooks) {
     let rowDescription = policyRow.querySelector(
       '[data-test-sentinel-policy-description]'
     );
-    assert.equal(rowDescription.textContent.trim(), 'edited description');
+    assert.strictEqual(rowDescription.textContent.trim(), 'edited description');
     assert
       .dom(policyRow.querySelector('[data-test-sentinel-policy-enforcement]'))
       .hasText('hard-mandatory');
@@ -111,7 +111,7 @@ module('Acceptance | sentinel policies', function (hooks) {
       (sp) => sp.name === 'host-volume-policy'
     );
     await click('[data-test-sentinel-policy-name="host-volume-policy"]');
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/administration/sentinel-policies/${policy.id}`
     );
@@ -154,7 +154,7 @@ module('Acceptance | sentinel policies', function (hooks) {
 
   test('New Sentinel Policy from Scratch', async function (assert) {
     await click('[data-test-create-sentinel-policy]');
-    assert.equal(currentURL(), '/administration/sentinel-policies/new');
+    assert.strictEqual(currentURL(), '/administration/sentinel-policies/new');
     await fillIn('[data-test-policy-name-input]', 'new-policy');
     await fillIn('[data-test-policy-description]', 'new description');
     await click('[data-test-enforcement-level="hard-mandatory"]');
@@ -171,7 +171,7 @@ module('Acceptance | sentinel policies', function (hooks) {
     let rowDescription = policyRow.querySelector(
       '[data-test-sentinel-policy-description]'
     );
-    assert.equal(
+    assert.strictEqual(
       rowDescription.textContent.trim(),
       'new description',
       'description matches new policy input'
@@ -194,7 +194,10 @@ module('Acceptance | sentinel policies', function (hooks) {
   test('New Sentinel Policy from Template', async function (assert) {
     assert.expect(5);
     await click('[data-test-create-sentinel-policy-from-template]');
-    assert.equal(currentURL(), '/administration/sentinel-policies/gallery');
+    assert.strictEqual(
+      currentURL(),
+      '/administration/sentinel-policies/gallery'
+    );
     await percySnapshot(assert);
     const template = find('[data-test-template-card="no-friday-deploys"]');
     await click(template);
@@ -207,7 +210,7 @@ module('Acceptance | sentinel policies', function (hooks) {
         )
     );
     await click('[data-test-apply]');
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       '/administration/sentinel-policies/new?template=no-friday-deploys',
       'New Policy page has query param'

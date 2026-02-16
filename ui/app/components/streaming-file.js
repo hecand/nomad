@@ -4,6 +4,7 @@
  */
 
 import Component from '@ember/component';
+import { set, get } from '@ember/object';
 import { scheduleOnce, once } from '@ember/runloop';
 import { task } from 'ember-concurrency';
 import WindowResizable from 'nomad-ui/mixins/window-resizable';
@@ -12,11 +13,9 @@ import {
   tagName,
   attributeBindings,
 } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 
 const A_KEY = 65;
 
-@classic
 @tagName('pre')
 @classNames('cli-window')
 @attributeBindings('data-test-log-cli')
@@ -44,15 +43,15 @@ export default class StreamingFile extends Component.extend(WindowResizable) {
   performTask() {
     switch (this.mode) {
       case 'head':
-        this.set('follow', false);
+        set(this, 'follow', false);
         this.head.perform();
         break;
       case 'tail':
-        this.set('follow', true);
+        set(this, 'follow', true);
         this.tail.perform();
         break;
       case 'streaming':
-        this.set('follow', true);
+        set(this, 'follow', true);
         if (this.isStreaming) {
           this.stream.perform();
         } else {
@@ -70,7 +69,8 @@ export default class StreamingFile extends Component.extend(WindowResizable) {
     if (this.requestFrame) {
       window.requestAnimationFrame(() => {
         // If the scroll position is close enough to the bottom, autoscroll to the bottom
-        this.set(
+        set(
+          this,
           'follow',
           cli.scrollHeight - cli.scrollTop - cli.clientHeight < 20
         );
@@ -99,10 +99,10 @@ export default class StreamingFile extends Component.extend(WindowResizable) {
       this.fillAvailableHeight();
     }
 
-    this.set('_scrollHandler', this.scrollHandler.bind(this));
+    set(this, '_scrollHandler', this.scrollHandler.bind(this));
     this.element.addEventListener('scroll', this._scrollHandler);
 
-    this.set('_keyDownHandler', this.keyDownHandler.bind(this));
+    set(this, '_keyDownHandler', this.keyDownHandler.bind(this));
     document.addEventListener('keydown', this._keyDownHandler);
   }
 
@@ -129,7 +129,7 @@ export default class StreamingFile extends Component.extend(WindowResizable) {
   }
 
   @task(function* () {
-    yield this.get('logger.gotoHead').perform();
+    yield get(this, 'logger.gotoHead').perform();
     scheduleOnce('afterRender', this, this.scrollToTop);
   })
   head;
@@ -139,7 +139,7 @@ export default class StreamingFile extends Component.extend(WindowResizable) {
   }
 
   @task(function* () {
-    yield this.get('logger.gotoTail').perform();
+    yield get(this, 'logger.gotoTail').perform();
   })
   tail;
 

@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-// @ts-check
 import { default as FlashService } from 'ember-cli-flash/services/flash-messages';
 
 /**

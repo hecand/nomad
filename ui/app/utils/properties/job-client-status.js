@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import { computed } from '@ember/object';
+import { computed, get } from '@ember/object';
 import matchGlob from '../match-glob';
 
 const STATUS = [
@@ -27,8 +27,8 @@ export default function jobClientStatus(nodesKey, jobKey) {
     `${nodesKey}.[]`,
     `${jobKey}.{datacenters,status,allocations.@each.clientStatus,taskGroups}`,
     function () {
-      const job = this.get(jobKey);
-      const nodes = this.get(nodesKey);
+      const job = get(this, jobKey);
+      const nodes = get(this, nodesKey);
 
       // Filter nodes by the datacenters defined in the job.
       const filteredNodes = nodes.filter((n) => {

@@ -3,21 +3,17 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-// @ts-check
-
 import { alias, equal, or, and, mapBy } from '@ember/object/computed';
-import { computed } from '@ember/object';
-import Model from '@ember-data/model';
-import { attr, belongsTo, hasMany } from '@ember-data/model';
+import { computed, get, set } from '@ember/object';
+import Model, { attr, belongsTo, hasMany } from '@ember-data/model';
 import { fragment, fragmentArray } from 'ember-data-model-fragments/attributes';
 import RSVP from 'rsvp';
 import { assert } from '@ember/debug';
-import classic from 'ember-classic-decorator';
+
 import { jobAllocStatuses } from '../utils/allocation-client-statuses';
 
 const JOB_TYPES = ['service', 'batch', 'system', 'sysbatch'];
 
-@classic
 export default class Job extends Model {
   @attr('string') region;
   @attr('string') name;
@@ -300,8 +296,11 @@ export default class Job extends Model {
     // If any allocations are failed, lost, or unplaced in a steady state,
     // the job is "Degraded"
     const failedOrLostAllocs = [
+      // eslint-disable-next-line no-unsafe-optional-chaining
       ...this.allocBlocks.failed?.healthy?.nonCanary,
+      // eslint-disable-next-line no-unsafe-optional-chaining
       ...this.allocBlocks.lost?.healthy?.nonCanary,
+      // eslint-disable-next-line no-unsafe-optional-chaining
       ...this.allocBlocks.unplaced?.healthy?.nonCanary,
     ];
 
@@ -374,7 +373,7 @@ export default class Job extends Model {
   // The parent job name is prepended to child launch job names
   @computed('name', 'parent.content')
   get trimmedName() {
-    return this.get('parent.content')
+    return get(this, 'parent.content')
       ? this.name.replace(/.+?\//, '')
       : this.name;
   }
@@ -403,9 +402,9 @@ export default class Job extends Model {
   get templateType() {
     const type = this.type;
 
-    if (this.get('parent.periodic')) {
+    if (get(this, 'parent.periodic')) {
       return 'periodic-child';
-    } else if (this.get('parent.parameterized')) {
+    } else if (get(this, 'parent.parameterized')) {
       return 'parameterized-child';
     } else if (this.periodic) {
       return 'periodic';
@@ -630,7 +629,7 @@ export default class Job extends Model {
     try {
       // If the definition is already JSON then it doesn't need to be parsed.
       const json = JSON.parse(definition);
-      this.set('_newDefinitionJSON', json);
+      set(this, '_newDefinitionJSON', json);
 
       // You can't set the ID of a record that already exists
       if (this.isNew) {
@@ -646,7 +645,7 @@ export default class Job extends Model {
         .adapterFor('job')
         .parse(this._newDefinition, variables)
         .then((response) => {
-          this.set('_newDefinitionJSON', response);
+          set(this, '_newDefinitionJSON', response);
           this.setIdByPayload(response);
         });
     }
@@ -668,19 +667,20 @@ export default class Job extends Model {
     const namespace = payload.Namespace || 'default';
     const id = payload.Name;
 
-    this.set('plainId', id);
-    this.set('_idBeforeSaving', JSON.stringify([id, namespace]));
+    set(this, 'plainId', id);
+    set(this, '_idBeforeSaving', JSON.stringify([id, namespace]));
 
     const namespaceRecord = this.store.peekRecord('namespace', namespace);
     if (namespaceRecord) {
-      this.set('namespace', namespaceRecord);
+      set(this, 'namespace', namespaceRecord);
     }
   }
 
   resetId() {
-    this.set(
+    set(
+      this,
       'id',
-      JSON.stringify([this.plainId, this.get('namespace.name') || 'default'])
+      JSON.stringify([this.plainId, get(this, 'namespace.name') || 'default'])
     );
   }
 

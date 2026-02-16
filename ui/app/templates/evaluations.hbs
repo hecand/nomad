@@ -3,7 +3,7 @@
   SPDX-License-Identifier: BUSL-1.1
 ~}}
 
-<Breadcrumb @crumb={{hash label="Evaluations" args=(array "evaluations.index")}} />
+<Breadcrumb @label="Evaluations" @route="evaluations.index" />
 <PageLayout>
   <PortalTarget @name="eval-detail-portal" />
   {{outlet}}

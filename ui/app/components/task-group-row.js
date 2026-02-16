@@ -5,7 +5,7 @@
 
 import Component from '@ember/component';
 import { inject as service } from '@ember/service';
-import { computed, action } from '@ember/object';
+import { computed, action, get } from '@ember/object';
 import { alias, oneWay } from '@ember/object/computed';
 import { debounce } from '@ember/runloop';
 import {
@@ -13,15 +13,14 @@ import {
   tagName,
   attributeBindings,
 } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
+
 import { lazyClick } from '../helpers/lazy-click';
 
-@classic
 @tagName('tr')
 @classNames('task-group-row', 'is-interactive')
 @attributeBindings('data-test-task-group')
 export default class TaskGroupRow extends Component {
-  @service can;
+  @service abilities;
 
   taskGroup = null;
   debounce = 500;
@@ -30,12 +29,12 @@ export default class TaskGroupRow extends Component {
   @alias('taskGroup.job.runningDeployment') runningDeployment;
 
   get namespace() {
-    return this.get('taskGroup.job.namespace.name');
+    return get(this, 'taskGroup.job.namespace.name');
   }
 
-  @computed('runningDeployment', 'namespace')
+  @computed('abilities', 'namespace', 'runningDeployment')
   get tooltipText() {
-    if (this.can.cannot('scale job', null, { namespace: this.namespace }))
+    if (this.abilities.cannot('scale job', null, { namespace: this.namespace }))
       return "You aren't allowed to scale task groups";
     if (this.runningDeployment)
       return 'You cannot scale task groups during a deployment';

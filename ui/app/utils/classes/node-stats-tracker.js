@@ -3,11 +3,10 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import EmberObject, { computed } from '@ember/object';
+import EmberObject, { computed, get } from '@ember/object';
 import { alias } from '@ember/object/computed';
 import RollingArray from 'nomad-ui/utils/classes/rolling-array';
 import AbstractStatsTracker from 'nomad-ui/utils/classes/abstract-stats-tracker';
-import classic from 'ember-classic-decorator';
 
 const percent = (numerator, denominator) => {
   if (!numerator || !denominator) {
@@ -18,14 +17,13 @@ const percent = (numerator, denominator) => {
 
 const empty = (ts) => ({ timestamp: ts, used: null, percent: null });
 
-@classic
 class NodeStatsTracker extends EmberObject.extend(AbstractStatsTracker) {
   // Set via the stats computed property macro
   node = null;
 
   @computed('node.id')
   get url() {
-    return `/v1/client/stats?node_id=${this.get('node.id')}`;
+    return `/v1/client/stats?node_id=${get(this, 'node.id')}`;
   }
 
   append(frame) {
@@ -75,7 +73,7 @@ export function stats(nodeProp, fetch) {
   return computed(nodeProp, function () {
     return NodeStatsTracker.create({
       fetch: fetch.call(this),
-      node: this.get(nodeProp),
+      node: get(this, nodeProp),
     });
   });
 }

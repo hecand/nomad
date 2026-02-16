@@ -14,7 +14,7 @@ import {
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import sinon from 'sinon';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 import { componentA11yAudit } from 'nomad-ui/tests/helpers/a11y-audit';
 
 const TAB = 9;
@@ -56,7 +56,7 @@ module('Integration | Component | multi-select dropdown', function (hooks) {
     await render(commonTemplate);
 
     assert.ok(find('.dropdown-trigger'), 'Trigger is shown');
-    assert.equal(
+    assert.strictEqual(
       find('[data-test-dropdown-trigger]').textContent.trim(),
       props.label,
       'Trigger is appropriately labeled'
@@ -101,14 +101,14 @@ module('Integration | Component | multi-select dropdown', function (hooks) {
 
     await click('[data-test-dropdown-trigger]');
 
-    assert.equal(
+    assert.strictEqual(
       findAll('[data-test-dropdown-option]').length,
       props.options.length,
       'All options are shown'
     );
     findAll('[data-test-dropdown-option]').forEach((optionEl, index) => {
       const label = props.options[index].label;
-      assert.equal(
+      assert.strictEqual(
         optionEl.textContent.trim(),
         label,
         `Correct label for ${label}`
@@ -149,7 +149,7 @@ module('Integration | Component | multi-select dropdown', function (hooks) {
       find('[data-test-dropdown-trigger] [data-test-dropdown-count]'),
       'The count is shown'
     );
-    assert.equal(
+    assert.strictEqual(
       find('[data-test-dropdown-trigger] [data-test-dropdown-count]')
         .textContent,
       props.selection.length,
@@ -178,7 +178,7 @@ module('Integration | Component | multi-select dropdown', function (hooks) {
     );
     await triggerKeyEvent('[data-test-dropdown-trigger]', 'keyup', ARROW_DOWN);
     assert.ok(find('[data-test-dropdown-options]'), 'Options are now shown');
-    assert.equal(
+    assert.strictEqual(
       document.activeElement,
       find('[data-test-dropdown-trigger]'),
       'The dropdown trigger maintains focus'
@@ -193,7 +193,7 @@ module('Integration | Component | multi-select dropdown', function (hooks) {
     await focus('[data-test-dropdown-trigger]');
     await triggerKeyEvent('[data-test-dropdown-trigger]', 'keyup', ARROW_DOWN);
     await triggerKeyEvent('[data-test-dropdown-trigger]', 'keyup', ARROW_DOWN);
-    assert.equal(
+    assert.strictEqual(
       document.activeElement,
       find('[data-test-dropdown-option]'),
       'The first option now has focus'
@@ -208,7 +208,7 @@ module('Integration | Component | multi-select dropdown', function (hooks) {
     await focus('[data-test-dropdown-trigger]');
     await triggerKeyEvent('[data-test-dropdown-trigger]', 'keyup', ARROW_DOWN);
     await triggerKeyEvent('[data-test-dropdown-trigger]', 'keyup', TAB);
-    assert.equal(
+    assert.strictEqual(
       document.activeElement,
       find('[data-test-dropdown-option]'),
       'The first option now has focus'
@@ -224,7 +224,7 @@ module('Integration | Component | multi-select dropdown', function (hooks) {
 
     await focus('[data-test-dropdown-option]');
     await triggerKeyEvent('[data-test-dropdown-option]', 'keyup', ARROW_UP);
-    assert.equal(
+    assert.strictEqual(
       document.activeElement,
       find('[data-test-dropdown-option]'),
       'The first option maintains focus'
@@ -240,7 +240,7 @@ module('Integration | Component | multi-select dropdown', function (hooks) {
 
     await focus('[data-test-dropdown-option]');
     await triggerKeyEvent('[data-test-dropdown-option]', 'keyup', ARROW_DOWN);
-    assert.equal(
+    assert.strictEqual(
       document.activeElement,
       findAll('[data-test-dropdown-option]')[1],
       'The second option has focus'
@@ -265,7 +265,7 @@ module('Integration | Component | multi-select dropdown', function (hooks) {
 
       if (index < lastIndex) {
         /* eslint-disable-next-line qunit/no-conditional-assertions */
-        assert.equal(
+        assert.strictEqual(
           document.activeElement,
           optionEls[index + 1],
           `Option ${index + 1} has focus`
@@ -274,7 +274,7 @@ module('Integration | Component | multi-select dropdown', function (hooks) {
     }
 
     await triggerKeyEvent(optionEls[lastIndex], 'keyup', ARROW_DOWN);
-    assert.equal(
+    assert.strictEqual(
       document.activeElement,
       optionEls[lastIndex],
       `Option ${lastIndex} still has focus`
@@ -310,7 +310,7 @@ module('Integration | Component | multi-select dropdown', function (hooks) {
     await click('[data-test-dropdown-trigger]');
 
     findAll('[data-test-dropdown-option]').forEach((option) => {
-      assert.equal(
+      assert.strictEqual(
         parseInt(option.getAttribute('tabindex'), 10),
         0,
         'tabindex is zero'
@@ -354,7 +354,7 @@ module('Integration | Component | multi-select dropdown', function (hooks) {
       find('[data-test-dropdown-options]'),
       'The options list is hidden once more'
     );
-    assert.equal(
+    assert.strictEqual(
       document.activeElement,
       find('[data-test-dropdown-trigger]'),
       'The trigger has focus'

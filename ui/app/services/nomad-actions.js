@@ -3,16 +3,14 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-// @ts-check
-import Service from '@ember/service';
-import { inject as service } from '@ember/service';
+import Service, { inject as service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 import { action } from '@ember/object';
 import { base64DecodeString } from '../utils/encode';
 import config from 'nomad-ui/config/environment';
 
 export default class NomadActionsService extends Service {
-  @service can;
+  @service abilities;
   @service store;
   @service token;
 
@@ -20,7 +18,7 @@ export default class NomadActionsService extends Service {
   // will require this to be a computed property that depends on the current user's permissions.
   // For now, we simply check alloc exec privileges.
   get hasActionPermissions() {
-    return this.can.can('exec allocation');
+    return this.abilities.can('exec allocation');
   }
 
   @tracked flyoutActive = false;

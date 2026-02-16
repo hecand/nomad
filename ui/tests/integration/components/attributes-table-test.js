@@ -6,7 +6,7 @@
 import { find, findAll, render } from '@ember/test-helpers';
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 import { componentA11yAudit } from 'nomad-ui/tests/helpers/a11y-audit';
 import PathTree from 'nomad-ui/utils/path-tree';
 
@@ -51,7 +51,7 @@ module('Integration | Component | attributes table', function (hooks) {
     await render(hbs`<AttributesTable @attributePairs={{attributes}} />`);
 
     const rowsCount = commonAttributes.length;
-    assert.equal(
+    assert.strictEqual(
       this.element.querySelectorAll(
         '[data-test-attributes-section] [data-test-value]'
       ).length,
@@ -66,28 +66,28 @@ module('Integration | Component | attributes table', function (hooks) {
     this.set('attributes', commonAttributesTree.root);
     await render(hbs`<AttributesTable @attributePairs={{attributes}} />`);
 
-    assert.equal(
+    assert.strictEqual(
       find('[data-test-key]').textContent.trim(),
       'key',
       'Row renders the key'
     );
-    assert.equal(
+    assert.strictEqual(
       find('[data-test-value]').textContent.trim(),
       'value',
       'Row renders the value'
     );
     const deepRow = findAll('[data-test-attributes-section]')[4];
-    assert.equal(
+    assert.strictEqual(
       deepRow.querySelector('[data-test-key]').textContent.trim(),
       'so.are.deeply.nested',
       'Complex row renders the full path to the key'
     );
-    assert.equal(
+    assert.strictEqual(
       deepRow.querySelector('[data-test-prefix]').textContent.trim(),
       'so.are.deeply.',
       'The prefix is faded to put emphasis on the attribute'
     );
-    assert.equal(
+    assert.strictEqual(
       deepRow.querySelector('[data-test-value]').textContent.trim(),
       'properties'
     );

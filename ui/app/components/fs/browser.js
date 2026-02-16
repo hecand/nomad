@@ -6,11 +6,7 @@
 import Component from '@ember/component';
 import { computed } from '@ember/object';
 import { filterBy } from '@ember/object/computed';
-import { tagName } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 
-@classic
-@tagName('')
 export default class Browser extends Component {
   model = null;
 

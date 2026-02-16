@@ -12,7 +12,6 @@ import {
   visit,
   settled,
 } from '@ember/test-helpers';
-import { assign } from '@ember/polyfills';
 import { module, test } from 'qunit';
 import { selectChoose } from 'ember-power-select/test-support';
 import { clickTrigger } from 'ember-power-select/test-support/helpers';
@@ -33,7 +32,7 @@ let managementToken, clientToken;
 
 const jsonJob = (overrides) => {
   return JSON.stringify(
-    assign(
+    Object.assign(
       {},
       {
         Name: newJobName,
@@ -85,8 +84,8 @@ module('Acceptance | job run', function (hooks) {
   test('visiting /jobs/run', async function (assert) {
     await JobRun.visit();
 
-    assert.equal(currentURL(), '/jobs/run');
-    assert.equal(document.title, 'Run a job - Nomad');
+    assert.strictEqual(currentURL(), '/jobs/run');
+    assert.strictEqual(document.title, 'Run a job - Nomad');
   });
 
   test('when submitting a job, the site redirects to the new job overview page', async function (assert) {
@@ -97,7 +96,7 @@ module('Acceptance | job run', function (hooks) {
     await JobRun.editor.editor.fillIn(spec);
     await JobRun.editor.plan();
     await JobRun.editor.run();
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/jobs/${newJobName}@${newJobNamespace}`,
       `Redirected to the job overview page for ${newJobName}`
@@ -115,7 +114,7 @@ module('Acceptance | job run', function (hooks) {
     await JobRun.editor.editor.fillIn(spec);
     await JobRun.editor.plan();
     await JobRun.editor.run();
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/jobs/${newJobName}@${newNamespace}`,
       `Redirected to the job overview page for ${newJobName} and switched the namespace to ${newNamespace}`
@@ -126,7 +125,7 @@ module('Acceptance | job run', function (hooks) {
     window.localStorage.nomadTokenSecret = clientToken.secretId;
 
     await JobRun.visit();
-    assert.equal(currentURL(), '/jobs');
+    assert.strictEqual(currentURL(), '/jobs');
   });
 
   test('when using client token user can still go to job page if they have correct permissions', async function (assert) {
@@ -160,7 +159,7 @@ module('Acceptance | job run', function (hooks) {
     window.localStorage.nomadTokenSecret = clientTokenWithPolicy.secretId;
 
     await JobRun.visit({ namespace: newNamespace });
-    assert.equal(currentURL(), `/jobs/run?namespace=${newNamespace}`);
+    assert.strictEqual(currentURL(), `/jobs/run?namespace=${newNamespace}`);
   });
 
   test('when using fine grained client token user can still go to job page if they have correct permissions', async function (assert) {
@@ -247,7 +246,7 @@ module('Acceptance | job run', function (hooks) {
       );
       // Act
       await click('[data-test-choose-template]');
-      assert.equal(currentRouteName(), 'jobs.run.templates.index');
+      assert.strictEqual(currentRouteName(), 'jobs.run.templates.index');
 
       // Assert
       assert
@@ -263,7 +262,7 @@ module('Acceptance | job run', function (hooks) {
       await click('[data-test-template-card=Foo]');
       await click('[data-test-apply]');
 
-      assert.equal(
+      assert.strictEqual(
         currentURL(),
         '/jobs/run?template=nomad%2Fjob-templates%2Ffoo%40default'
       );
@@ -285,7 +284,7 @@ module('Acceptance | job run', function (hooks) {
         );
 
       await click('[data-test-create-new-button]');
-      assert.equal(currentRouteName(), 'jobs.run.templates.new');
+      assert.strictEqual(currentRouteName(), 'jobs.run.templates.new');
 
       await fillIn('[data-test-template-name]', 'foo');
       await fillIn('[data-test-template-description]', 'foo-bar-baz');
@@ -353,7 +352,7 @@ module('Acceptance | job run', function (hooks) {
       );
 
       await click('[data-test-save-template]');
-      assert.equal(currentRouteName(), 'jobs.run.templates.index');
+      assert.strictEqual(currentRouteName(), 'jobs.run.templates.index');
       assert
         .dom('[data-test-template-card=Foo]')
         .exists('The newly created template appears in the list.');
@@ -374,7 +373,7 @@ module('Acceptance | job run', function (hooks) {
         );
 
       await click('[data-test-create-new-button]');
-      assert.equal(currentRouteName(), 'jobs.run.templates.new');
+      assert.strictEqual(currentRouteName(), 'jobs.run.templates.new');
       assert
         .dom('[data-test-save-template]')
         .isDisabled('the save button should be disabled if no path is set');
@@ -392,7 +391,7 @@ module('Acceptance | job run', function (hooks) {
       });
 
       await click('[data-test-save-template]');
-      assert.equal(
+      assert.strictEqual(
         currentRouteName(),
         'jobs.run.templates.new',
         'We do not navigate away from the page if an error is returned by the API.'
@@ -426,7 +425,7 @@ module('Acceptance | job run', function (hooks) {
         );
 
       await click('[data-test-create-new-button]');
-      assert.equal(currentRouteName(), 'jobs.run.templates.new');
+      assert.strictEqual(currentRouteName(), 'jobs.run.templates.new');
 
       await fillIn('[data-test-template-name]', 'foo');
       assert
@@ -453,7 +452,7 @@ module('Acceptance | job run', function (hooks) {
       await JobRun.editor.editor.fillIn(jsonJob());
 
       await click('[data-test-save-as-template]');
-      assert.equal(
+      assert.strictEqual(
         currentRouteName(),
         'jobs.run.templates.new',
         'We navigate template creation page.'
@@ -470,7 +469,7 @@ module('Acceptance | job run', function (hooks) {
       const codeMirror = getCodeMirrorInstance('[data-test-template-json]');
       const json = codeMirror.getValue();
 
-      assert.equal(
+      assert.strictEqual(
         json,
         jsonJob(),
         'Template is filled out with text from the editor.'
@@ -490,13 +489,13 @@ module('Acceptance | job run', function (hooks) {
 
       await visit('/jobs/run/templates/manage');
 
-      assert.equal(currentRouteName(), 'jobs.run.templates.manage');
+      assert.strictEqual(currentRouteName(), 'jobs.run.templates.manage');
       assert
         .dom('[data-test-template-list]')
         .exists('A list of templates is visible');
       await percySnapshot(assert);
       await click('[data-test-edit-template="nomad/job-templates/foo"]');
-      assert.equal(
+      assert.strictEqual(
         currentRouteName(),
         'jobs.run.templates.template',
         'Navigates to edit template view'
@@ -526,7 +525,7 @@ module('Acceptance | job run', function (hooks) {
       await fillIn('[data-test-template-description]', 'baz qud thud');
       await click('[data-test-edit-template]');
 
-      assert.equal(
+      assert.strictEqual(
         currentRouteName(),
         'jobs.run.templates.index',
         'We navigate back to the templates view.'
@@ -560,7 +559,7 @@ module('Acceptance | job run', function (hooks) {
 
       await visit('/jobs/run/templates/manage');
 
-      assert.equal(currentRouteName(), 'jobs.run.templates.manage');
+      assert.strictEqual(currentRouteName(), 'jobs.run.templates.manage');
       assert
         .dom('[data-test-template-list]')
         .exists('A list of templates is visible');
@@ -575,7 +574,7 @@ module('Acceptance | job run', function (hooks) {
       await click('[data-test-idle-button]');
       await click('[data-test-confirm-button]');
 
-      assert.equal(
+      assert.strictEqual(
         currentRouteName(),
         'jobs.run.templates.manage',
         'We navigate back to the templates manager view.'
@@ -603,7 +602,7 @@ module('Acceptance | job run', function (hooks) {
 
       await visit('/jobs/run/templates');
 
-      assert.equal(currentRouteName(), 'jobs.run.templates.index');
+      assert.strictEqual(currentRouteName(), 'jobs.run.templates.index');
       assert.dom('[data-test-template-card="Foo"]').exists();
 
       this.store = this.owner.lookup('service:store');
@@ -622,7 +621,7 @@ module('Acceptance | job run', function (hooks) {
 
       await visit('/jobs/run/templates');
 
-      assert.equal(currentRouteName(), 'jobs.run.templates.index');
+      assert.strictEqual(currentRouteName(), 'jobs.run.templates.index');
       assert
         .dom('[data-test-template-card]')
         .exists({ count: NUMBER_OF_DEFAULT_TEMPLATES });
@@ -632,7 +631,7 @@ module('Acceptance | job run', function (hooks) {
       await click('[data-test-template-card="Hello world"]');
       await click('[data-test-apply]');
 
-      assert.equal(
+      assert.strictEqual(
         currentURL(),
         '/jobs/run?template=nomad%2Fjob-templates%2Fdefault%2Fhello-world'
       );

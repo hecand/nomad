@@ -4,7 +4,7 @@
  */
 
 import Mixin from '@ember/object/mixin';
-import { get, computed } from '@ember/object';
+import { get, computed, set } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import Fuse from 'fuse.js';
 
@@ -51,7 +51,7 @@ export default Mixin.create({
   // forgotten on a single page.
   resetPagination() {
     if (this.currentPage != null) {
-      this.set('currentPage', 1);
+      set(this, 'currentPage', 1);
     }
   },
 

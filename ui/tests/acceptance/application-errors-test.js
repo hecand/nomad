@@ -57,11 +57,15 @@ module('Acceptance | application errors ', function (hooks) {
     await Job.visit({ id: job.id });
 
     assert.ok(Job.error.isPresent, 'Error message is shown');
-    assert.equal(Job.error.title, 'Not Authorized', 'Error message is for 403');
+    assert.strictEqual(
+      Job.error.title,
+      'Not Authorized',
+      'Error message is for 403'
+    );
     await percySnapshot(assert);
 
     await Job.error.seekHelp();
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       '/settings/tokens',
       'Error message contains a link to the tokens page'
@@ -79,7 +83,7 @@ module('Acceptance | application errors ', function (hooks) {
     await JobsList.visit();
 
     assert.ok(JobsList.error.isPresent, 'An error is shown');
-    assert.equal(
+    assert.strictEqual(
       JobsList.error.title,
       'No Cluster Leader',
       'The error is specifically for the lack of a cluster leader'
@@ -93,21 +97,25 @@ module('Acceptance | application errors ', function (hooks) {
     assert.ok(JobsList.error.isPresent, 'An error is shown');
 
     await JobsList.error.gotoJobs();
-    assert.equal(currentURL(), '/jobs', 'Now on the jobs page');
+    assert.strictEqual(currentURL(), '/jobs', 'Now on the jobs page');
     assert.notOk(JobsList.error.isPresent, 'The error is gone now');
 
     await visit('/a/non-existent/page');
     assert.ok(JobsList.error.isPresent, 'An error is shown');
 
     await JobsList.error.gotoClients();
-    assert.equal(currentURL(), '/clients', 'Now on the clients page');
+    assert.strictEqual(currentURL(), '/clients', 'Now on the clients page');
     assert.notOk(JobsList.error.isPresent, 'The error is gone now');
 
     await visit('/a/non-existent/page');
     assert.ok(JobsList.error.isPresent, 'An error is shown');
 
     await JobsList.error.gotoSignin();
-    assert.equal(currentURL(), '/settings/tokens', 'Now on the sign-in page');
+    assert.strictEqual(
+      currentURL(),
+      '/settings/tokens',
+      'Now on the sign-in page'
+    );
     assert.notOk(JobsList.error.isPresent, 'The error is gone now');
   });
 });

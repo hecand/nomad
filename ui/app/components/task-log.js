@@ -5,13 +5,13 @@
 
 import { inject as service } from '@ember/service';
 import Component from '@ember/component';
-import { action, computed } from '@ember/object';
+import { action, computed, get, set } from '@ember/object';
 import { alias } from '@ember/object/computed';
 import RSVP from 'rsvp';
 import { logger } from 'nomad-ui/utils/classes/log';
 import timeout from 'nomad-ui/utils/timeout';
 import { classNames } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
+
 import localStorageProperty from 'nomad-ui/utils/properties/local-storage';
 
 class MockAbortController {
@@ -20,12 +20,11 @@ class MockAbortController {
   }
 }
 
-@classic
 @classNames('boxed-section', 'task-log')
 export default class TaskLog extends Component {
   @service token;
   @service userSettings;
-  @service can;
+  @service abilities;
   allocation = null;
   task = null;
 
@@ -51,9 +50,9 @@ export default class TaskLog extends Component {
   @computed('allocation.{id,node.httpAddr}', 'useServer')
   get logUrl() {
     let address;
-    const allocation = this.get('allocation.id');
-    if (this.can.can('read client')) {
-      address = this.get('allocation.node.httpAddr');
+    const allocation = get(this, 'allocation.id');
+    if (this.abilities.can('read client')) {
+      address = get(this, 'allocation.node.httpAddr');
     }
     const url = `/v1/client/fs/logs/${allocation}`;
     return this.useServer ? url : address ? `//${address}${url}` : url;
@@ -88,14 +87,14 @@ export default class TaskLog extends Component {
           // whenever the log files 404, it is due to log collection
           // being disabled.
           if (response.status === 404) {
-            this.set('logsDisabled', true);
+            set(this, 'logsDisabled', true);
           }
           return response;
         },
         (error) => {
           aborter.abort();
           if (useServer) {
-            this.set('noConnection', true);
+            set(this, 'noConnection', true);
           } else {
             this.send('failoverToServer');
           }
@@ -109,30 +108,30 @@ export default class TaskLog extends Component {
   setMode(mode) {
     if (this.mode === mode) return;
     this.logger.stop();
-    this.set('mode', mode);
+    set(this, 'mode', mode);
   }
 
   @action
   toggleStream() {
-    this.set('streamMode', 'streaming');
+    set(this, 'streamMode', 'streaming');
     this.toggleProperty('isStreaming');
   }
 
   @action
   gotoHead() {
-    this.set('streamMode', 'head');
-    this.set('isStreaming', false);
+    set(this, 'streamMode', 'head');
+    set(this, 'isStreaming', false);
   }
 
   @action
   gotoTail() {
-    this.set('streamMode', 'tail');
-    this.set('isStreaming', false);
+    set(this, 'streamMode', 'tail');
+    set(this, 'isStreaming', false);
   }
 
   @action
   failoverToServer() {
-    this.set('useServer', true);
+    set(this, 'useServer', true);
   }
 
   @action toggleWrap() {

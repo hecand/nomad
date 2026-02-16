@@ -56,12 +56,12 @@ module('Acceptance | job deployments', function (hooks) {
   test('/jobs/:id/deployments should list all job deployments', async function (assert) {
     await Deployments.visit({ id: job.id });
 
-    assert.equal(
+    assert.strictEqual(
       Deployments.deployments.length,
       deployments.length,
       'Each deployment gets a row in the timeline'
     );
-    assert.equal(document.title, `Job ${job.name} deployments - Nomad`);
+    assert.strictEqual(document.title, `Job ${job.name} deployments - Nomad`);
   });
 
   test('each deployment mentions the deployment shortId, status, version, and time since it was submitted', async function (assert) {
@@ -78,7 +78,7 @@ module('Acceptance | job deployments', function (hooks) {
       deploymentRow.text.includes(deployment.id.split('-')[0]),
       'Short ID'
     );
-    assert.equal(deploymentRow.status, deployment.status, 'Status');
+    assert.strictEqual(deploymentRow.status, deployment.status, 'Status');
     assert.ok(
       deploymentRow.statusClass.includes(classForStatus(deployment.status)),
       'Status Class'
@@ -143,7 +143,7 @@ module('Acceptance | job deployments', function (hooks) {
 
     await deploymentRow.toggle();
 
-    assert.equal(
+    assert.strictEqual(
       deploymentRow.metricFor('canaries').text,
       `${sum(taskGroupSummaries, 'placedCanaries', (a) => a.length)} / ${sum(
         taskGroupSummaries,
@@ -152,31 +152,31 @@ module('Acceptance | job deployments', function (hooks) {
       'Canaries, both places and desired, are in the metrics'
     );
 
-    assert.equal(
+    assert.strictEqual(
       deploymentRow.metricFor('placed').text,
       sum(taskGroupSummaries, 'placedAllocs'),
       'Placed allocs aggregates across task groups'
     );
 
-    assert.equal(
+    assert.strictEqual(
       deploymentRow.metricFor('desired').text,
       sum(taskGroupSummaries, 'desiredTotal'),
       'Desired allocs aggregates across task groups'
     );
 
-    assert.equal(
+    assert.strictEqual(
       deploymentRow.metricFor('healthy').text,
       sum(taskGroupSummaries, 'healthyAllocs'),
       'Healthy allocs aggregates across task groups'
     );
 
-    assert.equal(
+    assert.strictEqual(
       deploymentRow.metricFor('unhealthy').text,
       sum(taskGroupSummaries, 'unhealthyAllocs'),
       'Unhealthy allocs aggregates across task groups'
     );
 
-    assert.equal(
+    assert.strictEqual(
       deploymentRow.notification,
       deployment.statusDescription,
       'Status description is in the metrics block'
@@ -196,7 +196,7 @@ module('Acceptance | job deployments', function (hooks) {
 
     assert.ok(deploymentRow.hasTaskGroups, 'Task groups found');
 
-    assert.equal(
+    assert.strictEqual(
       deploymentRow.taskGroups.length,
       taskGroupSummaries.length,
       'One row per task group'
@@ -208,38 +208,38 @@ module('Acceptance | job deployments', function (hooks) {
       taskGroup.name
     );
 
-    assert.equal(taskGroupRow.name, taskGroup.name, 'Name');
-    assert.equal(
+    assert.strictEqual(taskGroupRow.name, taskGroup.name, 'Name');
+    assert.strictEqual(
       taskGroupRow.promotion,
       promotionTestForTaskGroup(taskGroup),
       'Needs Promotion'
     );
-    assert.equal(
+    assert.strictEqual(
       taskGroupRow.autoRevert,
       taskGroup.autoRevert ? 'Yes' : 'No',
       'Auto Revert'
     );
-    assert.equal(
+    assert.strictEqual(
       taskGroupRow.canaries,
       `${taskGroup.placedCanaries.length} / ${taskGroup.desiredCanaries}`,
       'Canaries'
     );
-    assert.equal(
+    assert.strictEqual(
       taskGroupRow.allocs,
       `${taskGroup.placedAllocs} / ${taskGroup.desiredTotal}`,
       'Allocs'
     );
-    assert.equal(
+    assert.strictEqual(
       taskGroupRow.healthy,
       taskGroup.healthyAllocs,
       'Healthy Allocs'
     );
-    assert.equal(
+    assert.strictEqual(
       taskGroupRow.unhealthy,
       taskGroup.unhealthyAllocs,
       'Unhealthy Allocs'
     );
-    assert.equal(
+    assert.strictEqual(
       taskGroupRow.progress,
       moment(taskGroup.requireProgressBy).format("MMM DD, 'YY HH:mm:ss ZZ"),
       'Progress By'
@@ -260,7 +260,7 @@ module('Acceptance | job deployments', function (hooks) {
     await deploymentRow.toggle();
 
     assert.ok(deploymentRow.hasAllocations, 'Allocations found');
-    assert.equal(
+    assert.strictEqual(
       deploymentRow.allocations.length,
       allocations.length,
       'One row per allocation'
@@ -269,7 +269,7 @@ module('Acceptance | job deployments', function (hooks) {
     const allocation = allocations[0];
     const allocationRow = deploymentRow.allocations.objectAt(0);
 
-    assert.equal(
+    assert.strictEqual(
       allocationRow.shortId,
       allocation.id.split('-')[0],
       'Allocation is as expected'
@@ -279,20 +279,20 @@ module('Acceptance | job deployments', function (hooks) {
   test('when the job for the deployments is not found, an error message is shown, but the URL persists', async function (assert) {
     await Deployments.visit({ id: 'not-a-real-job' });
 
-    assert.equal(
+    assert.strictEqual(
       server.pretender.handledRequests
         .filter((request) => !request.url.includes('policy'))
         .findBy('status', 404).url,
       '/v1/job/not-a-real-job',
       'A request to the nonexistent job is made'
     );
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       '/jobs/not-a-real-job/deployments',
       'The URL persists'
     );
     assert.ok(Deployments.error.isPresent, 'Error message is shown');
-    assert.equal(
+    assert.strictEqual(
       Deployments.error.title,
       'Not Found',
       'Error message is for 404'

@@ -4,7 +4,8 @@
  */
 
 import Ember from 'ember';
-import Response from 'ember-cli-mirage/response';
+import { discoverEmberDataModels } from 'ember-cli-mirage';
+import { createServer, Response } from 'miragejs';
 import { HOSTS } from './common';
 import { logFrames, logEncode } from './data/logs';
 import { generateDiff } from './factories/job-version';
@@ -33,7 +34,21 @@ export function filesForPath(allocFiles, filterPath) {
   );
 }
 
-export default function () {
+export default function (config) {
+  let finalConfig = {
+    ...config,
+    trackRequests: true,
+    models: {
+      ...discoverEmberDataModels(config.store),
+      ...config.models,
+    },
+    routes,
+  };
+
+  return createServer(finalConfig);
+}
+
+function routes() {
   this.timing = 0; // delay for each request, automatically set to 0 during testing
 
   this.logging = window.location.search.includes('mirage-logging=true');
@@ -714,7 +729,10 @@ export default function () {
 
   this.get(
     '/volume/host/:id',
-    withBlockingSupport(function ({ dynamicHostVolumes }, { params, queryParams }) {
+    withBlockingSupport(function (
+      { dynamicHostVolumes },
+      { params, queryParams }
+    ) {
       const { id } = params;
       const volume = dynamicHostVolumes.all().models.find((volume) => {
         const volumeIsDefault =

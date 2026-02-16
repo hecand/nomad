@@ -6,7 +6,7 @@
 import { module, test } from 'qunit';
 import { render, triggerEvent } from '@ember/test-helpers';
 import { setupRenderingTest } from 'ember-qunit';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 import { componentA11yAudit } from 'nomad-ui/tests/helpers/a11y-audit';
 import { create } from 'ember-cli-page-object';
 import { setupMirage } from 'ember-cli-mirage/test-support';
@@ -66,11 +66,11 @@ module('Integration | Component | TopoViz', function (hooks) {
 
     await render(commonTemplate);
 
-    assert.equal(TopoViz.datacenters.length, 2);
-    assert.equal(TopoViz.datacenters[0].nodes.length, 1);
-    assert.equal(TopoViz.datacenters[1].nodes.length, 1);
-    assert.equal(TopoViz.datacenters[0].nodes[0].memoryRects.length, 2);
-    assert.equal(TopoViz.datacenters[1].nodes[0].memoryRects.length, 1);
+    assert.strictEqual(TopoViz.datacenters.length, 2);
+    assert.strictEqual(TopoViz.datacenters[0].nodes.length, 1);
+    assert.strictEqual(TopoViz.datacenters[1].nodes.length, 1);
+    assert.strictEqual(TopoViz.datacenters[0].nodes[0].memoryRects.length, 2);
+    assert.strictEqual(TopoViz.datacenters[1].nodes[0].memoryRects.length, 1);
 
     await componentA11yAudit(this.element, assert);
   });
@@ -89,11 +89,14 @@ module('Integration | Component | TopoViz', function (hooks) {
 
     await TopoViz.datacenters[0].nodes[0].selectNode();
     assert.ok(this.onNodeSelect.calledOnce);
-    assert.equal(this.onNodeSelect.getCall(0).args[0].node, this.nodes[0]);
+    assert.strictEqual(
+      this.onNodeSelect.getCall(0).args[0].node,
+      this.nodes[0]
+    );
 
     await TopoViz.datacenters[0].nodes[0].selectNode();
     assert.ok(this.onNodeSelect.calledTwice);
-    assert.equal(this.onNodeSelect.getCall(1).args[0], null);
+    assert.strictEqual(this.onNodeSelect.getCall(1).args[0], null);
   });
 
   test('clicking on an allocation in a deeply nested TopoViz::Node will update the topology object with selections and call @onAllocationSelect and @onNodeSelect', async function (assert) {
@@ -108,7 +111,7 @@ module('Integration | Component | TopoViz', function (hooks) {
 
     await TopoViz.datacenters[0].nodes[0].memoryRects[0].select();
     assert.ok(this.onAllocationSelect.calledOnce);
-    assert.equal(
+    assert.strictEqual(
       this.onAllocationSelect.getCall(0).args[0],
       this.allocations[0]
     );
@@ -116,7 +119,7 @@ module('Integration | Component | TopoViz', function (hooks) {
 
     await TopoViz.datacenters[0].nodes[0].memoryRects[0].select();
     assert.ok(this.onAllocationSelect.calledTwice);
-    assert.equal(this.onAllocationSelect.getCall(1).args[0], null);
+    assert.strictEqual(this.onAllocationSelect.getCall(1).args[0], null);
     assert.ok(this.onNodeSelect.calledTwice);
     assert.ok(this.onNodeSelect.alwaysCalledWith(null));
   });
@@ -157,14 +160,14 @@ module('Integration | Component | TopoViz', function (hooks) {
     await TopoViz.datacenters[0].nodes[0].memoryRects[0].select();
 
     assert.ok(TopoViz.allocationAssociationsArePresent);
-    assert.equal(
+    assert.strictEqual(
       TopoViz.allocationAssociations.length,
       selectedAllocations.length * 2
     );
 
     // Lines get redrawn when the window resizes; make sure the lines persist.
     await triggerEvent(window, 'resize');
-    assert.equal(
+    assert.strictEqual(
       TopoViz.allocationAssociations.length,
       selectedAllocations.length * 2
     );
@@ -200,11 +203,11 @@ module('Integration | Component | TopoViz', function (hooks) {
     assert.notOk(TopoViz.allocationAssociationsArePresent);
 
     await TopoViz.datacenters[0].nodes[0].memoryRects[0].select();
-    assert.equal(TopoViz.allocationAssociations.length, 0);
+    assert.strictEqual(TopoViz.allocationAssociations.length, 0);
 
     // Lines get redrawn when the window resizes; make sure that doesn't make the lines show up again
     await triggerEvent(window, 'resize');
-    assert.equal(TopoViz.allocationAssociations.length, 0);
+    assert.strictEqual(TopoViz.allocationAssociations.length, 0);
   });
 
   test('when one or more nodes are missing the resources property, those nodes are filtered out of the topology view and onDataError is called', async function (assert) {
@@ -235,6 +238,6 @@ module('Integration | Component | TopoViz', function (hooks) {
       },
     ]);
 
-    assert.equal(TopoViz.datacenters[0].nodes.length, 1);
+    assert.strictEqual(TopoViz.datacenters[0].nodes.length, 1);
   });
 });

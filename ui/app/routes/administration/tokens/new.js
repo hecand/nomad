@@ -7,11 +7,12 @@ import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
 
 export default class AccessControlTokensNewRoute extends Route {
-  @service can;
+  @service abilities;
   @service router;
+  @service store;
 
   beforeModel() {
-    if (this.can.cannot('write token')) {
+    if (this.abilities.cannot('write token')) {
       this.router.transitionTo('/administration/tokens');
     }
   }

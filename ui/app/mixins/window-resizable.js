@@ -7,6 +7,7 @@ import Mixin from '@ember/object/mixin';
 import { scheduleOnce } from '@ember/runloop';
 import { assert } from '@ember/debug';
 import { on } from '@ember/object/evented';
+import { set } from '@ember/object';
 
 // eslint-disable-next-line ember/no-new-mixins
 export default Mixin.create({
@@ -22,7 +23,7 @@ export default Mixin.create({
   }),
 
   addResizeListener() {
-    this.set('_windowResizeHandler', this.windowResizeHandler.bind(this));
+    set(this, '_windowResizeHandler', this.windowResizeHandler.bind(this));
     window.addEventListener('resize', this._windowResizeHandler);
   },
 

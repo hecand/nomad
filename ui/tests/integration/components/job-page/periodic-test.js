@@ -6,7 +6,7 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { click, find, findAll, render } from '@ember/test-helpers';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 import moment from 'moment';
 import { create, collection } from 'ember-cli-page-object';
 import { startMirage } from 'nomad-ui/initializers/ember-cli-mirage';
@@ -85,7 +85,7 @@ module('Integration | Component | job-page/periodic', function (hooks) {
 
     const currentJobCount = server.db.jobs.length;
 
-    assert.equal(
+    assert.strictEqual(
       findAll('[data-test-job-row] [data-test-job-name]').length,
       childrenCount,
       'The new periodic job launch is in the children list'
@@ -102,7 +102,7 @@ module('Integration | Component | job-page/periodic', function (hooks) {
       'POST URL was correct'
     );
 
-    assert.equal(
+    assert.strictEqual(
       server.db.jobs.length,
       currentJobCount + 1,
       'POST request was made'
@@ -134,7 +134,7 @@ module('Integration | Component | job-page/periodic', function (hooks) {
 
     await click('[data-test-force-launch]');
 
-    assert.equal(
+    assert.strictEqual(
       find('[data-test-job-error-title]').textContent,
       'Could Not Force Launch',
       'Appropriate error is shown'
@@ -284,7 +284,7 @@ module('Integration | Component | job-page/periodic', function (hooks) {
     this.setProperties(commonProperties(job));
     await render(commonTemplate);
 
-    assert.equal(
+    assert.strictEqual(
       find('[data-test-job-submit-time]').textContent.trim(),
       moment(job.get('children.firstObject.submitTime')).format(
         'MMM DD HH:mm:ss ZZ'

@@ -4,15 +4,12 @@
  */
 
 import { get } from '@ember/object';
-import { assign } from '@ember/polyfills';
 import { inject as service } from '@ember/service';
 import { AbortError } from '@ember-data/adapter/error';
 import queryString from 'query-string';
 import ApplicationAdapter from './application';
 import removeRecord from '../utils/remove-record';
-import classic from 'ember-classic-decorator';
 
-@classic
 export default class Watchable extends ApplicationAdapter {
   @service watchList;
   @service store;
@@ -39,7 +36,7 @@ export default class Watchable extends ApplicationAdapter {
   }
 
   findAll(store, type, sinceToken, snapshotRecordArray, additionalParams = {}) {
-    const params = assign(this.buildQuery(), additionalParams);
+    const params = Object.assign(this.buildQuery(), additionalParams);
     const url = this.urlForFindAll(type.modelName);
 
     if (get(snapshotRecordArray || {}, 'adapterOptions.watch')) {
@@ -64,7 +61,7 @@ export default class Watchable extends ApplicationAdapter {
       'findRecord'
     );
     let [url, params] = originalUrl.split('?');
-    params = assign(
+    params = Object.assign(
       queryString.parse(params) || {},
       this.buildQuery(),
       additionalParams
@@ -97,7 +94,7 @@ export default class Watchable extends ApplicationAdapter {
     const url = this.buildURL(type.modelName, null, null, 'query', query);
     const method = get(options, 'adapterOptions.method') || 'GET';
     let [urlPath, params] = url.split('?');
-    params = assign(
+    params = Object.assign(
       queryString.parse(params) || {},
       this.buildQuery(),
       additionalParams,

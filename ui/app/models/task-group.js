@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import { computed } from '@ember/object';
+import { computed, get } from '@ember/object';
 import Fragment from 'ember-data-model-fragments/fragment';
 import { attr } from '@ember-data/model';
 import {
@@ -12,11 +12,9 @@ import {
   fragment,
 } from 'ember-data-model-fragments/attributes';
 import sumAggregation from '../utils/properties/sum-aggregation';
-import classic from 'ember-classic-decorator';
 
 const maybe = (arr) => arr || [];
 
-@classic
 export default class TaskGroup extends Fragment {
   @fragmentOwner() job;
 
@@ -68,7 +66,7 @@ export default class TaskGroup extends Fragment {
   get mergedMeta() {
     return {
       ...this.job.get('meta.raw'),
-      ...this.get('meta.raw'),
+      ...get(this, 'meta.raw'),
     };
   }
 
@@ -79,7 +77,7 @@ export default class TaskGroup extends Fragment {
 
   @computed('job.allocations.{@each.taskGroup,isFulfilled}', 'name')
   get allocations() {
-    return maybe(this.get('job.allocations')).filterBy(
+    return maybe(get(this, 'job.allocations')).filterBy(
       'taskGroupName',
       this.name
     );
@@ -91,7 +89,7 @@ export default class TaskGroup extends Fragment {
 
   @computed('tasks.@each.{reservedMemory,reservedMemoryMax}')
   get reservedMemoryMax() {
-    return this.get('tasks')
+    return this.tasks
       .map((t) => t.get('reservedMemoryMax') || t.get('reservedMemory'))
       .reduce((sum, count) => sum + count, 0);
   }
@@ -100,7 +98,8 @@ export default class TaskGroup extends Fragment {
 
   @computed('job.latestFailureEvaluation.failedTGAllocs.[]', 'name')
   get placementFailures() {
-    const placementFailures = this.get(
+    const placementFailures = get(
+      this,
       'job.latestFailureEvaluation.failedTGAllocs'
     );
     return placementFailures && placementFailures.findBy('name', this.name);
@@ -109,18 +108,18 @@ export default class TaskGroup extends Fragment {
   @computed('summary.{queuedAllocs,startingAllocs}')
   get queuedOrStartingAllocs() {
     return (
-      this.get('summary.queuedAllocs') + this.get('summary.startingAllocs')
+      get(this, 'summary.queuedAllocs') + get(this, 'summary.startingAllocs')
     );
   }
 
   @computed('job.taskGroupSummaries.[]', 'name')
   get summary() {
-    return maybe(this.get('job.taskGroupSummaries')).findBy('name', this.name);
+    return maybe(get(this, 'job.taskGroupSummaries')).findBy('name', this.name);
   }
 
   @computed('job.scaleState.taskGroupScales.[]', 'name')
   get scaleState() {
-    return maybe(this.get('job.scaleState.taskGroupScales')).findBy(
+    return maybe(get(this, 'job.scaleState.taskGroupScales')).findBy(
       'name',
       this.name
     );

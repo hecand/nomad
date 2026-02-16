@@ -105,7 +105,7 @@ function moduleForJobDispatch(title, jobFactory) {
 
     test('all meta fields are displayed', async function (assert) {
       await JobDispatch.visit({ id: `${job.id}@${namespace.name}` });
-      assert.equal(
+      assert.strictEqual(
         JobDispatch.metaFields.length,
         job.parameterizedJob.MetaOptional.length +
           job.parameterizedJob.MetaRequired.length
@@ -210,7 +210,7 @@ function moduleForJobDispatch(title, jobFactory) {
       await JobDispatch.dispatchButton.click();
       const childrenCountAfter = countDispatchChildren();
 
-      assert.equal(childrenCountAfter, childrenCountBefore + 1);
+      assert.strictEqual(childrenCountAfter, childrenCountBefore + 1);
       assert.ok(
         currentURL().startsWith(`/jobs/${encodeURIComponent(`${job.id}/`)}`)
       );

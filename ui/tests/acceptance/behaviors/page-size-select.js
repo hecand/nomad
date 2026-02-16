@@ -21,15 +21,21 @@ export default function pageSizeSelect({
 
     await setup.call(this);
 
-    assert.equal(pageObjectList.length, storedPageSize);
-    assert.equal(pageObject.pageSizeSelect.selectedOption, storedPageSize);
+    assert.strictEqual(pageObjectList.length, storedPageSize);
+    assert.strictEqual(
+      pageObject.pageSizeSelect.selectedOption,
+      storedPageSize
+    );
   });
 
   test('when the page size user setting is unset, the default page size is 25', async function (assert) {
     await setup.call(this);
 
-    assert.equal(pageObjectList.length, pageObject.pageSize);
-    assert.equal(pageObject.pageSizeSelect.selectedOption, pageObject.pageSize);
+    assert.strictEqual(pageObjectList.length, pageObject.pageSize);
+    assert.strictEqual(
+      pageObject.pageSizeSelect.selectedOption,
+      pageObject.pageSize
+    );
   });
 
   test(`changing the page size updates the ${pluralize(
@@ -39,14 +45,20 @@ export default function pageSizeSelect({
 
     await setup.call(this);
 
-    assert.equal(window.localStorage.nomadPageSize, null);
-    assert.equal(pageObjectList.length, pageObject.pageSize);
-    assert.equal(pageObject.pageSizeSelect.selectedOption, pageObject.pageSize);
+    assert.strictEqual(window.localStorage.nomadPageSize, null);
+    assert.strictEqual(pageObjectList.length, pageObject.pageSize);
+    assert.strictEqual(
+      pageObject.pageSizeSelect.selectedOption,
+      pageObject.pageSize
+    );
 
     await selectChoose('[data-test-page-size-select-parent]', desiredPageSize);
 
-    assert.equal(window.localStorage.nomadPageSize, desiredPageSize);
-    assert.equal(pageObjectList.length, desiredPageSize);
-    assert.equal(pageObject.pageSizeSelect.selectedOption, desiredPageSize);
+    assert.strictEqual(window.localStorage.nomadPageSize, desiredPageSize);
+    assert.strictEqual(pageObjectList.length, desiredPageSize);
+    assert.strictEqual(
+      pageObject.pageSizeSelect.selectedOption,
+      desiredPageSize
+    );
   });
 }

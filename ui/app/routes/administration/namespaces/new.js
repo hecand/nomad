@@ -7,11 +7,12 @@ import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
 
 export default class AccessControlNamespacesNewRoute extends Route {
-  @service can;
+  @service abilities;
   @service router;
+  @service store;
 
   beforeModel() {
-    if (this.can.cannot('write namespace')) {
+    if (this.abilities.cannot('write namespace')) {
       this.router.transitionTo('/administration/namespaces');
     }
   }
@@ -20,7 +21,7 @@ export default class AccessControlNamespacesNewRoute extends Route {
     let defaultMeta = {};
 
     let defaultNodePoolConfig = null;
-    if (this.can.can('configure-in-namespace node-pool')) {
+    if (this.abilities.can('configure-in-namespace node-pool')) {
       defaultNodePoolConfig = this.store.createFragment(
         'ns-node-pool-configuration',
         {

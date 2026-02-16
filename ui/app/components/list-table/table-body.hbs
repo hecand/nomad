@@ -3,6 +3,8 @@
   SPDX-License-Identifier: BUSL-1.1
 ~}}
 
-{{#each this.rows key=this.key as |row index|}}
-  {{yield row index}}
-{{/each}}
+<tbody ...attributes>
+  {{#each @rows key=this.key as |row index|}}
+    {{yield row index}}
+  {{/each}}
+</tbody>

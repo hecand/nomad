@@ -75,7 +75,7 @@ module('Unit | Model | job', function (hooks) {
       })
     );
 
-    assert.equal(
+    assert.strictEqual(
       job.get('totalAllocs'),
       job
         .get('taskGroups')
@@ -84,7 +84,7 @@ module('Unit | Model | job', function (hooks) {
       'totalAllocs is the sum of all group totalAllocs'
     );
 
-    assert.equal(
+    assert.strictEqual(
       job.get('queuedAllocs'),
       job
         .get('taskGroups')
@@ -93,7 +93,7 @@ module('Unit | Model | job', function (hooks) {
       'queuedAllocs is the sum of all group queuedAllocs'
     );
 
-    assert.equal(
+    assert.strictEqual(
       job.get('startingAllocs'),
       job
         .get('taskGroups')
@@ -102,7 +102,7 @@ module('Unit | Model | job', function (hooks) {
       'startingAllocs is the sum of all group startingAllocs'
     );
 
-    assert.equal(
+    assert.strictEqual(
       job.get('runningAllocs'),
       job
         .get('taskGroups')
@@ -111,7 +111,7 @@ module('Unit | Model | job', function (hooks) {
       'runningAllocs is the sum of all group runningAllocs'
     );
 
-    assert.equal(
+    assert.strictEqual(
       job.get('completeAllocs'),
       job
         .get('taskGroups')
@@ -120,7 +120,7 @@ module('Unit | Model | job', function (hooks) {
       'completeAllocs is the sum of all group completeAllocs'
     );
 
-    assert.equal(
+    assert.strictEqual(
       job.get('failedAllocs'),
       job
         .get('taskGroups')
@@ -129,7 +129,7 @@ module('Unit | Model | job', function (hooks) {
       'failedAllocs is the sum of all group failedAllocs'
     );
 
-    assert.equal(
+    assert.strictEqual(
       job.get('lostAllocs'),
       job
         .get('taskGroups')
@@ -204,31 +204,31 @@ module('Unit | Model | job', function (hooks) {
       })
     );
 
-    assert.equal(
+    assert.strictEqual(
       job.get('actions.length'),
       4,
       'Job draws actions from its task groups tasks'
     );
 
     // Three actions named one, one named two
-    assert.equal(
+    assert.strictEqual(
       job.get('actions').filterBy('name', 'one').length,
       3,
       'Job has three actions named one'
     );
-    assert.equal(
+    assert.strictEqual(
       job.get('actions').filterBy('name', 'two').length,
       1,
       'Job has one action named two'
     );
 
     // Job's actions mapped by task.name return 1.1, 1.1, 3.1, 3.2
-    assert.equal(
+    assert.strictEqual(
       job.get('actions').mapBy('task.name').length,
       4,
       'Job action fragments surface their task properties'
     );
-    assert.equal(
+    assert.strictEqual(
       job
         .get('actions')
         .mapBy('task.name')
@@ -236,7 +236,7 @@ module('Unit | Model | job', function (hooks) {
       2,
       'Two of the job actions are from task 1.1'
     );
-    assert.equal(
+    assert.strictEqual(
       job
         .get('actions')
         .mapBy('task.name')
@@ -244,7 +244,7 @@ module('Unit | Model | job', function (hooks) {
       1,
       'One of the job actions is from task 3.1'
     );
-    assert.equal(
+    assert.strictEqual(
       job
         .get('actions')
         .mapBy('task.name')

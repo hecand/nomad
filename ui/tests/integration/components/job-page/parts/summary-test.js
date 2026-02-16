@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 import { find, click, render } from '@ember/test-helpers';
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
@@ -95,37 +95,37 @@ module('Integration | Component | job-page/parts/summary', function (hooks) {
       <JobPage::Parts::Summary @job={{job}} />
     `);
 
-    assert.equal(
+    assert.strictEqual(
       find('[data-test-legend-value="queued"]').textContent,
       this.get('job.queuedAllocs'),
       `${this.get('job.queuedAllocs')} are queued`
     );
 
-    assert.equal(
+    assert.strictEqual(
       find('[data-test-legend-value="starting"]').textContent,
       this.get('job.startingAllocs'),
       `${this.get('job.startingAllocs')} are starting`
     );
 
-    assert.equal(
+    assert.strictEqual(
       find('[data-test-legend-value="running"]').textContent,
       this.get('job.runningAllocs'),
       `${this.get('job.runningAllocs')} are running`
     );
 
-    assert.equal(
+    assert.strictEqual(
       find('[data-test-legend-value="complete"]').textContent,
       this.get('job.completeAllocs'),
       `${this.get('job.completeAllocs')} are complete`
     );
 
-    assert.equal(
+    assert.strictEqual(
       find('[data-test-legend-value="failed"]').textContent,
       this.get('job.failedAllocs'),
       `${this.get('job.failedAllocs')} are failed`
     );
 
-    assert.equal(
+    assert.strictEqual(
       find('[data-test-legend-value="lost"]').textContent,
       this.get('job.lostAllocs'),
       `${this.get('job.lostAllocs')} are lost`
@@ -145,19 +145,19 @@ module('Integration | Component | job-page/parts/summary', function (hooks) {
       <JobPage::Parts::Summary @job={{job}} />
     `);
 
-    assert.equal(
+    assert.strictEqual(
       find('[data-test-legend-value="queued"]').textContent,
       this.get('job.pendingChildren'),
       `${this.get('job.pendingChildren')} are pending`
     );
 
-    assert.equal(
+    assert.strictEqual(
       find('[data-test-legend-value="running"]').textContent,
       this.get('job.runningChildren'),
       `${this.get('job.runningChildren')} are running`
     );
 
-    assert.equal(
+    assert.strictEqual(
       find('[data-test-legend-value="complete"]').textContent,
       this.get('job.deadChildren'),
       `${this.get('job.deadChildren')} are dead`
@@ -231,7 +231,7 @@ module('Integration | Component | job-page/parts/summary', function (hooks) {
     );
     await click('[data-test-accordion-toggle]');
 
-    assert.equal(
+    assert.strictEqual(
       window.localStorage.nomadExpandJobSummary,
       'false',
       'Value is stored for the collapsed state'
@@ -264,7 +264,7 @@ module('Integration | Component | job-page/parts/summary', function (hooks) {
 
     await click('[data-test-accordion-toggle]');
 
-    assert.equal(
+    assert.strictEqual(
       window.localStorage.nomadExpandJobSummary,
       'true',
       'localStorage value still toggles'

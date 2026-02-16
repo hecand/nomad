@@ -18,6 +18,7 @@ export default class IndexController extends Controller {
   @service userSettings;
   @service system;
   @service keyboard;
+  @service store;
 
   queryParams = [
     { qpNamespace: 'namespace' },

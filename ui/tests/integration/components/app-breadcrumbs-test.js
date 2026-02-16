@@ -9,7 +9,7 @@ import templateOnlyComponent from '@ember/component/template-only';
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { findAll, render } from '@ember/test-helpers';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 
 module('Integration | Component | app breadcrumbs', function (hooks) {
   setupRenderingTest(hooks);
@@ -38,7 +38,7 @@ module('Integration | Component | app breadcrumbs', function (hooks) {
     const renderedCrumbs = findAll('[data-test-breadcrumb]');
 
     renderedCrumbs.forEach((crumb, index) => {
-      assert.equal(
+      assert.strictEqual(
         crumb.textContent.trim(),
         commonCrumbs[index].label,
         `Crumb ${index} is ${commonCrumbs[index].label}`

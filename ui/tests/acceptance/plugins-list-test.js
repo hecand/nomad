@@ -30,8 +30,8 @@ module('Acceptance | plugins list', function (hooks) {
   test('visiting /storage/plugins', async function (assert) {
     await PluginsList.visit();
 
-    assert.equal(currentURL(), '/storage/plugins');
-    assert.equal(document.title, 'CSI Plugins - Nomad');
+    assert.strictEqual(currentURL(), '/storage/plugins');
+    assert.strictEqual(document.title, 'CSI Plugins - Nomad');
   });
 
   test('/storage/plugins should list the first page of plugins sorted by id', async function (assert) {
@@ -41,9 +41,13 @@ module('Acceptance | plugins list', function (hooks) {
     await PluginsList.visit();
 
     const sortedPlugins = server.db.csiPlugins.sortBy('id');
-    assert.equal(PluginsList.plugins.length, PluginsList.pageSize);
+    assert.strictEqual(PluginsList.plugins.length, PluginsList.pageSize);
     PluginsList.plugins.forEach((plugin, index) => {
-      assert.equal(plugin.id, sortedPlugins[index].id, 'Plugins are ordered');
+      assert.strictEqual(
+        plugin.id,
+        sortedPlugins[index].id,
+        'Plugins are ordered'
+      );
     });
   });
 
@@ -60,16 +64,16 @@ module('Acceptance | plugins list', function (hooks) {
       plugin.controllersHealthy > 0 ? 'Healthy' : 'Unhealthy';
     const nodeHealthStr = plugin.nodesHealthy > 0 ? 'Healthy' : 'Unhealthy';
 
-    assert.equal(pluginRow.id, plugin.id);
-    assert.equal(
+    assert.strictEqual(pluginRow.id, plugin.id);
+    assert.strictEqual(
       pluginRow.controllerHealth,
       `${controllerHealthStr} (${plugin.controllersHealthy}/${plugin.controllersExpected})`
     );
-    assert.equal(
+    assert.strictEqual(
       pluginRow.nodeHealth,
       `${nodeHealthStr} (${plugin.nodesHealthy}/${plugin.nodesExpected})`
     );
-    assert.equal(pluginRow.provider, plugin.provider);
+    assert.strictEqual(pluginRow.provider, plugin.provider);
   });
 
   test('node only plugins explain that there is no controller health for this plugin type', async function (assert) {
@@ -83,13 +87,13 @@ module('Acceptance | plugins list', function (hooks) {
     const pluginRow = PluginsList.plugins.objectAt(0);
     const nodeHealthStr = plugin.nodesHealthy > 0 ? 'Healthy' : 'Unhealthy';
 
-    assert.equal(pluginRow.id, plugin.id);
-    assert.equal(pluginRow.controllerHealth, 'Node Only');
-    assert.equal(
+    assert.strictEqual(pluginRow.id, plugin.id);
+    assert.strictEqual(pluginRow.controllerHealth, 'Node Only');
+    assert.strictEqual(
       pluginRow.nodeHealth,
       `${nodeHealthStr} (${plugin.nodesHealthy}/${plugin.nodesExpected})`
     );
-    assert.equal(pluginRow.provider, plugin.provider);
+    assert.strictEqual(pluginRow.provider, plugin.provider);
   });
 
   test('each plugin row should link to the corresponding plugin', async function (assert) {
@@ -98,20 +102,20 @@ module('Acceptance | plugins list', function (hooks) {
     await PluginsList.visit();
 
     await PluginsList.plugins.objectAt(0).clickName();
-    assert.equal(currentURL(), `/storage/plugins/${plugin.id}`);
+    assert.strictEqual(currentURL(), `/storage/plugins/${plugin.id}`);
 
     await PluginsList.visit();
-    assert.equal(currentURL(), '/storage/plugins');
+    assert.strictEqual(currentURL(), '/storage/plugins');
 
     await PluginsList.plugins.objectAt(0).clickRow();
-    assert.equal(currentURL(), `/storage/plugins/${plugin.id}`);
+    assert.strictEqual(currentURL(), `/storage/plugins/${plugin.id}`);
   });
 
   test('when there are no plugins, there is an empty message', async function (assert) {
     await PluginsList.visit();
 
     assert.ok(PluginsList.isEmpty);
-    assert.equal(PluginsList.emptyState.headline, 'No Plugins');
+    assert.strictEqual(PluginsList.emptyState.headline, 'No Plugins');
   });
 
   test('when there are plugins, but no matches for a search, there is an empty message', async function (assert) {
@@ -122,7 +126,7 @@ module('Acceptance | plugins list', function (hooks) {
 
     await PluginsList.search('dog');
     assert.ok(PluginsList.isEmpty);
-    assert.equal(PluginsList.emptyState.headline, 'No Matches');
+    assert.strictEqual(PluginsList.emptyState.headline, 'No Matches');
   });
 
   test('search resets the current page', async function (assert) {
@@ -133,21 +137,21 @@ module('Acceptance | plugins list', function (hooks) {
     await PluginsList.visit();
     await PluginsList.nextPage();
 
-    assert.equal(currentURL(), '/storage/plugins?page=2');
+    assert.strictEqual(currentURL(), '/storage/plugins?page=2');
 
     await PluginsList.search('foobar');
 
-    assert.equal(currentURL(), '/storage/plugins?search=foobar');
+    assert.strictEqual(currentURL(), '/storage/plugins?search=foobar');
   });
 
   test('when accessing plugins is forbidden, a message is shown with a link to the tokens page', async function (assert) {
     server.pretender.get('/v1/plugins', () => [403, {}, null]);
 
     await PluginsList.visit();
-    assert.equal(PluginsList.error.title, 'Not Authorized');
+    assert.strictEqual(PluginsList.error.title, 'Not Authorized');
 
     await PluginsList.error.seekHelp();
-    assert.equal(currentURL(), '/settings/tokens');
+    assert.strictEqual(currentURL(), '/settings/tokens');
   });
 
   pageSizeSelect({

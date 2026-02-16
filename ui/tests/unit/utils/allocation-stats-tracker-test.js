@@ -4,7 +4,6 @@
  */
 
 import EmberObject from '@ember/object';
-import { assign } from '@ember/polyfills';
 import { module, test } from 'qunit';
 import sinon from 'sinon';
 import Pretender from 'pretender';
@@ -21,7 +20,7 @@ module('Unit | Util | AllocationStatsTracker', function () {
   const makeDate = (ts) => new Date(ts / 1000000);
 
   const MockAllocation = (overrides) =>
-    assign(
+    Object.assign(
       {
         id: 'some-identifier',
         taskGroup: {
@@ -118,7 +117,7 @@ module('Unit | Util | AllocationStatsTracker', function () {
     const allocation = MockAllocation();
     const tracker = AllocationStatsTracker.create({ fetch, allocation });
 
-    assert.equal(
+    assert.strictEqual(
       tracker.get('url'),
       `/v1/client/allocation/${allocation.id}/stats`,
       'Url is derived from the allocation id'
@@ -129,12 +128,12 @@ module('Unit | Util | AllocationStatsTracker', function () {
     const allocation = MockAllocation();
     const tracker = AllocationStatsTracker.create({ fetch, allocation });
 
-    assert.equal(
+    assert.strictEqual(
       tracker.get('reservedCPU'),
       allocation.taskGroup.reservedCPU,
       'reservedCPU comes from the allocation task group'
     );
-    assert.equal(
+    assert.strictEqual(
       tracker.get('reservedMemory'),
       allocation.taskGroup.reservedMemory,
       'reservedMemory comes from the allocation task group'
@@ -147,19 +146,19 @@ module('Unit | Util | AllocationStatsTracker', function () {
     const allocation = MockAllocation();
     const tracker = AllocationStatsTracker.create({ fetch, allocation });
 
-    assert.equal(
+    assert.strictEqual(
       tracker.get('tasks.length'),
       allocation.taskGroup.tasks.length,
       'tasks matches lengths with the allocation task group'
     );
     allocation.taskGroup.tasks.forEach((task) => {
       const trackerTask = tracker.get('tasks').findBy('task', task.name);
-      assert.equal(
+      assert.strictEqual(
         trackerTask.reservedCPU,
         task.reservedCPU,
         `CPU matches for task ${task.name}`
       );
-      assert.equal(
+      assert.strictEqual(
         trackerTask.reservedMemory,
         task.reservedMemory,
         `Memory matches for task ${task.name}`
@@ -191,8 +190,12 @@ module('Unit | Util | AllocationStatsTracker', function () {
 
     tracker.get('poll').perform();
 
-    assert.equal(server.handledRequests.length, 1, 'Only one request was made');
-    assert.equal(
+    assert.strictEqual(
+      server.handledRequests.length,
+      1,
+      'Only one request was made'
+    );
+    assert.strictEqual(
       server.handledRequests[0].url,
       `/v1/client/allocation/${allocation.id}/stats`,
       'The correct URL was requested'
@@ -497,69 +500,69 @@ module('Unit | Util | AllocationStatsTracker', function () {
       tracker.append(mockFrame(i));
     }
 
-    assert.equal(
+    assert.strictEqual(
       tracker.get('cpu.length'),
       bufferSize,
       `20 calls to append, only ${bufferSize} frames in the stats array`
     );
-    assert.equal(
+    assert.strictEqual(
       tracker.get('memory.length'),
       bufferSize,
       `20 calls to append, only ${bufferSize} frames in the stats array`
     );
 
-    assert.equal(
+    assert.strictEqual(
       +tracker.get('cpu')[0].timestamp,
       +makeDate(refDate + 11000),
       'Old frames are removed in favor of newer ones'
     );
-    assert.equal(
+    assert.strictEqual(
       +tracker.get('memory')[0].timestamp,
       +makeDate(refDate + 11000),
       'Old frames are removed in favor of newer ones'
     );
 
     tracker.get('tasks').forEach((task) => {
-      assert.equal(
+      assert.strictEqual(
         task.cpu.length,
         bufferSize,
         `20 calls to append, only ${bufferSize} frames in the stats array`
       );
-      assert.equal(
+      assert.strictEqual(
         task.memory.length,
         bufferSize,
         `20 calls to append, only ${bufferSize} frames in the stats array`
       );
     });
 
-    assert.equal(
+    assert.strictEqual(
       +tracker.get('tasks').findBy('task', 'service').cpu[0].timestamp,
       +makeDate(refDate + 11),
       'Old frames are removed in favor of newer ones'
     );
-    assert.equal(
+    assert.strictEqual(
       +tracker.get('tasks').findBy('task', 'service').memory[0].timestamp,
       +makeDate(refDate + 11),
       'Old frames are removed in favor of newer ones'
     );
 
-    assert.equal(
+    assert.strictEqual(
       +tracker.get('tasks').findBy('task', 'log-shipper').cpu[0].timestamp,
       +makeDate(refDate + 110),
       'Old frames are removed in favor of newer ones'
     );
-    assert.equal(
+    assert.strictEqual(
       +tracker.get('tasks').findBy('task', 'log-shipper').memory[0].timestamp,
       +makeDate(refDate + 110),
       'Old frames are removed in favor of newer ones'
     );
 
-    assert.equal(
+    assert.strictEqual(
       +tracker.get('tasks').findBy('task', 'sidecar').cpu[0].timestamp,
       +makeDate(refDate + 1100),
       'Old frames are removed in favor of newer ones'
     );
-    assert.equal(
+    assert.strictEqual(
       +tracker.get('tasks').findBy('task', 'sidecar').memory[0].timestamp,
       +makeDate(refDate + 1100),
       'Old frames are removed in favor of newer ones'
@@ -579,7 +582,7 @@ module('Unit | Util | AllocationStatsTracker', function () {
       alloc: allocation,
     });
 
-    assert.equal(
+    assert.strictEqual(
       someObject.get('stats.url'),
       `/v1/client/allocation/${allocation.id}/stats`,
       'stats computed property macro creates an AllocationStatsTracker'

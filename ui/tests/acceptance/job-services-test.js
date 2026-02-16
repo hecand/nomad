@@ -52,7 +52,7 @@ module('Acceptance | job services', function (hooks) {
       'correctly traverses to a service instance list'
     );
 
-    assert.equal(
+    assert.strictEqual(
       findAll('tr[data-test-service-row]').length,
       expectedNumAllocs,
       'Same number of alloc rows as the index shows'

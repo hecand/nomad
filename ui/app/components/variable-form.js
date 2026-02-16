@@ -3,15 +3,12 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-// @ts-check
-
 import Component from '@glimmer/component';
-import { action, computed } from '@ember/object';
+import EmberObject, { action, computed, set } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { inject as service } from '@ember/service';
 import { trimPath } from '../helpers/trim-path';
 import { copy } from 'ember-copy';
-import EmberObject, { set } from '@ember/object';
 // eslint-disable-next-line no-unused-vars
 import MutableArray from '@ember/array/mutable';
 import { A } from '@ember/array';
@@ -32,7 +29,7 @@ export default class VariableFormComponent extends Component {
   @service notifications;
   @service router;
   @service store;
-  @service can;
+  @service abilities;
 
   @tracked variableNamespace = null;
   @tracked namespaceOptions = null;
@@ -265,7 +262,7 @@ export default class VariableFormComponent extends Component {
       });
 
       if (
-        this.can.can('read job', null, {
+        this.abilities.can('read job', null, {
           namespace: this.variableNamespace || 'default',
         })
       ) {

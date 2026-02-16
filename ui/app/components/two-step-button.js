@@ -4,15 +4,13 @@
  */
 
 import Component from '@ember/component';
-import { action } from '@ember/object';
+import { action, set } from '@ember/object';
 import { next } from '@ember/runloop';
 import { equal } from '@ember/object/computed';
 import { task, waitForEvent } from 'ember-concurrency';
 import RSVP from 'rsvp';
 import { classNames, classNameBindings } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 
-@classic
 @classNames('two-step-button')
 @classNameBindings(
   'inlineText:has-inline-text',
@@ -51,7 +49,7 @@ export default class TwoStepButton extends Component {
 
   @action
   setToIdle() {
-    this.set('state', 'idle');
+    set(this, 'state', 'idle');
     this.cancelOnClickOutside.cancelAll();
   }
 
@@ -60,7 +58,7 @@ export default class TwoStepButton extends Component {
     if (this.onPrompt) {
       this.onPrompt();
     }
-    this.set('state', 'prompt');
+    set(this, 'state', 'prompt');
     next(() => {
       this.cancelOnClickOutside.perform();
     });

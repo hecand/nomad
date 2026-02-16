@@ -7,7 +7,7 @@ import { findAll, find, render } from '@ember/test-helpers';
 import { module, skip, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import faker from 'nomad-ui/mirage/faker';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 import { componentA11yAudit } from 'nomad-ui/tests/helpers/a11y-audit';
 
 module('Integration | Component | list table', function (hooks) {
@@ -26,7 +26,7 @@ module('Integration | Component | list table', function (hooks) {
     this.set('source', commonTable);
     await render(hbs`
       <ListTable @source={{source}} @sortProperty={{sortProperty}} @sortDescending={{sortDescending}} as |t|>
-        <t.head @class="head">
+        <t.head class="head">
           <th>First Name</th>
           <th>Last Name</th>
           <th>Age</th>
@@ -35,7 +35,7 @@ module('Integration | Component | list table', function (hooks) {
     `);
 
     assert.ok(findAll('.head').length, 'Table head is rendered');
-    assert.equal(
+    assert.strictEqual(
       find('.head').tagName.toLowerCase(),
       'thead',
       'Table head is a thead element'
@@ -53,7 +53,7 @@ module('Integration | Component | list table', function (hooks) {
     });
     await render(hbs`
       <ListTable @source={{source}} @sortProperty={{sortProperty}} @sortDescending={{sortDescending}} as |t|>
-        <t.body @class="body" as |row index|>
+        <t.body class="body" as |row index|>
           <tr class="item">
             <td>{{row.model.firstName}}</td>
             <td>{{row.model.lastName}}</td>
@@ -65,13 +65,13 @@ module('Integration | Component | list table', function (hooks) {
     `);
 
     assert.ok(findAll('.body').length, 'Table body is rendered');
-    assert.equal(
+    assert.strictEqual(
       find('.body').tagName.toLowerCase(),
       'tbody',
       'Table body is a tbody element'
     );
 
-    assert.equal(
+    assert.strictEqual(
       findAll('.item').length,
       this.get('source.length'),
       'Each item gets its own row'
@@ -81,22 +81,22 @@ module('Integration | Component | list table', function (hooks) {
     // rendered in index-order.
     this.source.forEach((item, index) => {
       const $item = this.element.querySelectorAll('.item')[index];
-      assert.equal(
+      assert.strictEqual(
         $item.querySelectorAll('td')[0].innerHTML.trim(),
         item.firstName,
         'First name'
       );
-      assert.equal(
+      assert.strictEqual(
         $item.querySelectorAll('td')[1].innerHTML.trim(),
         item.lastName,
         'Last name'
       );
-      assert.equal(
+      assert.strictEqual(
         $item.querySelectorAll('td')[2].innerHTML.trim(),
         item.age,
         'Age'
       );
-      assert.equal(
+      assert.strictEqual(
         $item.querySelectorAll('td')[3].innerHTML.trim(),
         index,
         'Index'

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import { computed } from '@ember/object';
+import { computed, get } from '@ember/object';
 import { alias, and } from '@ember/object/computed';
 import Fragment from 'ember-data-model-fragments/fragment';
 import { attr } from '@ember-data/model';
@@ -12,9 +12,7 @@ import {
   fragmentOwner,
   fragmentArray,
 } from 'ember-data-model-fragments/attributes';
-import classic from 'ember-classic-decorator';
 
-@classic
 export default class TaskState extends Fragment {
   @fragmentOwner() allocation;
 
@@ -29,12 +27,12 @@ export default class TaskState extends Fragment {
 
   @computed('task.kind')
   get isConnectProxy() {
-    return (this.get('task.kind') || '').startsWith('connect-proxy:');
+    return (get(this, 'task.kind') || '').startsWith('connect-proxy:');
   }
 
   @computed('name', 'allocation.taskGroup.tasks.[]')
   get task() {
-    const tasks = this.get('allocation.taskGroup.tasks');
+    const tasks = get(this, 'allocation.taskGroup.tasks');
     return tasks && tasks.findBy('name', this.name);
   }
 
@@ -44,8 +42,8 @@ export default class TaskState extends Fragment {
   // driver via the task, the health of the driver is also known via the node
   @computed('task.driver', 'allocation.node.drivers.[]')
   get driverStatus() {
-    const nodeDrivers = this.get('allocation.node.drivers') || [];
-    return nodeDrivers.findBy('name', this.get('task.driver'));
+    const nodeDrivers = get(this, 'allocation.node.drivers') || [];
+    return nodeDrivers.findBy('name', get(this, 'task.driver'));
   }
 
   @fragment('resources') resources;

@@ -6,12 +6,11 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { find, click, render, settled } from '@ember/test-helpers';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 import Pretender from 'pretender';
 import { logEncode } from '../../../../mirage/data/logs';
 import { componentA11yAudit } from 'nomad-ui/tests/helpers/a11y-audit';
 
-const { assign } = Object;
 const HOST = '1.1.1.1:1111';
 
 module('Integration | Component | fs/file', function (hooks) {
@@ -60,7 +59,7 @@ module('Integration | Component | fs/file', function (hooks) {
     },
   });
   const makeProps = (props = {}) =>
-    assign(
+    Object.assign(
       {},
       {
         allocation: {

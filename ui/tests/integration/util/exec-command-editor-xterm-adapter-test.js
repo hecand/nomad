@@ -7,7 +7,7 @@ import ExecCommandEditorXtermAdapter from 'nomad-ui/utils/classes/exec-command-e
 import { setupRenderingTest } from 'ember-qunit';
 import { module, test } from 'qunit';
 import { render, settled } from '@ember/test-helpers';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 import { Terminal } from 'xterm';
 import KEYS from 'nomad-ui/utils/keys';
 
@@ -22,8 +22,8 @@ module(
       let done = assert.async();
 
       await render(hbs`
-      <div id='terminal'></div>
-    `);
+    <div id='terminal'></div>
+  `);
 
       let terminal = new Terminal({ cols: 10 });
       terminal.open(document.getElementById('terminal'));
@@ -33,7 +33,7 @@ module(
       new ExecCommandEditorXtermAdapter(
         terminal,
         (command) => {
-          assert.equal(command, '/bin/long');
+          assert.strictEqual(command, '/bin/long');
           done();
         },
         '/bin/long-command'
@@ -50,7 +50,7 @@ module(
 
       await settled();
 
-      assert.equal(
+      assert.strictEqual(
         terminal.buffer.active.getLine(0).translateToString().trim(),
         '/bin/long'
       );
@@ -64,8 +64,8 @@ module(
       let done = assert.async();
 
       await render(hbs`
-      <div id='terminal'></div>
-    `);
+    <div id='terminal'></div>
+  `);
 
       let terminal = new Terminal({ cols: 72 });
       terminal.open(document.getElementById('terminal'));
@@ -75,7 +75,7 @@ module(
       new ExecCommandEditorXtermAdapter(
         terminal,
         (command) => {
-          assert.equal(command, '/bin/bash!');
+          assert.strictEqual(command, '/bin/bash!');
           done();
         },
         '/bin/bash'
@@ -92,10 +92,10 @@ module(
 
       await settled();
 
-      assert.equal(terminal.buffer.active.cursorY, 0);
-      assert.equal(terminal.buffer.active.cursorX, 10);
+      assert.strictEqual(terminal.buffer.active.cursorY, 0);
+      assert.strictEqual(terminal.buffer.active.cursorX, 10);
 
-      assert.equal(
+      assert.strictEqual(
         terminal.buffer.active.getLine(0).translateToString().trim(),
         '/bin/bash!'
       );
@@ -109,8 +109,8 @@ module(
       let done = assert.async();
 
       await render(hbs`
-      <div id='terminal'></div>
-    `);
+    <div id='terminal'></div>
+  `);
 
       let terminal = new Terminal({ cols: 10 });
       terminal.open(document.getElementById('terminal'));
@@ -120,7 +120,7 @@ module(
       new ExecCommandEditorXtermAdapter(
         terminal,
         (command) => {
-          assert.equal(command, '!');
+          assert.strictEqual(command, '!');
           done();
         },
         'to-delete'
@@ -130,7 +130,7 @@ module(
 
       await settled();
 
-      assert.equal(
+      assert.strictEqual(
         terminal.buffer.active.getLine(0).translateToString().trim(),
         ''
       );

@@ -43,7 +43,7 @@ module('Integration | Component | variable-form', function (hooks) {
     assert.expect(7);
 
     await render(hbs`<VariableForm @model={{this.mockedModel}} />`);
-    assert.equal(
+    assert.strictEqual(
       findAll('div.key-value').length,
       1,
       'A single KV row exists by default'
@@ -73,7 +73,7 @@ module('Integration | Component | variable-form', function (hooks) {
 
     await click('[data-test-add-kv]');
 
-    assert.equal(
+    assert.strictEqual(
       findAll('div.key-value').length,
       2,
       'A second KV row exists after adding a new one'
@@ -83,7 +83,7 @@ module('Integration | Component | variable-form', function (hooks) {
     await typeIn('.key-value:last-of-type [data-test-var-value]', 'bar');
     await click('[data-test-add-kv]');
 
-    assert.equal(
+    assert.strictEqual(
       findAll('div.key-value').length,
       3,
       'A third KV row exists after adding a new one'
@@ -91,7 +91,7 @@ module('Integration | Component | variable-form', function (hooks) {
 
     await click('.delete-entry-button');
 
-    assert.equal(
+    assert.strictEqual(
       findAll('div.key-value').length,
       2,
       'Back down to two rows after hitting delete'
@@ -164,30 +164,30 @@ module('Integration | Component | variable-form', function (hooks) {
       })
     );
     await render(hbs`<VariableForm @model={{this.mockedModel}} />`);
-    assert.equal(
+    assert.strictEqual(
       findAll('div.key-value').length,
       5,
       'Shows 5 existing key values'
     );
-    assert.equal(
+    assert.strictEqual(
       findAll('.delete-entry-button').length,
       5,
       'Shows "delete" for all five rows'
     );
-    assert.equal(
+    assert.strictEqual(
       findAll('[data-test-add-kv]').length,
       1,
       'Shows "add more" only on the last row'
     );
 
     findAll('div.key-value').forEach((row, idx) => {
-      assert.equal(
+      assert.strictEqual(
         row.querySelector(`[data-test-var-key]`).value,
         keyValues[idx].key,
         `Key ${idx + 1} is correct`
       );
 
-      assert.equal(
+      assert.strictEqual(
         row.querySelector(`[data-test-var-value]`).value,
         keyValues[idx].value,
         keyValues[idx].value
@@ -457,7 +457,7 @@ module('Integration | Component | variable-form', function (hooks) {
         return acc;
       }, {});
 
-      assert.equal(
+      assert.strictEqual(
         code('.editor-wrapper').get(),
         JSON.stringify(keyValuesAsJSON, null, 2),
         'JSON editor contains the key values, stringified, by default'
@@ -498,13 +498,13 @@ module('Integration | Component | variable-form', function (hooks) {
         JSON.stringify({ golden: 'gate' }, null, 2)
       );
       this.set('view', 'table');
-      assert.equal(
+      assert.strictEqual(
         find(`.key-value:last-of-type [data-test-var-key]`).value,
         'golden',
         'Key persists from JSON to Table'
       );
 
-      assert.equal(
+      assert.strictEqual(
         find(`.key-value:last-of-type [data-test-var-value]`).value,
         'gate',
         'Value persists from JSON to Table'

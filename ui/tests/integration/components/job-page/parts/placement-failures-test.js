@@ -5,7 +5,7 @@
 
 /* eslint-disable qunit/require-expect */
 /* Mirage fixtures are random so we can't expect a set number of assertions */
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 import { findAll, find, render } from '@ember/test-helpers';
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
@@ -45,8 +45,8 @@ module(
       this.set('job', job);
 
       await render(hbs`
-      <JobPage::Parts::PlacementFailures @job={{job}} />)
-    `);
+    <JobPage::Parts::PlacementFailures @job={{job}} />)
+  `);
 
       const failedEvaluation = this.get('job.evaluations')
         .filterBy('hasPlacementFailures')
@@ -94,8 +94,8 @@ module(
       this.set('job', job);
 
       await render(hbs`
-      <JobPage::Parts::PlacementFailures @job={{job}} />)
-    `);
+    <JobPage::Parts::PlacementFailures @job={{job}} />)
+  `);
 
       assert.notOk(
         find('[data-test-placement-failures]'),

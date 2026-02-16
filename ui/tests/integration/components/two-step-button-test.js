@@ -6,7 +6,7 @@
 import { find, click, render } from '@ember/test-helpers';
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 import { componentA11yAudit } from 'nomad-ui/tests/helpers/a11y-audit';
 import sinon from 'sinon';
 import { create } from 'ember-cli-page-object';
@@ -48,7 +48,7 @@ module('Integration | Component | two step button', function (hooks) {
     await render(commonTemplate);
 
     assert.ok(find('[data-test-idle-button]'), 'Idle button is rendered');
-    assert.equal(
+    assert.strictEqual(
       TwoStepButton.idleText,
       props.idleText,
       'Button is labeled correctly'
@@ -74,20 +74,20 @@ module('Integration | Component | two step button', function (hooks) {
     await TwoStepButton.idle();
 
     assert.ok(find('[data-test-cancel-button]'), 'Cancel button is rendered');
-    assert.equal(
+    assert.strictEqual(
       TwoStepButton.cancelText,
       props.cancelText,
       'Button is labeled correctly'
     );
 
     assert.ok(find('[data-test-confirm-button]'), 'Confirm button is rendered');
-    assert.equal(
+    assert.strictEqual(
       TwoStepButton.confirmText,
       props.confirmText,
       'Button is labeled correctly'
     );
 
-    assert.equal(
+    assert.strictEqual(
       TwoStepButton.confirmationMessage,
       props.confirmationMessage,
       'Confirmation message is shown'
@@ -139,7 +139,7 @@ module('Integration | Component | two step button', function (hooks) {
       'The confirm button is disabled'
     );
 
-    assert.equal(
+    assert.strictEqual(
       TwoStepButton.confirmText,
       'Loading...',
       'The confirm button is in a loading state'

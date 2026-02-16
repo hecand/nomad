@@ -96,7 +96,7 @@ module('Unit | Model | task', function (hooks) {
       })
     );
 
-    assert.equal(
+    assert.strictEqual(
       longTaskEvent.get('message'),
       'Task restarting in 1h2m3s',
       'hour-specific displayMessage is simplified'
@@ -108,7 +108,7 @@ module('Unit | Model | task', function (hooks) {
       })
     );
 
-    assert.equal(
+    assert.strictEqual(
       mediumTaskEvent.get('message'),
       'Task restarting in 1m2s',
       'minute-specific displayMessage is simplified'
@@ -120,7 +120,7 @@ module('Unit | Model | task', function (hooks) {
       })
     );
 
-    assert.equal(
+    assert.strictEqual(
       shortTaskEvent.get('message'),
       'Task restarting in 1s',
       'second-specific displayMessage is simplified'
@@ -132,7 +132,7 @@ module('Unit | Model | task', function (hooks) {
       })
     );
 
-    assert.equal(
+    assert.strictEqual(
       roundedTaskEvent.get('message'),
       'I bet I can knock this out in about 2s',
       'displayMessage is rounded'
@@ -144,7 +144,7 @@ module('Unit | Model | task', function (hooks) {
       })
     );
 
-    assert.equal(
+    assert.strictEqual(
       timelessTaskEvent.get('message'),
       'All 3000 tasks look great, no notes.',
       'displayMessage is unchanged'

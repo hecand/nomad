@@ -202,11 +202,11 @@ module('Unit | Component | TopoViz', function (hooks) {
     const topoViz = this.createComponent({ nodes, allocations });
     topoViz.buildTopology();
 
-    assert.equal(
+    assert.strictEqual(
       topoViz.topology.datacenters[0].nodes[0].allocations[0].cpuPercent,
       0.5
     );
-    assert.equal(
+    assert.strictEqual(
       topoViz.topology.datacenters[0].nodes[0].allocations[0].memoryPercent,
       0.1
     );

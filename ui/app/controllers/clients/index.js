@@ -3,13 +3,11 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-// @ts-check
-
 /* eslint-disable ember/no-incorrect-calls-with-inline-anonymous-functions */
 import { alias, readOnly } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import Controller, { inject as controller } from '@ember/controller';
-import { action, computed } from '@ember/object';
+import { action, computed, set } from '@ember/object';
 import { scheduleOnce } from '@ember/runloop';
 import intersection from 'lodash.intersection';
 import SortableFactory from 'nomad-ui/mixins/sortable-factory';
@@ -18,9 +16,7 @@ import {
   serialize,
   deserializedQueryParam as selection,
 } from 'nomad-ui/utils/qp-serialize';
-import classic from 'ember-classic-decorator';
 
-@classic
 export default class IndexController extends Controller.extend(
   SortableFactory(['id', 'name', 'compositeStatus', 'datacenter', 'version']),
   Searchable
@@ -152,15 +148,15 @@ export default class IndexController extends Controller.extend(
   addDynamicQueryParams() {
     this.clientFilterToggles.state.forEach((filter) => {
       this.queryParams.push({ [filter.qp]: filter.qp });
-      this.set(filter.qp, filter.default);
+      set(this, filter.qp, filter.default);
     });
     this.clientFilterToggles.eligibility.forEach((filter) => {
       this.queryParams.push({ [filter.qp]: filter.qp });
-      this.set(filter.qp, filter.default);
+      set(this, filter.qp, filter.default);
     });
     this.clientFilterToggles.drainStatus.forEach((filter) => {
       this.queryParams.push({ [filter.qp]: filter.qp });
-      this.set(filter.qp, filter.default);
+      set(this, filter.qp, filter.default);
     });
   }
 
@@ -196,7 +192,8 @@ export default class IndexController extends Controller.extend(
     // Remove any invalid node classes from the query param/selection
     scheduleOnce('actions', () => {
       // eslint-disable-next-line ember/no-side-effects
-      this.set(
+      set(
+        this,
         'qpClass',
         serialize(intersection(classes, this.selectionClass))
       );
@@ -214,7 +211,8 @@ export default class IndexController extends Controller.extend(
     // Remove any invalid datacenters from the query param/selection
     scheduleOnce('actions', () => {
       // eslint-disable-next-line ember/no-side-effects
-      this.set(
+      set(
+        this,
         'qpDatacenter',
         serialize(intersection(datacenters, this.selectionDatacenter))
       );
@@ -230,7 +228,8 @@ export default class IndexController extends Controller.extend(
     // Remove any invalid versions from the query param/selection
     scheduleOnce('actions', () => {
       // eslint-disable-next-line ember/no-side-effects
-      this.set(
+      set(
+        this,
         'qpVersion',
         serialize(intersection(versions, this.selectionVersion))
       );
@@ -248,7 +247,8 @@ export default class IndexController extends Controller.extend(
 
     scheduleOnce('actions', () => {
       // eslint-disable-next-line ember/no-side-effects
-      this.set(
+      set(
+        this,
         'qpVolume',
         serialize(intersection(volumes, this.selectionVolume))
       );
@@ -265,7 +265,8 @@ export default class IndexController extends Controller.extend(
 
     scheduleOnce('actions', () => {
       // eslint-disable-next-line ember/no-side-effects
-      this.set(
+      set(
+        this,
         'qpNodePool',
         serialize(
           intersection(
@@ -351,7 +352,7 @@ export default class IndexController extends Controller.extend(
   @alias('clientsController.isForbidden') isForbidden;
 
   setFacetQueryParam(queryParam, selection) {
-    this.set(queryParam, serialize(selection));
+    set(this, queryParam, serialize(selection));
   }
 
   @action
@@ -361,7 +362,7 @@ export default class IndexController extends Controller.extend(
     } else {
       queryParamValue.addObject(option);
     }
-    this.set(queryParamLabel, serialize(queryParamValue));
+    set(this, queryParamLabel, serialize(queryParamValue));
   }
 
   @action

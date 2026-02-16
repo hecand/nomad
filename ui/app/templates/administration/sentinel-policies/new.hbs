@@ -3,8 +3,10 @@
   SPDX-License-Identifier: BUSL-1.1
 ~}}
 
-<Breadcrumb @crumb={{hash label="New" args=(array "administration.sentinel-policies.new")}} />
 {{page-title "Create a Policy"}}
+
+<Breadcrumb @label="New" @route="administration.sentinel-policies.new" />
+
 <section class="section">
 	<Hds::PageHeader class="variable-title" as |PH|>
 		<PH.Title>Create Sentinel Policy</PH.Title>

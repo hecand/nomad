@@ -3,11 +3,10 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import { assign } from '@ember/polyfills';
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { click, find, render } from '@ember/test-helpers';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 import { startMirage } from 'nomad-ui/initializers/ember-cli-mirage';
 import {
   startJob,
@@ -67,7 +66,7 @@ module('Integration | Component | job-page/service', function (hooks) {
   const makeMirageJob = (server, props = {}) =>
     server.create(
       'job',
-      assign(
+      Object.assign(
         {
           type: 'service',
           createAllocations: false,
@@ -194,8 +193,12 @@ module('Integration | Component | job-page/service', function (hooks) {
       .reverse()[0];
     const allocationRow = Job.allocations.objectAt(0);
 
-    assert.equal(allocationRow.shortId, allocation.id.split('-')[0], 'ID');
-    assert.equal(
+    assert.strictEqual(
+      allocationRow.shortId,
+      allocation.id.split('-')[0],
+      'ID'
+    );
+    assert.strictEqual(
       allocationRow.taskGroup,
       allocation.taskGroup,
       'Task Group name'
@@ -216,7 +219,7 @@ module('Integration | Component | job-page/service', function (hooks) {
     this.setProperties(commonProperties(job));
     await render(commonTemplate);
 
-    assert.equal(Job.allocations.length, 5, 'Capped at 5 allocations');
+    assert.strictEqual(Job.allocations.length, 5, 'Capped at 5 allocations');
     assert.ok(
       Job.viewAllAllocations.includes(job.get('allocations.length') + ''),
       `View link mentions ${job.get('allocations.length')} allocations`
@@ -320,7 +323,7 @@ module('Integration | Component | job-page/service', function (hooks) {
 
     await click('[data-test-promote-canary]');
 
-    assert.equal(
+    assert.strictEqual(
       find('[data-test-job-error-title]').textContent,
       'Could Not Promote Deployment',
       'Appropriate error is shown'
@@ -386,7 +389,7 @@ module('Integration | Component | job-page/service', function (hooks) {
 
     await click('.active-deployment [data-test-fail]');
 
-    assert.equal(
+    assert.strictEqual(
       find('[data-test-job-error-title]').textContent,
       'Could Not Fail Deployment',
       'Appropriate error is shown'

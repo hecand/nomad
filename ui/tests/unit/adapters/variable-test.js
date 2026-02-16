@@ -19,12 +19,12 @@ module('Unit | Adapter | Variable', function (hooks) {
     // hacky fix to rectify the issue
     newVariable.attr = () => {};
 
-    assert.equal(
+    assert.strictEqual(
       this.subject().urlForFindAll('variable'),
       '/v1/vars',
       'pluralizes findAll lookup'
     );
-    assert.equal(
+    assert.strictEqual(
       this.subject().urlForFindRecord('foo/bar', 'variable', newVariable),
       `/v1/var/${encodeURIComponent('foo/bar')}?namespace=default`,
       'singularizes findRecord lookup'

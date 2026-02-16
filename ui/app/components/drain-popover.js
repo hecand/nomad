@@ -3,18 +3,16 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import Component from '@ember/component';
+import Component from '@glimmer/component';
+import { set } from '@ember/object';
 import { computed } from '@ember/object';
 import { equal } from '@ember/object/computed';
 import { computed as overridable } from 'ember-overridable-computed';
 import { task } from 'ember-concurrency';
 import Duration from 'duration-js';
-import { tagName } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
+
 import localStorageProperty from 'nomad-ui/utils/properties/local-storage';
 
-@classic
-@tagName('')
 export default class DrainPopover extends Component {
   client = null;
   isDisabled = false;
@@ -86,7 +84,7 @@ export default class DrainPopover extends Component {
     try {
       deadline = new Duration(this.deadline).nanoseconds();
     } catch (err) {
-      this.set('parseError', err.message);
+      set(this, 'parseError', err.message);
       return;
     }
 

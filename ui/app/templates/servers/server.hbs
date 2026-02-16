@@ -3,7 +3,5 @@
   SPDX-License-Identifier: BUSL-1.1
 ~}}
 
-<Breadcrumb
-  @crumb={{hash title="Server" label=this.server.name args=(array "servers.server" this.server.id)}}
-/>
+<Breadcrumb @label="Servers" @route="servers.index" @model={{this.server.id}} />
 {{outlet}}

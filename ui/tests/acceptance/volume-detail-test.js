@@ -47,8 +47,8 @@ module('Acceptance | volume detail', function (hooks) {
   test('/storage/volumes/:id should have a breadcrumb trail linking back to Volumes and Storage', async function (assert) {
     await VolumeDetail.visit({ id: `${volume.id}@default` });
 
-    assert.equal(Layout.breadcrumbFor('storage.index').text, 'Storage');
-    assert.equal(
+    assert.strictEqual(Layout.breadcrumbFor('storage.index').text, 'Storage');
+    assert.strictEqual(
       Layout.breadcrumbFor('storage.volumes.volume').text,
       volume.name
     );
@@ -57,8 +57,8 @@ module('Acceptance | volume detail', function (hooks) {
   test('/storage/volumes/:id should show the volume name in the title', async function (assert) {
     await VolumeDetail.visit({ id: `${volume.id}@default` });
 
-    assert.equal(document.title, `CSI Volume ${volume.name} - Nomad`);
-    assert.equal(VolumeDetail.title, volume.name);
+    assert.strictEqual(document.title, `CSI Volume ${volume.name} - Nomad`);
+    assert.strictEqual(VolumeDetail.title, volume.name);
   });
 
   test('/storage/volumes/:id should list additional details for the volume below the title', async function (assert) {
@@ -85,12 +85,15 @@ module('Acceptance | volume detail', function (hooks) {
 
     await VolumeDetail.visit({ id: `${volume.id}@default` });
 
-    assert.equal(VolumeDetail.writeAllocations.length, writeAllocations.length);
+    assert.strictEqual(
+      VolumeDetail.writeAllocations.length,
+      writeAllocations.length
+    );
     writeAllocations
       .sortBy('modifyIndex')
       .reverse()
       .forEach((allocation, idx) => {
-        assert.equal(
+        assert.strictEqual(
           allocation.id,
           VolumeDetail.writeAllocations.objectAt(idx).id
         );
@@ -105,12 +108,15 @@ module('Acceptance | volume detail', function (hooks) {
 
     await VolumeDetail.visit({ id: `${volume.id}@default` });
 
-    assert.equal(VolumeDetail.readAllocations.length, readAllocations.length);
+    assert.strictEqual(
+      VolumeDetail.readAllocations.length,
+      readAllocations.length
+    );
     readAllocations
       .sortBy('modifyIndex')
       .reverse()
       .forEach((allocation, idx) => {
-        assert.equal(
+        assert.strictEqual(
           allocation.id,
           VolumeDetail.readAllocations.objectAt(idx).id
         );
@@ -137,44 +143,44 @@ module('Acceptance | volume detail', function (hooks) {
     await VolumeDetail.visit({ id: `${volume.id}@default` });
 
     VolumeDetail.writeAllocations.objectAt(0).as((allocationRow) => {
-      assert.equal(
+      assert.strictEqual(
         allocationRow.shortId,
         allocation.id.split('-')[0],
         'Allocation short ID'
       );
-      assert.equal(
+      assert.strictEqual(
         allocationRow.createTime,
         moment(allocation.createTime / 1000000).format('MMM DD HH:mm:ss ZZ'),
         'Allocation create time'
       );
-      assert.equal(
+      assert.strictEqual(
         allocationRow.modifyTime,
         moment(allocation.modifyTime / 1000000).fromNow(),
         'Allocation modify time'
       );
-      assert.equal(
+      assert.strictEqual(
         allocationRow.status,
         allocation.clientStatus,
         'Client status'
       );
-      assert.equal(
+      assert.strictEqual(
         allocationRow.job,
         server.db.jobs.find(allocation.jobId).name,
         'Job name'
       );
       assert.ok(allocationRow.taskGroup, 'Task group name');
       assert.ok(allocationRow.jobVersion, 'Job Version');
-      assert.equal(
+      assert.strictEqual(
         allocationRow.client,
         server.db.nodes.find(allocation.nodeId).id.split('-')[0],
         'Node ID'
       );
-      assert.equal(
+      assert.strictEqual(
         allocationRow.clientTooltip.substr(0, 15),
         server.db.nodes.find(allocation.nodeId).name.substr(0, 15),
         'Node Name'
       );
-      assert.equal(
+      assert.strictEqual(
         allocationRow.cpu,
         Math.floor(allocStats.resourceUsage.CpuStats.TotalTicks) / cpuUsed,
         'CPU %'
@@ -182,17 +188,17 @@ module('Acceptance | volume detail', function (hooks) {
       const roundedTicks = Math.floor(
         allocStats.resourceUsage.CpuStats.TotalTicks
       );
-      assert.equal(
+      assert.strictEqual(
         allocationRow.cpuTooltip,
         `${formatHertz(roundedTicks, 'MHz')} / ${formatHertz(cpuUsed, 'MHz')}`,
         'Detailed CPU information is in a tooltip'
       );
-      assert.equal(
+      assert.strictEqual(
         allocationRow.mem,
         allocStats.resourceUsage.MemoryStats.RSS / 1024 / 1024 / memoryUsed,
         'Memory used'
       );
-      assert.equal(
+      assert.strictEqual(
         allocationRow.memTooltip,
         `${formatBytes(
           allocStats.resourceUsage.MemoryStats.RSS
@@ -209,28 +215,34 @@ module('Acceptance | volume detail', function (hooks) {
     await VolumeDetail.visit({ id: `${volume.id}@default` });
     await VolumeDetail.writeAllocations.objectAt(0).visit();
 
-    assert.equal(currentURL(), `/allocations/${allocation.id}`);
+    assert.strictEqual(currentURL(), `/allocations/${allocation.id}`);
   });
 
   test('when there are no write allocations, the table presents an empty state', async function (assert) {
     await VolumeDetail.visit({ id: `${volume.id}@default` });
 
     assert.ok(VolumeDetail.writeTableIsEmpty);
-    assert.equal(VolumeDetail.writeEmptyState.headline, 'No Write Allocations');
+    assert.strictEqual(
+      VolumeDetail.writeEmptyState.headline,
+      'No Write Allocations'
+    );
   });
 
   test('when there are no read allocations, the table presents an empty state', async function (assert) {
     await VolumeDetail.visit({ id: `${volume.id}@default` });
 
     assert.ok(VolumeDetail.readTableIsEmpty);
-    assert.equal(VolumeDetail.readEmptyState.headline, 'No Read Allocations');
+    assert.strictEqual(
+      VolumeDetail.readEmptyState.headline,
+      'No Read Allocations'
+    );
   });
 
   test('the constraints table shows access mode and attachment mode', async function (assert) {
     await VolumeDetail.visit({ id: `${volume.id}@default` });
 
-    assert.equal(VolumeDetail.constraints.accessMode, volume.accessMode);
-    assert.equal(
+    assert.strictEqual(VolumeDetail.constraints.accessMode, volume.accessMode);
+    assert.strictEqual(
       VolumeDetail.constraints.attachmentMode,
       volume.attachmentMode
     );

@@ -4,10 +4,8 @@
  */
 
 import ApplicationSerializer from './application';
-import isIp from 'is-ip';
-import classic from 'ember-classic-decorator';
+import { isIPv6 } from 'is-ip';
 
-@classic
 export default class NetworkSerializer extends ApplicationSerializer {
   attrs = {
     cidr: 'CIDR',
@@ -18,7 +16,7 @@ export default class NetworkSerializer extends ApplicationSerializer {
   normalize(typeHash, hash) {
     const ip = hash.IP;
 
-    if (isIp.v6(ip)) {
+    if (isIPv6(ip)) {
       hash.IP = `[${ip}]`;
     }
 

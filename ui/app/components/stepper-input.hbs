@@ -22,9 +22,7 @@
   onChange={{action "setValue"}}
 />
 <button
-  data-test-stepper-decrement
-  role="button"
-  aria-label="decrement"
+  data-test-stepper-decrement aria-label="decrement"
   class="stepper-input-stepper button {{this.class}}"
   disabled={{or this.disabled (lte this.internalValue this.min)}}
   onclick={{action "decrement"}}
@@ -33,9 +31,7 @@
   <Hds::Icon @name="minus" />
 </button>
 <button
-  data-test-stepper-increment
-  role="button"
-  aria-label="increment"
+  data-test-stepper-increment aria-label="increment"
   class="stepper-input-stepper button {{this.class}}"
   disabled={{or this.disabled (gte this.internalValue this.max)}}
   onclick={{action "increment"}}

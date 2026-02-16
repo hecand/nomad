@@ -3,14 +3,12 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import EmberObject from '@ember/object';
+import EmberObject, { set } from '@ember/object';
 import { task, timeout } from 'ember-concurrency';
 import { decode } from 'nomad-ui/utils/stream-frames';
 import AbstractLogger from './abstract-logger';
 import { fetchFailure } from './log';
-import classic from 'ember-classic-decorator';
 
-@classic
 export default class PollLogger extends EmberObject.extend(AbstractLogger) {
   interval = 1000;
 
@@ -37,7 +35,7 @@ export default class PollLogger extends EmberObject.extend(AbstractLogger) {
       if (text) {
         const { offset, message } = decode(text);
         if (message) {
-          this.set('endOffset', offset);
+          set(this, 'endOffset', offset);
           this.write(message);
         }
       }

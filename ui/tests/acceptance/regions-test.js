@@ -59,18 +59,18 @@ module('Acceptance | regions (only one)', function (hooks) {
     server.create('region', { id: 'global' });
 
     await JobsList.visit();
-    assert.equal(currentURL(), '/jobs', 'No region query param');
+    assert.strictEqual(currentURL(), '/jobs', 'No region query param');
 
     const jobId = JobsList.jobs.objectAt(0).id;
     await JobsList.jobs.objectAt(0).clickRow();
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/jobs/${jobId}@default`,
       'No region query param'
     );
 
     await ClientsList.visit();
-    assert.equal(currentURL(), '/clients', 'No region query param');
+    assert.strictEqual(currentURL(), '/clients', 'No region query param');
   });
 
   test('api requests do not include the region query param', async function (assert) {
@@ -121,8 +121,8 @@ module('Acceptance | regions (many)', function (hooks) {
     await JobsList.visit();
     await settled();
 
-    assert.equal(currentURL(), '/jobs', 'No region query param');
-    assert.equal(
+    assert.strictEqual(currentURL(), '/jobs', 'No region query param');
+    assert.strictEqual(
       window.localStorage.nomadActiveRegion,
       'global',
       'Region in localStorage'
@@ -140,7 +140,7 @@ module('Acceptance | regions (many)', function (hooks) {
       currentURL().includes(`region=${newRegion}`),
       'New region is the region query param value'
     );
-    assert.equal(
+    assert.strictEqual(
       window.localStorage.nomadActiveRegion,
       newRegion,
       'New region in localStorage'
@@ -161,7 +161,7 @@ module('Acceptance | regions (many)', function (hooks) {
       currentURL().includes('region='),
       'No region query param for the default region'
     );
-    assert.equal(
+    assert.strictEqual(
       window.localStorage.nomadActiveRegion,
       defaultRegion,
       'New region in localStorage'
@@ -173,12 +173,12 @@ module('Acceptance | regions (many)', function (hooks) {
     const region = server.db.regions[1].id;
     await Allocation.visit({ id: allocation.id, region });
 
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/allocations/${allocation.id}?region=${region}`,
       'Region param is persisted when navigating straight to a detail page'
     );
-    assert.equal(
+    assert.strictEqual(
       window.localStorage.nomadActiveRegion,
       region,
       'Region is also set in localStorage from a detail page'
@@ -234,18 +234,18 @@ module('Acceptance | regions (many)', function (hooks) {
     window.localStorage.clear();
     let managementToken = server.create('token');
     await Tokens.visit();
-    assert.equal(
+    assert.strictEqual(
       Layout.navbar.regionSwitcher.text,
       'Select a Region',
       'Region picker says "Select a Region" before signing in'
     );
     await Tokens.secret(managementToken.secretId).submit();
-    assert.equal(
+    assert.strictEqual(
       window.localStorage.nomadActiveRegion,
       'global',
       'Region is set in localStorage after signing in'
     );
-    assert.equal(
+    assert.strictEqual(
       Layout.navbar.regionSwitcher.text,
       'Region: global',
       'Region picker says "Region: global" after signing in'

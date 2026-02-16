@@ -7,7 +7,7 @@ import { htmlSafe } from '@ember/template';
 import { click, find, findAll, render, settled } from '@ember/test-helpers';
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 import { componentA11yAudit } from 'nomad-ui/tests/helpers/a11y-audit';
 
 // Used to prevent XSS warnings in console
@@ -32,8 +32,8 @@ module('Integration | Component | FlexMasonry', function (hooks) {
 
     const div = find('[data-test-flex-masonry]');
     assert.ok(div);
-    assert.equal(div.tagName.toLowerCase(), 'div');
-    assert.equal(div.children.length, 0);
+    assert.strictEqual(div.tagName.toLowerCase(), 'div');
+    assert.strictEqual(div.children.length, 0);
 
     await componentA11yAudit(this.element, assert);
   });
@@ -52,7 +52,7 @@ module('Integration | Component | FlexMasonry', function (hooks) {
       </FlexMasonry>
     `);
 
-    assert.equal(
+    assert.strictEqual(
       findAll('[data-test-flex-masonry-item]').length,
       this.items.length
     );
@@ -88,18 +88,18 @@ module('Integration | Component | FlexMasonry', function (hooks) {
     `);
 
     const div = find('[data-test-flex-masonry]');
-    assert.equal(div.style.maxHeight, '51px');
+    assert.strictEqual(div.style.maxHeight, '51px');
     assert.ok(div.textContent.includes('one'));
     assert.ok(div.textContent.includes('two'));
 
     this.set('height', h(500));
     await settled();
-    assert.equal(div.style.maxHeight, '51px');
+    assert.strictEqual(div.style.maxHeight, '51px');
 
     // The height of the div changes when reflow is called
     await click('[data-test-flex-masonry-item]:first-child div');
 
-    assert.equal(div.style.maxHeight, '501px');
+    assert.strictEqual(div.style.maxHeight, '501px');
   });
 
   test('items are rendered to the DOM in the order they were passed into the component', async function (assert) {
@@ -124,7 +124,7 @@ module('Integration | Component | FlexMasonry', function (hooks) {
     `);
 
     findAll('[data-test-flex-masonry-item]').forEach((el, index) => {
-      assert.equal(el.textContent.trim(), this.items[index].text);
+      assert.strictEqual(el.textContent.trim(), this.items[index].text);
     });
   });
 
@@ -150,7 +150,7 @@ module('Integration | Component | FlexMasonry', function (hooks) {
     `);
 
     findAll('[data-test-flex-masonry-item]').forEach((el, index) => {
-      assert.equal(el.style.order, this.items[index].expectedOrder);
+      assert.strictEqual(el.style.order, this.items[index].expectedOrder);
     });
   });
 
@@ -180,7 +180,7 @@ module('Integration | Component | FlexMasonry', function (hooks) {
     findAll('[data-test-flex-masonry-item]').forEach((el, index) => {
       if (el.style.flexBasis) {
         /* eslint-disable-next-line qunit/no-conditional-assertions */
-        assert.equal(el.style.flexBasis, this.items[index].flexBasis);
+        assert.strictEqual(el.style.flexBasis, this.items[index].flexBasis);
       }
     });
   });
@@ -208,16 +208,19 @@ module('Integration | Component | FlexMasonry', function (hooks) {
       </FlexMasonry>
     `);
 
-    assert.equal(find('[data-test-flex-masonry]').style.maxHeight, '101px');
+    assert.strictEqual(
+      find('[data-test-flex-masonry]').style.maxHeight,
+      '101px'
+    );
 
     this.set('columns', 1);
     await settled();
 
     findAll('[data-test-flex-masonry-item]').forEach((el) => {
-      assert.equal(el.style.flexBasis, '');
-      assert.equal(el.style.order, '');
+      assert.strictEqual(el.style.flexBasis, '');
+      assert.strictEqual(el.style.order, '');
     });
 
-    assert.equal(find('[data-test-flex-masonry]').style.maxHeight, '');
+    assert.strictEqual(find('[data-test-flex-masonry]').style.maxHeight, '');
   });
 });

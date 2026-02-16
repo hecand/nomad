@@ -3,24 +3,23 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import Ember from 'ember';
 import { inject as service } from '@ember/service';
+import Ember from 'ember';
 import Component from '@ember/component';
-import { computed } from '@ember/object';
+import { computed, get, set } from '@ember/object';
 import { computed as overridable } from 'ember-overridable-computed';
 import { alias } from '@ember/object/computed';
 import { scheduleOnce } from '@ember/runloop';
 import { task, timeout } from 'ember-concurrency';
 import { lazyClick } from '../helpers/lazy-click';
 import AllocationStatsTracker from 'nomad-ui/utils/classes/allocation-stats-tracker';
-import classic from 'ember-classic-decorator';
+
 import {
   classNames,
   tagName,
   attributeBindings,
 } from '@ember-decorators/component';
 
-@classic
 @tagName('tr')
 @classNames('allocation-row', 'is-interactive')
 @attributeBindings(
@@ -44,7 +43,7 @@ export default class AllocationRow extends Component {
 
   @computed('allocation', 'allocation.isRunning')
   get stats() {
-    if (!this.get('allocation.isRunning')) return undefined;
+    if (!get(this, 'allocation.isRunning')) return undefined;
 
     return AllocationStatsTracker.create({
       fetch: (url) => this.token.authorizedRequest(url),
@@ -80,10 +79,10 @@ export default class AllocationRow extends Component {
     do {
       if (this.stats) {
         try {
-          yield this.get('stats.poll').linked().perform();
-          this.set('statsError', false);
+          yield get(this, 'stats.poll').linked().perform();
+          set(this, 'statsError', false);
         } catch (error) {
-          this.set('statsError', true);
+          set(this, 'statsError', true);
         }
       }
 

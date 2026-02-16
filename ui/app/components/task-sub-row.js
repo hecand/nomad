@@ -3,12 +3,10 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-// @ts-check
 import Ember from 'ember';
 import Component from '@glimmer/component';
 import { inject as service } from '@ember/service';
-import { action } from '@ember/object';
-import { computed } from '@ember/object';
+import { action, computed } from '@ember/object';
 import { alias } from '@ember/object/computed';
 import { task, timeout } from 'ember-concurrency';
 import { tracked } from '@glimmer/tracking';

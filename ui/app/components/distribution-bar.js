@@ -5,10 +5,9 @@
 
 /* eslint-disable ember/no-observers */
 import Component from '@ember/component';
-import { computed, set } from '@ember/object';
+import { computed, set, setProperties } from '@ember/object';
 import { observes } from '@ember-decorators/object';
 import { run, once } from '@ember/runloop';
-import { assign } from '@ember/polyfills';
 import { guidFor } from '@ember/object/internals';
 import { copy } from 'ember-copy';
 import { computed as overridable } from 'ember-overridable-computed';
@@ -17,11 +16,9 @@ import 'd3-transition';
 import WindowResizable from '../mixins/window-resizable';
 import styleStringProperty from '../utils/properties/style-string';
 import { classNames, classNameBindings } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 
 const sumAggregate = (total, val) => total + val;
 
-@classic
 @classNames('chart', 'distribution-bar')
 @classNameBindings('isNarrow:is-narrow')
 export default class DistributionBar extends Component.extend(WindowResizable) {
@@ -60,14 +57,14 @@ export default class DistributionBar extends Component.extend(WindowResizable) {
     const svg = this.element.querySelector('svg');
     const chart = d3.select(svg);
     const maskId = `dist-mask-${guidFor(this)}`;
-    this.setProperties({ chart, maskId });
+    setProperties(this, { chart, maskId });
 
     svg.querySelector('clipPath').setAttribute('id', maskId);
 
     chart.on('mouseleave', () => {
       run(() => {
-        this.set('isActive', false);
-        this.set('activeDatum', null);
+        set(this, 'isActive', false);
+        set(this, 'activeDatum', null);
         chart
           .selectAll('g')
           .classed('active', false)
@@ -103,45 +100,50 @@ export default class DistributionBar extends Component.extend(WindowResizable) {
 
     slices.exit().remove();
 
-    let slicesEnter = slices.enter()
+    let slicesEnter = slices
+      .enter()
       .append('g')
       .on('mouseenter', (ev, d) => {
         run(() => {
           const slices = this.slices;
-          const slice = slices.filter(datum => datum.label === d.label);
+          const slice = slices.filter((datum) => datum.label === d.label);
           slices.classed('active', false).classed('inactive', true);
           slice.classed('active', true).classed('inactive', false);
-          this.set('activeDatum', d);
+          set(this, 'activeDatum', d);
 
           const box = slice.node().getBBox();
           const pos = box.x + box.width / 2;
 
           // Ensure that the position is set before the tooltip is visible
-          run.schedule('afterRender', this, () => this.set('isActive', true));
-          this.set('tooltipPosition', {
+          run.schedule('afterRender', this, () => set(this, 'isActive', true));
+          set(this, 'tooltipPosition', {
             left: pos,
           });
         });
       });
 
     slices = slices.merge(slicesEnter);
-    slices.attr('class', d => {
-      const className = d.className || `slice-${_data.indexOf(d)}`
-      const activeDatum = this.activeDatum;
-      const isActive = activeDatum && activeDatum.label === d.label;
-      const isInactive = activeDatum && activeDatum.label !== d.label;
-      const isClickable = !!this.onSliceClick;
-      return [
-        className,
-        isActive && 'active',
-        isInactive && 'inactive',
-        isClickable && 'clickable'
-      ].compact().join(' ');
-    }).attr('data-test-slice-label', d => d.className);
+    slices
+      .attr('class', (d) => {
+        const className = d.className || `slice-${_data.indexOf(d)}`;
+        const activeDatum = this.activeDatum;
+        const isActive = activeDatum && activeDatum.label === d.label;
+        const isInactive = activeDatum && activeDatum.label !== d.label;
+        const isClickable = !!this.onSliceClick;
+        return [
+          className,
+          isActive && 'active',
+          isInactive && 'inactive',
+          isClickable && 'clickable',
+        ]
+          .compact()
+          .join(' ');
+      })
+      .attr('data-test-slice-label', (d) => d.className);
 
-    this.set('slices', slices);
+    set(this, 'slices', slices);
 
-    const setWidth = d => {
+    const setWidth = (d) => {
       // Remove a pixel from either side of the slice
       let modifier = 2;
       if (d.index === 0) modifier--; // But not the left side
@@ -149,23 +151,24 @@ export default class DistributionBar extends Component.extend(WindowResizable) {
 
       return `${width * d.percent - modifier}px`;
     };
-    const setOffset = d => `${width * d.offset + (d.index === 0 ? 0 : 1)}px`;
+    const setOffset = (d) => `${width * d.offset + (d.index === 0 ? 0 : 1)}px`;
 
-    let hoverTargets = slices.selectAll('.target').data(d => [d]);
-    hoverTargets.enter()
-        .append('rect')
-        .attr('class', 'target')
-        .attr('width', setWidth)
-        .attr('height', '100%')
-        .attr('x', setOffset)
+    let hoverTargets = slices.selectAll('.target').data((d) => [d]);
+    hoverTargets
+      .enter()
+      .append('rect')
+      .attr('class', 'target')
+      .attr('width', setWidth)
+      .attr('height', '100%')
+      .attr('x', setOffset)
       .merge(hoverTargets)
       .transition()
-        .duration(200)
-        .attr('width', setWidth)
-        .attr('x', setOffset)
+      .duration(200)
+      .attr('width', setWidth)
+      .attr('x', setOffset);
 
     let layers = slices.selectAll('.bar').data((d, i) => {
-      return new Array(d.layers || 1).fill(assign({ index: i }, d));
+      return new Array(d.layers || 1).fill(Object.assign({ index: i }, d));
     });
     layers.enter()
         .append('rect')

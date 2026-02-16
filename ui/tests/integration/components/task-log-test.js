@@ -7,7 +7,7 @@ import { run } from '@ember/runloop';
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { find, click, render, settled } from '@ember/test-helpers';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 import { componentA11yAudit } from 'nomad-ui/tests/helpers/a11y-audit';
 import Pretender from 'pretender';
 import { logEncode } from '../../../mirage/data/logs';
@@ -145,7 +145,7 @@ module('Integration | Component | task log', function (hooks) {
     );
 
     await settled();
-    assert.equal(
+    assert.strictEqual(
       find('[data-test-log-cli]').textContent,
       streamFrames[0],
       'First chunk of streaming log is shown'
@@ -172,7 +172,7 @@ module('Integration | Component | task log', function (hooks) {
       ),
       'Log head request was made'
     );
-    assert.equal(
+    assert.strictEqual(
       find('[data-test-log-cli]').textContent,
       logHead[0],
       'Head of the log is shown'
@@ -197,7 +197,7 @@ module('Integration | Component | task log', function (hooks) {
       ),
       'Log tail request was made'
     );
-    assert.equal(
+    assert.strictEqual(
       find('[data-test-log-cli]').textContent,
       logTail[0],
       'Tail of the log is shown'
@@ -220,14 +220,14 @@ module('Integration | Component | task log', function (hooks) {
     }, interval);
 
     await settled();
-    assert.equal(
+    assert.strictEqual(
       find('[data-test-log-cli]').textContent,
       streamFrames[0],
       'First frame loaded'
     );
 
     run.later(() => {
-      assert.equal(
+      assert.strictEqual(
         find('[data-test-log-cli]').textContent,
         streamFrames[0],
         'Still only first frame'
@@ -237,7 +237,7 @@ module('Integration | Component | task log', function (hooks) {
     }, interval * 2);
 
     await settled();
-    assert.equal(
+    assert.strictEqual(
       find('[data-test-log-cli]').textContent,
       streamFrames[0] + streamFrames[0] + streamFrames[1],
       'Now includes second frame'
@@ -277,7 +277,7 @@ module('Integration | Component | task log', function (hooks) {
       hbs`<TaskLog @allocation={{allocation}} @task={{taskState}} />`
     );
 
-    assert.equal(
+    assert.strictEqual(
       find('[data-test-log-cli]').textContent,
       streamFrames[0] + streamFrames[0] + streamFrames[1],
       'Now includes second frame'
@@ -458,6 +458,9 @@ module('Integration | Component | task log', function (hooks) {
         (req) => req.queryParams.type === 'stdout'
       ).length
     );
-    assert.equal(window.localStorage.nomadLogMode, JSON.stringify('stdout'));
+    assert.strictEqual(
+      window.localStorage.nomadLogMode,
+      JSON.stringify('stdout')
+    );
   });
 });

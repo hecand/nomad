@@ -6,6 +6,7 @@
 import { inject as service } from '@ember/service';
 import { alias } from '@ember/object/computed';
 import Component from '@ember/component';
+import { get } from '@ember/object';
 import { computed } from '@ember/object';
 import { lazyClick } from '../helpers/lazy-click';
 import {
@@ -13,9 +14,7 @@ import {
   classNameBindings,
   tagName,
 } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 
-@classic
 @tagName('tr')
 @classNames('server-agent-row', 'is-interactive')
 @classNameBindings('isActive:is-active')
@@ -33,8 +32,8 @@ export default class ServerAgentRow extends Component {
   get isActive() {
     // TODO Switch back to the router service once the service behaves more like Route
     // https://github.com/emberjs/ember.js/issues/15801
-    // const targetURL = this.get('router').urlFor('servers.server', this.get('agent'));
-    // const currentURL = `${this.get('router.rootURL').slice(0, -1)}${this.get('router.currentURL')}`;
+    // const targetURL = get(this, 'router').urlFor('servers.server', get(this, 'agent'));
+    // const currentURL = `${get(this, 'router.rootURL').slice(0, -1)}${get(this, 'router.currentURL')}`;
 
     const router = this.router;
     const targetURL = router.generate('servers.server', this.agent);
@@ -58,7 +57,7 @@ export default class ServerAgentRow extends Component {
 
   @computed('agent.status')
   get agentStatusColor() {
-    let agentStatus = this.get('agent.status');
+    let agentStatus = get(this, 'agent.status');
     if (agentStatus === 'alive') {
       return 'success';
     } else if (agentStatus === 'failed') {

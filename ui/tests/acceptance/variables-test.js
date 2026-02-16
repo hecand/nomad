@@ -38,7 +38,7 @@ module('Acceptance | variables', function (hooks) {
 
   test('it redirects to jobs and hides the gutter link when the token lacks permissions', async function (assert) {
     await Variables.visit();
-    assert.equal(currentURL(), '/jobs');
+    assert.strictEqual(currentURL(), '/jobs');
     assert.ok(Layout.gutter.variables.isHidden);
   });
 
@@ -46,7 +46,7 @@ module('Acceptance | variables', function (hooks) {
     allScenarios.variableTestCluster(server);
     window.localStorage.nomadTokenSecret = server.db.tokens[0].secretId;
     await Variables.visit();
-    assert.equal(currentURL(), '/variables');
+    assert.strictEqual(currentURL(), '/variables');
     assert.ok(Layout.gutter.variables.isVisible, 'Menu section is visible');
   });
 
@@ -57,7 +57,7 @@ module('Acceptance | variables', function (hooks) {
     window.localStorage.nomadTokenSecret = variablesToken.secretId;
 
     await Variables.visit();
-    assert.equal(currentURL(), '/variables');
+    assert.strictEqual(currentURL(), '/variables');
     assert.ok(Layout.gutter.variables.isVisible);
     await percySnapshot(assert);
   });
@@ -74,7 +74,7 @@ module('Acceptance | variables', function (hooks) {
     ).Capabilities = ['list', 'read', 'destroy'];
 
     await Variables.visit();
-    assert.equal(currentURL(), '/variables');
+    assert.strictEqual(currentURL(), '/variables');
     assert.ok(Layout.gutter.variables.isVisible);
 
     let abcLink = [...findAll('[data-test-folder-row]')].filter((a) =>
@@ -83,17 +83,17 @@ module('Acceptance | variables', function (hooks) {
 
     await click(abcLink);
 
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       '/variables/path/a/b/c',
       'correctly traverses to a deeply nested path'
     );
-    assert.equal(
+    assert.strictEqual(
       findAll('[data-test-folder-row]').length,
       2,
       'correctly shows 2 sub-folders'
     );
-    assert.equal(
+    assert.strictEqual(
       findAll('[data-test-file-row]').length,
       2,
       'correctly shows 2 files'
@@ -122,18 +122,18 @@ module('Acceptance | variables', function (hooks) {
       .exists('confirmation message is present');
 
     await click(find('[data-test-confirm-button]'));
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       '/variables/path/a/b/c',
       'correctly returns to the parent path page after deletion'
     );
 
-    assert.equal(
+    assert.strictEqual(
       findAll('[data-test-folder-row]').length,
       2,
       'still correctly shows 2 sub-folders'
     );
-    assert.equal(
+    assert.strictEqual(
       findAll('[data-test-file-row]').length,
       1,
       'now correctly shows 1 file'
@@ -166,7 +166,7 @@ module('Acceptance | variables', function (hooks) {
 
     // Non-job variable
     await Variables.visit();
-    assert.equal(currentURL(), '/variables');
+    assert.strictEqual(currentURL(), '/variables');
     assert.ok(Layout.gutter.variables.isVisible);
 
     let nonJobLink = [...findAll('[data-test-file-row]')].filter((a) =>
@@ -193,7 +193,7 @@ module('Acceptance | variables', function (hooks) {
 
     await click(jobsDirectoryLink);
 
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       '/variables/path/nomad/jobs',
       'correctly traverses to the jobs directory'
@@ -361,7 +361,7 @@ module('Acceptance | variables', function (hooks) {
     allScenarios.variableTestCluster(server);
     window.localStorage.nomadTokenSecret = server.db.tokens[0].secretId;
     await Variables.visitNew();
-    assert.equal(currentURL(), '/variables/new');
+    assert.strictEqual(currentURL(), '/variables/new');
     await typeIn('[data-test-path-input]', 'foo/bar');
     await click('button[type="submit"]');
     assert.dom('.flash-message.alert-critical').exists();
@@ -405,7 +405,7 @@ module('Acceptance | variables', function (hooks) {
         .exists('It should display an enabled button to create a variable');
       await click('[data-test-create-var]');
 
-      assert.equal(currentRouteName(), 'variables.new');
+      assert.strictEqual(currentRouteName(), 'variables.new');
 
       await typeIn('[data-test-path-input]', 'foo/bar');
       await clickToggle('[data-test-variable-namespace-filter]');
@@ -424,7 +424,7 @@ module('Acceptance | variables', function (hooks) {
       await typeIn('[data-test-var-value]', 'do you love me');
       await click('[data-test-submit-var]');
 
-      assert.equal(
+      assert.strictEqual(
         currentRouteName(),
         'variables.variable.index',
         'Navigates user back to variables list page after creating variable.'
@@ -477,7 +477,7 @@ module('Acceptance | variables', function (hooks) {
       await typeIn('[data-test-var-value]', 'my_test_value');
       await click('[data-test-submit-var]');
 
-      assert.equal(
+      assert.strictEqual(
         currentRouteName(),
         'variables.variable.index',
         'Navigates user back to variables list page after creating variable.'
@@ -583,12 +583,12 @@ module('Acceptance | variables', function (hooks) {
       await click('[data-test-file-row]');
       // End Test Set-up
 
-      assert.equal(currentRouteName(), 'variables.variable.index');
+      assert.strictEqual(currentRouteName(), 'variables.variable.index');
       assert
         .dom('[data-test-edit-button]')
         .exists('The edit button is enabled in the view.');
       await click('[data-test-edit-button]');
-      assert.equal(
+      assert.strictEqual(
         currentRouteName(),
         'variables.variable.edit',
         'Clicking the button navigates you to editing view.'
@@ -602,7 +602,7 @@ module('Acceptance | variables', function (hooks) {
       await typeIn('[data-test-var-key]', 'kiki');
       await typeIn('[data-test-var-value]', 'do you love me');
       await click('[data-test-submit-var]');
-      assert.equal(
+      assert.strictEqual(
         currentRouteName(),
         'variables.variable.index',
         'Navigates user back to variables list page after creating variable.'
@@ -632,7 +632,7 @@ module('Acceptance | variables', function (hooks) {
       await click('[data-test-file-row]');
       // End Test Set-up
 
-      assert.equal(currentRouteName(), 'variables.variable.index');
+      assert.strictEqual(currentRouteName(), 'variables.variable.index');
       assert
         .dom('[data-test-edit-button]')
         .doesNotExist('The edit button is hidden in the view.');
@@ -660,7 +660,7 @@ module('Acceptance | variables', function (hooks) {
       await click('[data-test-submit-var]');
 
       await click('button[data-test-overwrite-button]');
-      assert.equal(
+      assert.strictEqual(
         currentURL(),
         '/variables/var/Auto-conflicting Variable@default',
         'Selecting overwrite forces a save and redirects'
@@ -699,7 +699,7 @@ module('Acceptance | variables', function (hooks) {
       await typeIn('[data-test-var-value]', 'pal');
       await click('[data-test-gutter-link="jobs"]');
       assert.ok(confirmFired, 'Confirm fired when leaving with unsaved form');
-      assert.equal(
+      assert.strictEqual(
         currentURL(),
         '/jobs',
         'Opted to leave, ended up on desired page'
@@ -715,7 +715,7 @@ module('Acceptance | variables', function (hooks) {
       await typeIn('[data-test-var-value]', 'pal');
       await click('[data-test-gutter-link="jobs"]');
       assert.ok(confirmFired, 'Confirm fired when leaving with unsaved form');
-      assert.equal(
+      assert.strictEqual(
         currentURL(),
         '/variables/var/Auto-conflicting%20Variable@default/edit',
         'Opted to stay, did not leave page'
@@ -733,7 +733,7 @@ module('Acceptance | variables', function (hooks) {
         confirmFired,
         'Confirm did not fire when only transitioning queryParams'
       );
-      assert.equal(
+      assert.strictEqual(
         currentURL(),
         '/variables/var/Auto-conflicting%20Variable@default/edit?view=json',
         'Stayed on page, queryParams changed'
@@ -761,7 +761,7 @@ module('Acceptance | variables', function (hooks) {
       await Variables.visit();
       await click('[data-test-file-row]');
       // End Test Set-up
-      assert.equal(currentRouteName(), 'variables.variable.index');
+      assert.strictEqual(currentRouteName(), 'variables.variable.index');
       assert
         .dom('[data-test-delete-button]')
         .exists('The delete button is enabled in the view.');
@@ -773,7 +773,7 @@ module('Acceptance | variables', function (hooks) {
 
       await click('[data-test-confirm-button]');
 
-      assert.equal(
+      assert.strictEqual(
         currentRouteName(),
         'variables.index',
         'Navigates user back to variables list page after destroying a variable.'
@@ -797,7 +797,7 @@ module('Acceptance | variables', function (hooks) {
       await click('[data-test-file-row]');
       // End Test Set-up
 
-      assert.equal(currentRouteName(), 'variables.variable.index');
+      assert.strictEqual(currentRouteName(), 'variables.variable.index');
       assert
         .dom('[data-test-delete-button]')
         .doesNotExist('The delete button is hidden in the view.');
@@ -822,7 +822,7 @@ module('Acceptance | variables', function (hooks) {
         );
 
       await click('[data-test-file-row]');
-      assert.equal(currentRouteName(), 'variables.variable.index');
+      assert.strictEqual(currentRouteName(), 'variables.variable.index');
 
       // Reset Token
       window.localStorage.nomadTokenSecret = null;
@@ -891,7 +891,7 @@ module('Acceptance | variables', function (hooks) {
       server.db.namespaces.remove(twoTokens);
       await Variables.visit();
 
-      assert.equal(
+      assert.strictEqual(
         server.db.namespaces.length,
         1,
         'There should only be one namespace.'
@@ -913,7 +913,7 @@ module('Acceptance | variables', function (hooks) {
         await Variables.visit();
         await click('[data-test-folder-row]');
 
-        assert.equal(
+        assert.strictEqual(
           currentRouteName(),
           'variables.path',
           'It navigates a user to the path subroute'
@@ -953,7 +953,7 @@ module('Acceptance | variables', function (hooks) {
         server.db.namespaces.remove(twoTokens);
         await Variables.visit();
 
-        assert.equal(
+        assert.strictEqual(
           server.db.namespaces.length,
           1,
           'There should only be one namespace.'
@@ -961,7 +961,7 @@ module('Acceptance | variables', function (hooks) {
 
         await click('[data-test-folder-row]');
 
-        assert.equal(
+        assert.strictEqual(
           currentRouteName(),
           'variables.path',
           'It navigates a user to the path subroute'
@@ -989,7 +989,7 @@ module('Acceptance | variables', function (hooks) {
       await visit(
         `/jobs/${server.db.jobs[0].id}@${server.db.jobs[0].namespace}/variables`
       );
-      assert.equal(currentURL(), '/jobs');
+      assert.strictEqual(currentURL(), '/jobs');
 
       window.localStorage.nomadTokenSecret = null; // Reset Token
     });
@@ -1003,7 +1003,7 @@ module('Acceptance | variables', function (hooks) {
       );
       assert.dom('[data-test-tab="variables"]').exists();
       await click('[data-test-tab="variables"] a');
-      assert.equal(
+      assert.strictEqual(
         currentURL(),
         `/jobs/${server.db.jobs[1].id}@${server.db.jobs[1].namespace}/variables`
       );
@@ -1023,7 +1023,7 @@ module('Acceptance | variables', function (hooks) {
       );
       assert.dom('[data-test-tab="variables"]').exists();
       await click('[data-test-tab="variables"] a');
-      assert.equal(
+      assert.strictEqual(
         currentURL(),
         `/jobs/${server.db.jobs[1].id}@${server.db.jobs[1].namespace}/variables`
       );
@@ -1045,7 +1045,7 @@ module('Acceptance | variables', function (hooks) {
       );
       assert.dom('[data-test-tab="variables"]').exists();
       await click('[data-test-tab="variables"] a');
-      assert.equal(
+      assert.strictEqual(
         currentURL(),
         `/jobs/${server.db.jobs[0].id}@${server.db.jobs[0].namespace}/variables`
       );
@@ -1069,7 +1069,7 @@ module('Acceptance | variables', function (hooks) {
       );
       assert.dom('[data-test-tab="variables"]').exists();
       await click('[data-test-tab="variables"] a');
-      assert.equal(
+      assert.strictEqual(
         currentURL(),
         `/jobs/${server.db.jobs[1].id}@${server.db.jobs[1].namespace}/variables`
       );
@@ -1126,7 +1126,7 @@ module('Acceptance | variables', function (hooks) {
           request.url === '/v1/vars?path=nomad%2Fjobs' ||
           request.url === `/v1/vars?prefix=nomad%2Fjobs%2F${job.name}`
       );
-      assert.equal(requests.length, 2);
+      assert.strictEqual(requests.length, 2);
 
       // Should see 32 rows: nomad/jobs, job-name, and 30 task variables
       assert.dom('[data-test-file-row]').exists({ count: 32 });
@@ -1171,7 +1171,10 @@ module('Acceptance | variables', function (hooks) {
       await visit(`/jobs/${job.id}@${job.namespace}`);
       assert.dom('[data-test-tab="variables"]').exists();
       await click('[data-test-tab="variables"] a');
-      assert.equal(currentURL(), `/jobs/${job.id}@${job.namespace}/variables`);
+      assert.strictEqual(
+        currentURL(),
+        `/jobs/${job.id}@${job.namespace}/variables`
+      );
 
       assert.dom('.job-variables-intro').exists();
 

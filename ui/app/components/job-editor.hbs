@@ -4,7 +4,7 @@
 ~}}
 
 <div>
-  <JobEditor::Alert 
+  <JobEditor::Alert
     @data={{merge (hash error=this.error stage=this.stage) this.data}}
     @fns={{this.fns}}
   />
@@ -37,6 +37,6 @@
         </Hds::ButtonSet>
       </header>
     {{/if}}
-    {{did-update this.setDefinitionOnModel this.definition}}
+    {{did-update-helper this.setDefinitionOnModel this.definition}}
     {{component (concat 'job-editor/' this.stage) data=this.data fns=this.fns}}
 </div>

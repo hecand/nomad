@@ -7,14 +7,13 @@ import { run } from '@ember/runloop';
 import { find, render, triggerKeyEvent } from '@ember/test-helpers';
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 import { componentA11yAudit } from 'nomad-ui/tests/helpers/a11y-audit';
 import Pretender from 'pretender';
 import { logEncode } from '../../../mirage/data/logs';
 import fetch from 'nomad-ui/utils/fetch';
 import Log from 'nomad-ui/utils/classes/log';
 
-const { assign } = Object;
 const A_KEY = 65;
 
 const stringifyValues = (obj) =>
@@ -63,14 +62,18 @@ module('Integration | Component | streaming file', function (hooks) {
     await render(commonTemplate);
 
     const request = this.server.handledRequests[0];
-    assert.equal(this.server.handledRequests.length, 1, 'One request made');
-    assert.equal(request.url.split('?')[0], url, `URL is ${url}`);
+    assert.strictEqual(
+      this.server.handledRequests.length,
+      1,
+      'One request made'
+    );
+    assert.strictEqual(request.url.split('?')[0], url, `URL is ${url}`);
     assert.deepEqual(
       request.queryParams,
-      stringifyValues(assign({ origin: 'start' }, params)),
+      stringifyValues(Object.assign({ origin: 'start' }, params)),
       'Query params are correct'
     );
-    assert.equal(find('[data-test-output]').textContent, 'Hello World');
+    assert.strictEqual(find('[data-test-output]').textContent, 'Hello World');
     await componentA11yAudit(this.element, assert);
   });
 
@@ -86,14 +89,18 @@ module('Integration | Component | streaming file', function (hooks) {
     await render(commonTemplate);
 
     const request = this.server.handledRequests[0];
-    assert.equal(this.server.handledRequests.length, 1, 'One request made');
-    assert.equal(request.url.split('?')[0], url, `URL is ${url}`);
+    assert.strictEqual(
+      this.server.handledRequests.length,
+      1,
+      'One request made'
+    );
+    assert.strictEqual(request.url.split('?')[0], url, `URL is ${url}`);
     assert.deepEqual(
       request.queryParams,
-      stringifyValues(assign({ origin: 'end', offset: 50000 }, params)),
+      stringifyValues(Object.assign({ origin: 'end', offset: 50000 }, params)),
       'Query params are correct'
     );
-    assert.equal(find('[data-test-output]').textContent, 'Hello World');
+    assert.strictEqual(find('[data-test-output]').textContent, 'Hello World');
   });
 
   test('when mode is `streaming` and `isStreaming` is true, streaming starts', async function (assert) {
@@ -112,8 +119,8 @@ module('Integration | Component | streaming file', function (hooks) {
     await render(commonTemplate);
 
     const request = this.server.handledRequests[0];
-    assert.equal(request.url.split('?')[0], url, `URL is ${url}`);
-    assert.equal(find('[data-test-output]').textContent, 'Hello World');
+    assert.strictEqual(request.url.split('?')[0], url, `URL is ${url}`);
+    assert.strictEqual(find('[data-test-output]').textContent, 'Hello World');
   });
 
   test('the ctrl+a/cmd+a shortcut selects only the text in the output window', async function (assert) {
@@ -135,7 +142,7 @@ module('Integration | Component | streaming file', function (hooks) {
     await triggerKeyEvent('[data-test-output]', 'keydown', A_KEY, {
       ctrlKey: true,
     });
-    assert.equal(
+    assert.strictEqual(
       window.getSelection().toString().trim(),
       find('[data-test-output]').textContent.trim()
     );
@@ -146,7 +153,7 @@ module('Integration | Component | streaming file', function (hooks) {
     await triggerKeyEvent('[data-test-output]', 'keydown', A_KEY, {
       metaKey: true,
     });
-    assert.equal(
+    assert.strictEqual(
       window.getSelection().toString().trim(),
       find('[data-test-output]').textContent.trim()
     );

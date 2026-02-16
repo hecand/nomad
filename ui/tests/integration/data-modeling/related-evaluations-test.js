@@ -16,7 +16,7 @@ module('Integration | Data Modeling | related evaluations', function (hooks) {
     const store = this.owner.lookup('service:store');
 
     server.get('/evaluation/:id', function (_, fakeRes) {
-      assert.equal(
+      assert.strictEqual(
         fakeRes.queryParams.related,
         'true',
         'it should append the related query parameter when making the API request for related evaluations'
@@ -129,7 +129,7 @@ module('Integration | Data Modeling | related evaluations', function (hooks) {
       adapterOptions: { related: true },
     });
 
-    assert.equal(result.relatedEvals.length, 2);
+    assert.strictEqual(result.relatedEvals.length, 2);
 
     const mappedResult = result.relatedEvals.map((es) => es.id);
 

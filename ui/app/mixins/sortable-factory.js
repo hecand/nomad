@@ -5,7 +5,7 @@
 
 import Mixin from '@ember/object/mixin';
 import Ember from 'ember';
-import { computed } from '@ember/object';
+import { computed, set } from '@ember/object';
 import { warn } from '@ember/debug';
 
 /**
@@ -59,7 +59,7 @@ export default function sortableFactory(properties, fromSortableMixin) {
             id: 'nomad.no-sortable-properties',
           });
           // eslint-disable-next-line ember/no-side-effects
-          this.set('_sortableFactoryWarningPrinted', true);
+          set(this, '_sortableFactoryWarningPrinted', true);
         }
 
         const sorted = this.listToSort.compact().sortBy(this.sortProperty);

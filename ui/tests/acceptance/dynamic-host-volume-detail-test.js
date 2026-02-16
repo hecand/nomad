@@ -45,8 +45,8 @@ module('Acceptance | dynamic host volume detail', function (hooks) {
   test('/storage/volumes/:id should have a breadcrumb trail linking back to Volumes and Storage', async function (assert) {
     await VolumeDetail.visit({ id: `${volume.id}@default` });
 
-    assert.equal(Layout.breadcrumbFor('storage.index').text, 'Storage');
-    assert.equal(
+    assert.strictEqual(Layout.breadcrumbFor('storage.index').text, 'Storage');
+    assert.strictEqual(
       Layout.breadcrumbFor('storage.volumes.dynamic-host-volume').text,
       volume.name
     );
@@ -55,8 +55,11 @@ module('Acceptance | dynamic host volume detail', function (hooks) {
   test('/storage/volumes/:id should show the volume name in the title', async function (assert) {
     await VolumeDetail.visit({ id: `${volume.id}@default` });
 
-    assert.equal(document.title, `Dynamic Host Volume ${volume.name} - Nomad`);
-    assert.equal(VolumeDetail.title, volume.name);
+    assert.strictEqual(
+      document.title,
+      `Dynamic Host Volume ${volume.name} - Nomad`
+    );
+    assert.strictEqual(VolumeDetail.title, volume.name);
   });
 
   test('/storage/volumes/:id should list additional details for the volume below the title', async function (assert) {
@@ -67,7 +70,7 @@ module('Acceptance | dynamic host volume detail', function (hooks) {
       VolumeDetail.hasNamespace,
       'Namespace is omitted when there is only one namespace'
     );
-    assert.equal(VolumeDetail.capacity, 'Capacity 9.54 MiB');
+    assert.strictEqual(VolumeDetail.capacity, 'Capacity 9.54 MiB');
   });
 
   test('/storage/volumes/:id should list all allocations the volume is attached to', async function (assert) {
@@ -76,12 +79,15 @@ module('Acceptance | dynamic host volume detail', function (hooks) {
 
     await VolumeDetail.visit({ id: `${volume.id}@default` });
 
-    assert.equal(VolumeDetail.allocations.length, allocations.length);
+    assert.strictEqual(VolumeDetail.allocations.length, allocations.length);
     allocations
       .sortBy('modifyIndex')
       .reverse()
       .forEach((allocation, idx) => {
-        assert.equal(allocation.id, VolumeDetail.allocations.objectAt(idx).id);
+        assert.strictEqual(
+          allocation.id,
+          VolumeDetail.allocations.objectAt(idx).id
+        );
       });
     await percySnapshot(assert);
   });
@@ -105,44 +111,44 @@ module('Acceptance | dynamic host volume detail', function (hooks) {
 
     await VolumeDetail.visit({ id: `${volume.id}@default` });
     VolumeDetail.allocations.objectAt(0).as((allocationRow) => {
-      assert.equal(
+      assert.strictEqual(
         allocationRow.shortId,
         allocation.id.split('-')[0],
         'Allocation short ID'
       );
-      assert.equal(
+      assert.strictEqual(
         allocationRow.createTime,
         moment(allocation.createTime / 1000000).format('MMM DD HH:mm:ss ZZ'),
         'Allocation create time'
       );
-      assert.equal(
+      assert.strictEqual(
         allocationRow.modifyTime,
         moment(allocation.modifyTime / 1000000).fromNow(),
         'Allocation modify time'
       );
-      assert.equal(
+      assert.strictEqual(
         allocationRow.status,
         allocation.clientStatus,
         'Client status'
       );
-      assert.equal(
+      assert.strictEqual(
         allocationRow.job,
         server.db.jobs.find(allocation.jobId).name,
         'Job name'
       );
       assert.ok(allocationRow.taskGroup, 'Task group name');
       assert.ok(allocationRow.jobVersion, 'Job Version');
-      assert.equal(
+      assert.strictEqual(
         allocationRow.client,
         server.db.nodes.find(allocation.nodeId).id.split('-')[0],
         'Node ID'
       );
-      assert.equal(
+      assert.strictEqual(
         allocationRow.clientTooltip.substr(0, 15),
         server.db.nodes.find(allocation.nodeId).name.substr(0, 15),
         'Node Name'
       );
-      assert.equal(
+      assert.strictEqual(
         allocationRow.cpu,
         Math.floor(allocStats.resourceUsage.CpuStats.TotalTicks) / cpuUsed,
         'CPU %'
@@ -150,17 +156,17 @@ module('Acceptance | dynamic host volume detail', function (hooks) {
       const roundedTicks = Math.floor(
         allocStats.resourceUsage.CpuStats.TotalTicks
       );
-      assert.equal(
+      assert.strictEqual(
         allocationRow.cpuTooltip,
         `${formatHertz(roundedTicks, 'MHz')} / ${formatHertz(cpuUsed, 'MHz')}`,
         'Detailed CPU information is in a tooltip'
       );
-      assert.equal(
+      assert.strictEqual(
         allocationRow.mem,
         allocStats.resourceUsage.MemoryStats.RSS / 1024 / 1024 / memoryUsed,
         'Memory used'
       );
-      assert.equal(
+      assert.strictEqual(
         allocationRow.memTooltip,
         `${formatBytes(
           allocStats.resourceUsage.MemoryStats.RSS
@@ -177,31 +183,34 @@ module('Acceptance | dynamic host volume detail', function (hooks) {
     await VolumeDetail.visit({ id: `${volume.id}@default` });
     await VolumeDetail.allocations.objectAt(0).visit();
 
-    assert.equal(currentURL(), `/allocations/${allocation.id}`);
+    assert.strictEqual(currentURL(), `/allocations/${allocation.id}`);
   });
 
   test('when there are no allocations, the table presents an empty state', async function (assert) {
     await VolumeDetail.visit({ id: `${volume.id}@default` });
 
     assert.ok(VolumeDetail.allocationsTableIsEmpty);
-    assert.equal(VolumeDetail.allocationsEmptyState.headline, 'No Allocations');
+    assert.strictEqual(
+      VolumeDetail.allocationsEmptyState.headline,
+      'No Allocations'
+    );
   });
 
   test('Capabilities table shows access mode and attachment mode', async function (assert) {
     await VolumeDetail.visit({ id: `${volume.id}@default` });
-    assert.equal(
+    assert.strictEqual(
       VolumeDetail.capabilities.objectAt(0).accessMode,
       'single-node-writer'
     );
-    assert.equal(
+    assert.strictEqual(
       VolumeDetail.capabilities.objectAt(0).attachmentMode,
       'file-system'
     );
-    assert.equal(
+    assert.strictEqual(
       VolumeDetail.capabilities.objectAt(1).accessMode,
       'single-node-reader-only'
     );
-    assert.equal(
+    assert.strictEqual(
       VolumeDetail.capabilities.objectAt(1).attachmentMode,
       'block-device'
     );

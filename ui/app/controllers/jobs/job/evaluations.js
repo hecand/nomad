@@ -7,9 +7,7 @@ import { alias } from '@ember/object/computed';
 import Controller from '@ember/controller';
 import WithNamespaceResetting from 'nomad-ui/mixins/with-namespace-resetting';
 import Sortable from 'nomad-ui/mixins/sortable';
-import classic from 'ember-classic-decorator';
 
-@classic
 export default class EvaluationsController extends Controller.extend(
   WithNamespaceResetting,
   Sortable

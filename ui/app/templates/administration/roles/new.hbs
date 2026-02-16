@@ -3,8 +3,10 @@
   SPDX-License-Identifier: BUSL-1.1
 ~}}
 
-<Breadcrumb @crumb={{hash label="New" args=(array "administration.roles.new")}} />
 {{page-title "Create Role"}}
+
+<Breadcrumb @label="New" @route="administration.roles.new" />
+
 <section class="section">
   <Hds::PageHeader as |PH|>
     <PH.Title data-test-title>Create Role</PH.Title>

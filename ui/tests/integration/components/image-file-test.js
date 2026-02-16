@@ -6,7 +6,7 @@
 import { find, render } from '@ember/test-helpers';
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 import { componentA11yAudit } from 'nomad-ui/tests/helpers/a11y-audit';
 import sinon from 'sinon';
 import RSVP from 'rsvp';
@@ -33,7 +33,7 @@ module('Integration | Component | image file', function (hooks) {
     await render(commonTemplate);
 
     assert.ok(find('img'), 'Image is in the DOM');
-    assert.equal(
+    assert.strictEqual(
       find('img').getAttribute('src'),
       commonProperties.src,
       `src is ${commonProperties.src}`
@@ -49,17 +49,17 @@ module('Integration | Component | image file', function (hooks) {
 
     assert.ok(find('a'), 'Anchor');
     assert.ok(find('a > img'), 'Image in anchor');
-    assert.equal(
+    assert.strictEqual(
       find('a').getAttribute('href'),
       commonProperties.src,
       `href is ${commonProperties.src}`
     );
-    assert.equal(
+    assert.strictEqual(
       find('a').getAttribute('target'),
       '_blank',
       'Anchor opens to a new tab'
     );
-    assert.equal(
+    assert.strictEqual(
       find('a').getAttribute('rel'),
       'noopener noreferrer',
       'Anchor rel correctly bars openers and referrers'

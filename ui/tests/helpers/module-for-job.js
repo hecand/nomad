@@ -56,8 +56,8 @@ export default function moduleForJob(
         ? `/jobs/${job.name}@${job.namespace}`
         : `/jobs/${job.name}`;
 
-      assert.equal(decodeURIComponent(currentURL()), expectedURL);
-      assert.equal(document.title, `Job ${job.name} - Nomad`);
+      assert.strictEqual(decodeURIComponent(currentURL()), expectedURL);
+      assert.strictEqual(document.title, `Job ${job.name} - Nomad`);
     });
 
     test('the subnav links to overview', async function (assert) {
@@ -67,7 +67,7 @@ export default function moduleForJob(
         ? `/jobs/${job.name}@${job.namespace}`
         : `/jobs/${job.name}`;
 
-      assert.equal(decodeURIComponent(currentURL()), expectedURL);
+      assert.strictEqual(decodeURIComponent(currentURL()), expectedURL);
     });
 
     test('the subnav links to definition', async function (assert) {
@@ -87,7 +87,7 @@ export default function moduleForJob(
         ? `/jobs/${job.name}@${job.namespace}/versions`
         : `/jobs/${job.name}/versions`;
 
-      assert.equal(decodeURIComponent(currentURL()), expectedURL);
+      assert.strictEqual(decodeURIComponent(currentURL()), expectedURL);
     });
 
     test('the title buttons are dependent on job status', async function (assert) {
@@ -109,13 +109,16 @@ export default function moduleForJob(
     });
 
     test('page header displays job information', async function (assert) {
-      assert.equal(JobDetail.statFor('type').text, `Type ${job.type}`);
-      assert.equal(
+      assert.strictEqual(JobDetail.statFor('type').text, `Type ${job.type}`);
+      assert.strictEqual(
         JobDetail.statFor('priority').text,
         `Priority ${job.priority}`
       );
-      assert.equal(JobDetail.statFor('version').text, `Version ${job.version}`);
-      assert.equal(
+      assert.strictEqual(
+        JobDetail.statFor('version').text,
+        `Version ${job.version}`
+      );
+      assert.strictEqual(
         JobDetail.statFor('node-pool').text,
         `Node Pool ${job.nodePool}`
       );
@@ -142,7 +145,7 @@ export default function moduleForJob(
 
         await allocationRow.visitRow();
 
-        assert.equal(
+        assert.strictEqual(
           currentURL(),
           `/allocations/${allocationId}`,
           'Allocation row links to allocation detail'
@@ -159,7 +162,7 @@ export default function moduleForJob(
           ? `/jobs/${encodeURIComponent(job.name)}@${job.namespace}/${tgName}`
           : `/jobs/${encodeURIComponent(job.name)}/${tgName}`;
 
-        assert.equal(currentURL(), expectedURL);
+        assert.strictEqual(currentURL(), expectedURL);
       });
 
       test('clicking legend item navigates to a pre-filtered allocations table', async function (assert) {
@@ -216,7 +219,7 @@ export default function moduleForJob(
         // Sort and compare URL query params.
         gotURL.searchParams.sort();
         expectedURL.searchParams.sort();
-        assert.equal(
+        assert.strictEqual(
           gotURL.searchParams.toString(),
           expectedURL.searchParams.toString()
         );
@@ -242,7 +245,7 @@ export default function moduleForJob(
           ? `/jobs/${job.name}@${job.namespace}/evaluations`
           : `/jobs/${job.name}/evaluations`;
 
-        assert.equal(decodeURIComponent(currentURL()), expectedURL);
+        assert.strictEqual(decodeURIComponent(currentURL()), expectedURL);
       });
     }
 
@@ -318,7 +321,7 @@ export function moduleForJobWithClientStatus(
           ? `/jobs/${job.id}@${job.namespace}/clients`
           : `/jobs/${job.id}/clients`;
 
-        assert.equal(currentURL(), expectedURL);
+        assert.strictEqual(currentURL(), expectedURL);
       });
 
       for (var testName in additionalTests) {
@@ -351,7 +354,7 @@ export function moduleForJobWithClientStatus(
       test('/jobs/job/clients route is protected with authorization logic', async function (assert) {
         await visit(`/jobs/${job.id}/clients`);
 
-        assert.equal(
+        assert.strictEqual(
           currentRouteName(),
           'jobs.job.index',
           'The clients route cannot be visited unless you have node:read permissions'

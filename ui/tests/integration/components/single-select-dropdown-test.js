@@ -9,7 +9,7 @@ import { setupRenderingTest } from 'ember-qunit';
 import { selectChoose } from 'ember-power-select/test-support';
 import { clickTrigger } from 'ember-power-select/test-support/helpers';
 import sinon from 'sinon';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 import { componentA11yAudit } from 'nomad-ui/tests/helpers/a11y-audit';
 
 module('Integration | Component | single-select dropdown', function (hooks) {
@@ -66,13 +66,13 @@ module('Integration | Component | single-select dropdown', function (hooks) {
 
     await clickTrigger('[data-test-single-select-dropdown]');
 
-    assert.equal(
+    assert.strictEqual(
       findAll('.ember-power-select-option').length,
       props.options.length,
       'All options are shown'
     );
     findAll('.ember-power-select-option').forEach((optionEl, index) => {
-      assert.equal(
+      assert.strictEqual(
         optionEl.querySelector('.dropdown-label').textContent.trim(),
         props.options[index].label
       );

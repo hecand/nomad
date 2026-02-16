@@ -27,12 +27,12 @@ module('Unit | Component | line-chart', function (hooks) {
     });
 
     let [xDomainLow, xDomainHigh] = chart.xScale.domain();
-    assert.equal(
+    assert.strictEqual(
       xDomainLow,
       Math.min(...data.mapBy('foo')),
       'Domain lower bound is the lowest foo value'
     );
-    assert.equal(
+    assert.strictEqual(
       xDomainHigh,
       Math.max(...data.mapBy('foo')),
       'Domain upper bound is the highest foo value'
@@ -41,7 +41,7 @@ module('Unit | Component | line-chart', function (hooks) {
     chart.args.data = [...data, { foo: 12, bar: 600 }];
 
     [, xDomainHigh] = chart.xScale.domain();
-    assert.equal(
+    assert.strictEqual(
       xDomainHigh,
       12,
       'When the data changes, the xScale is recalculated'
@@ -55,8 +55,8 @@ module('Unit | Component | line-chart', function (hooks) {
     });
 
     let [yDomainLow, yDomainHigh] = chart.yScale.domain();
-    assert.equal(yDomainLow, 0, 'Domain lower bound is always 0');
-    assert.equal(
+    assert.strictEqual(yDomainLow, 0, 'Domain lower bound is always 0');
+    assert.strictEqual(
       yDomainHigh,
       Math.max(...data.mapBy('bar')),
       'Domain upper bound is the highest bar value'
@@ -65,7 +65,7 @@ module('Unit | Component | line-chart', function (hooks) {
     chart.args.data = [...data, { foo: 12, bar: 600 }];
 
     [, yDomainHigh] = chart.yScale.domain();
-    assert.equal(
+    assert.strictEqual(
       yDomainHigh,
       600,
       'When the data changes, the yScale is recalculated'
@@ -79,13 +79,13 @@ module('Unit | Component | line-chart', function (hooks) {
     });
 
     chart.height = 100;
-    assert.equal(chart.yTicks.length, 3);
+    assert.strictEqual(chart.yTicks.length, 3);
 
     chart.height = 240;
-    assert.equal(chart.yTicks.length, 5);
+    assert.strictEqual(chart.yTicks.length, 5);
 
     chart.height = 242;
-    assert.equal(chart.yTicks.length, 7);
+    assert.strictEqual(chart.yTicks.length, 7);
   });
 
   test('the values for yTicks are rounded to whole numbers', function (assert) {
@@ -129,7 +129,7 @@ module('Unit | Component | line-chart', function (hooks) {
 
     chart.activeDatum = data[1];
 
-    assert.equal(
+    assert.strictEqual(
       chart.activeDatumLabel,
       d3Format.format(',')(data[1].foo),
       'activeDatumLabel correctly formats the correct prop of the correct datum'
@@ -145,7 +145,7 @@ module('Unit | Component | line-chart', function (hooks) {
 
     chart.activeDatum = data[1];
 
-    assert.equal(
+    assert.strictEqual(
       chart.activeDatumValue,
       d3Format.format(',.2~r')(data[1].bar),
       'activeDatumValue correctly formats the correct prop of the correct datum'

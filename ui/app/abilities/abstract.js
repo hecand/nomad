@@ -7,9 +7,7 @@ import { Ability } from 'ember-can';
 import { inject as service } from '@ember/service';
 import { computed, get } from '@ember/object';
 import { equal, not } from '@ember/object/computed';
-import classic from 'ember-classic-decorator';
 
-@classic
 export default class Abstract extends Ability {
   @service system;
   @service token;
@@ -31,7 +29,7 @@ export default class Abstract extends Ability {
   get rulesForNamespace() {
     let namespace = this._namespace;
 
-    return (this.get('token.selfTokenPolicies') || [])
+    return (get(this, 'token.selfTokenPolicies') || [])
       .toArray()
       .reduce((rules, policy) => {
         let policyNamespaces = get(policy, 'rulesJSON.Namespaces') || [];
@@ -55,7 +53,7 @@ export default class Abstract extends Ability {
 
   @computed('token.selfTokenPolicies.[]')
   get capabilitiesForAllNamespaces() {
-    return (this.get('token.selfTokenPolicies') || [])
+    return (get(this, 'token.selfTokenPolicies') || [])
       .toArray()
       .reduce((allCapabilities, policy) => {
         (get(policy, 'rulesJSON.Namespaces') || []).forEach(

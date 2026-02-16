@@ -97,8 +97,12 @@ module('Acceptance | task group detail', function (hooks) {
 
     await TaskGroup.visit({ id: job.id, name: taskGroup.name });
 
-    assert.equal(TaskGroup.tasksCount, `# Tasks ${tasks.length}`, '# Tasks');
-    assert.equal(
+    assert.strictEqual(
+      TaskGroup.tasksCount,
+      `# Tasks ${tasks.length}`,
+      '# Tasks'
+    );
+    assert.strictEqual(
       TaskGroup.cpu,
       `Reserved CPU ${formatScheduledHertz(totalCPU, 'MHz')}`,
       'Aggregated CPU reservation for all tasks'
@@ -113,7 +117,7 @@ module('Acceptance | task group detail', function (hooks) {
       )}Max)`;
     }
 
-    assert.equal(
+    assert.strictEqual(
       TaskGroup.mem,
       `Reserved Memory ${formatScheduledBytes(
         totalMemory,
@@ -121,7 +125,7 @@ module('Acceptance | task group detail', function (hooks) {
       )}${totalMemoryMaxAddendum}`,
       'Aggregated Memory reservation for all tasks'
     );
-    assert.equal(
+    assert.strictEqual(
       TaskGroup.disk,
       `Reserved Disk ${formatScheduledBytes(totalDisk, 'MiB')}`,
       'Aggregated Disk reservation for all tasks'
@@ -135,17 +139,17 @@ module('Acceptance | task group detail', function (hooks) {
   test('/jobs/:id/:task-group should have breadcrumbs for job and jobs', async function (assert) {
     await TaskGroup.visit({ id: job.id, name: taskGroup.name });
 
-    assert.equal(
+    assert.strictEqual(
       Layout.breadcrumbFor('jobs.index').text,
       'Jobs',
       'First breadcrumb says jobs'
     );
-    assert.equal(
+    assert.strictEqual(
       Layout.breadcrumbFor('jobs.job.index').text,
       `Job ${job.name}`,
       'Second breadcrumb says the job name'
     );
-    assert.equal(
+    assert.strictEqual(
       Layout.breadcrumbFor('jobs.job.task-group').text,
       `Task Group ${taskGroup.name}`,
       'Third breadcrumb says the job name'
@@ -156,14 +160,18 @@ module('Acceptance | task group detail', function (hooks) {
     await TaskGroup.visit({ id: job.id, name: taskGroup.name });
 
     await Layout.breadcrumbFor('jobs.index').visit();
-    assert.equal(currentURL(), '/jobs', 'First breadcrumb links back to jobs');
+    assert.strictEqual(
+      currentURL(),
+      '/jobs',
+      'First breadcrumb links back to jobs'
+    );
   });
 
   test('/jobs/:id/:task-group second breadcrumb should link to the job for the task group', async function (assert) {
     await TaskGroup.visit({ id: job.id, name: taskGroup.name });
 
     await Layout.breadcrumbFor('jobs.job.index').visit();
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/jobs/${job.id}`,
       'Second breadcrumb links back to the job for the task group'
@@ -241,7 +249,7 @@ module('Acceptance | task group detail', function (hooks) {
       name: scalingGroup.name,
     });
 
-    assert.equal(
+    assert.strictEqual(
       decodeURIComponent(currentURL()),
       `/jobs/${job.id}@${SCALE_AND_WRITE_NAMESPACE}/scaling`
     );
@@ -251,7 +259,7 @@ module('Acceptance | task group detail', function (hooks) {
       id: `${job2.id}@${secondNamespace.name}`,
       name: scalingGroup2.name,
     });
-    assert.equal(
+    assert.strictEqual(
       decodeURIComponent(currentURL()),
       `/jobs/${job2.id}@${READ_ONLY_NAMESPACE}/scaling`
     );
@@ -273,7 +281,7 @@ module('Acceptance | task group detail', function (hooks) {
       'There are enough allocations to invoke pagination'
     );
 
-    assert.equal(
+    assert.strictEqual(
       TaskGroup.allocations.length,
       TaskGroup.pageSize,
       'All allocations for the task group'
@@ -286,37 +294,37 @@ module('Acceptance | task group detail', function (hooks) {
     const allocation = allocations.sortBy('modifyIndex').reverse()[0];
     const allocationRow = TaskGroup.allocations.objectAt(0);
 
-    assert.equal(
+    assert.strictEqual(
       allocationRow.shortId,
       allocation.id.split('-')[0],
       'Allocation short id'
     );
-    assert.equal(
+    assert.strictEqual(
       allocationRow.createTime,
       moment(allocation.createTime / 1000000).format('MMM DD HH:mm:ss ZZ'),
       'Allocation create time'
     );
-    assert.equal(
+    assert.strictEqual(
       allocationRow.modifyTime,
       moment(allocation.modifyTime / 1000000).fromNow(),
       'Allocation modify time'
     );
-    assert.equal(
+    assert.strictEqual(
       allocationRow.status,
       allocation.clientStatus,
       'Client status'
     );
-    assert.equal(
+    assert.strictEqual(
       allocationRow.jobVersion,
       allocation.jobVersion,
       'Job Version'
     );
-    assert.equal(
+    assert.strictEqual(
       allocationRow.client,
       server.db.nodes.find(allocation.nodeId).id.split('-')[0],
       'Node ID'
     );
-    assert.equal(
+    assert.strictEqual(
       allocationRow.volume,
       Object.keys(taskGroup.volumes).length ? 'Yes' : '',
       'Volumes'
@@ -324,7 +332,7 @@ module('Acceptance | task group detail', function (hooks) {
 
     await allocationRow.visitClient();
 
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/clients/${allocation.nodeId}`,
       'Node links to node page'
@@ -346,7 +354,7 @@ module('Acceptance | task group detail', function (hooks) {
       0
     );
 
-    assert.equal(
+    assert.strictEqual(
       allocationRow.cpu,
       Math.floor(allocStats.resourceUsage.CpuStats.TotalTicks) / cpuUsed,
       'CPU %'
@@ -355,19 +363,19 @@ module('Acceptance | task group detail', function (hooks) {
     const roundedTicks = Math.floor(
       allocStats.resourceUsage.CpuStats.TotalTicks
     );
-    assert.equal(
+    assert.strictEqual(
       allocationRow.cpuTooltip,
       `${formatHertz(roundedTicks, 'MHz')} / ${formatHertz(cpuUsed, 'MHz')}`,
       'Detailed CPU information is in a tooltip'
     );
 
-    assert.equal(
+    assert.strictEqual(
       allocationRow.mem,
       allocStats.resourceUsage.MemoryStats.RSS / 1024 / 1024 / memoryUsed,
       'Memory used'
     );
 
-    assert.equal(
+    assert.strictEqual(
       allocationRow.memTooltip,
       `${formatBytes(allocStats.resourceUsage.MemoryStats.RSS)} / ${formatBytes(
         memoryUsed,
@@ -383,7 +391,7 @@ module('Acceptance | task group detail', function (hooks) {
     await TaskGroup.search('zzzzzz');
 
     assert.ok(TaskGroup.isEmpty, 'Empty state is shown');
-    assert.equal(
+    assert.strictEqual(
       TaskGroup.emptyState.headline,
       'No Matches',
       'Empty state has an appropriate message'
@@ -415,7 +423,7 @@ module('Acceptance | task group detail', function (hooks) {
     await TaskGroup.visit({ id: job.id, name: taskGroup.name });
 
     assert.ok(TaskGroup.lifecycleChart.isPresent);
-    assert.equal(
+    assert.strictEqual(
       TaskGroup.lifecycleChart.title,
       'Task Lifecycle Configuration'
     );
@@ -425,7 +433,7 @@ module('Acceptance | task group detail', function (hooks) {
 
     // This is thoroughly tested in allocation detail tests, so this mostly checks what’s different
 
-    assert.equal(TaskGroup.lifecycleChart.tasks.length, 3);
+    assert.strictEqual(TaskGroup.lifecycleChart.tasks.length, 3);
 
     TaskGroup.lifecycleChart.tasks.forEach((Task) => {
       assert.ok(taskNames.includes(Task.name));
@@ -438,7 +446,7 @@ module('Acceptance | task group detail', function (hooks) {
     await TaskGroup.visit({ id: job.id, name: taskGroup.name });
 
     assert.ok(TaskGroup.hasVolumes);
-    assert.equal(
+    assert.strictEqual(
       TaskGroup.volumes.length,
       Object.keys(taskGroup.volumes).length
     );
@@ -471,10 +479,10 @@ module('Acceptance | task group detail', function (hooks) {
 
     TaskGroup.volumes[0].as((volumeRow) => {
       const volume = taskGroup.volumes[volumeRow.name];
-      assert.equal(volumeRow.name, volume.Name);
-      assert.equal(volumeRow.type, volume.Type);
-      assert.equal(volumeRow.source, volume.Source);
-      assert.equal(
+      assert.strictEqual(volumeRow.name, volume.Name);
+      assert.strictEqual(volumeRow.type, volume.Type);
+      assert.strictEqual(volumeRow.source, volume.Source);
+      assert.strictEqual(
         volumeRow.permissions,
         volume.ReadOnly ? 'Read' : 'Read/Write'
       );
@@ -507,8 +515,8 @@ module('Acceptance | task group detail', function (hooks) {
       (req) => req.method === 'POST' && req.url.endsWith('/scale')
     );
     const requestBody = JSON.parse(scaleRequest.requestBody);
-    assert.equal(requestBody.Target.Group, scalingGroup.name);
-    assert.equal(requestBody.Count, scalingGroup.count + 1);
+    assert.strictEqual(requestBody.Target.Group, scalingGroup.name);
+    assert.strictEqual(requestBody.Count, scalingGroup.count + 1);
   });
 
   test('the count stepper is disabled when a deployment is running', async function (assert) {
@@ -542,20 +550,20 @@ module('Acceptance | task group detail', function (hooks) {
       name: 'not-a-real-task-group',
     });
 
-    assert.equal(
+    assert.strictEqual(
       server.pretender.handledRequests
         .filter((request) => !request.url.includes('policy'))
         .findBy('status', 404).url,
       '/v1/job/not-a-real-job',
       'A request to the nonexistent job is made'
     );
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       '/jobs/not-a-real-job/not-a-real-task-group',
       'The URL persists'
     );
     assert.ok(TaskGroup.error.isPresent, 'Error message is shown');
-    assert.equal(
+    assert.strictEqual(
       TaskGroup.error.title,
       'Not Found',
       'Error message is for 404'
@@ -572,13 +580,13 @@ module('Acceptance | task group detail', function (hooks) {
         .includes(`/v1/job/${job.id}`),
       'A request to the job is made and succeeds'
     );
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/jobs/${job.id}/not-a-real-task-group`,
       'The URL persists'
     );
     assert.ok(TaskGroup.error.isPresent, 'Error message is shown');
-    assert.equal(
+    assert.strictEqual(
       TaskGroup.error.title,
       'Not Found',
       'Error message is for 404'
@@ -633,14 +641,14 @@ module('Acceptance | task group detail', function (hooks) {
 
     scaleEvents.forEach((scaleEvent, idx) => {
       const ScaleEvent = TaskGroup.scaleEvents[idx];
-      assert.equal(
+      assert.strictEqual(
         ScaleEvent.time,
         moment(scaleEvent.time / 1000000).format('MMM DD HH:mm:ss ZZ')
       );
-      assert.equal(ScaleEvent.message, scaleEvent.message);
+      assert.strictEqual(ScaleEvent.message, scaleEvent.message);
 
       if (scaleEvent.count != null) {
-        assert.equal(ScaleEvent.count, scaleEvent.count);
+        assert.strictEqual(ScaleEvent.count, scaleEvent.count);
       }
 
       if (scaleEvent.error) {
@@ -678,7 +686,7 @@ module('Acceptance | task group detail', function (hooks) {
     assert.ok(TaskGroup.hasScaleEvents);
     assert.ok(TaskGroup.hasScalingTimeline);
 
-    assert.equal(
+    assert.strictEqual(
       TaskGroup.scalingAnnotations.length,
       scaleEvents.filter((ev) => ev.count == null).length
     );
@@ -783,7 +791,7 @@ function testFacet(
       .reverse();
 
     TaskGroup.allocations.forEach((alloc, index) => {
-      assert.equal(
+      assert.strictEqual(
         alloc.id,
         expectedAllocs[index].id,
         `Allocation at ${index} is ${expectedAllocs[index].id}`
@@ -810,7 +818,7 @@ function testFacet(
       .reverse();
 
     TaskGroup.allocations.forEach((alloc, index) => {
-      assert.equal(
+      assert.strictEqual(
         alloc.id,
         expectedAllocs[index].id,
         `Allocation at ${index} is ${expectedAllocs[index].id}`
@@ -831,7 +839,7 @@ function testFacet(
     await option2.toggle();
     selection.push(option2.key);
 
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/jobs/${job.id}/${taskGroup.name}?${paramName}=${encodeURIComponent(
         JSON.stringify(selection)

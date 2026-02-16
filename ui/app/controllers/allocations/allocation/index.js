@@ -6,20 +6,18 @@
 /* eslint-disable ember/no-observers */
 import Controller from '@ember/controller';
 import { inject as service } from '@ember/service';
-import { action, computed } from '@ember/object';
+import { action, computed, get, set } from '@ember/object';
 import { observes } from '@ember-decorators/object';
 import { computed as overridable } from 'ember-overridable-computed';
-import { alias } from '@ember/object/computed';
+import { alias, union } from '@ember/object/computed';
 import { task } from 'ember-concurrency';
 import Sortable from 'nomad-ui/mixins/sortable';
 import { lazyClick } from 'nomad-ui/helpers/lazy-click';
 import { watchRecord } from 'nomad-ui/utils/properties/watch';
 import messageForError from 'nomad-ui/utils/message-from-adapter-error';
-import classic from 'ember-classic-decorator';
-import { union } from '@ember/object/computed';
+
 import { tracked } from '@glimmer/tracking';
 
-@classic
 export default class IndexController extends Controller.extend(Sortable) {
   @service token;
   @service store;
@@ -53,17 +51,17 @@ export default class IndexController extends Controller.extend(Sortable) {
 
   @computed('model.allocatedResources.ports.@each.label')
   get ports() {
-    return (this.get('model.allocatedResources.ports') || []).sortBy('label');
+    return (get(this, 'model.allocatedResources.ports') || []).sortBy('label');
   }
 
   @computed('model.states.@each.task')
   get tasks() {
-    return this.get('model.states').mapBy('task') || [];
+    return get(this, 'model.states').mapBy('task') || [];
   }
 
   @computed('tasks.@each.services')
   get taskServices() {
-    return this.get('tasks')
+    return this.tasks
       .map((t) => ((t && t.services) || []).toArray())
       .flat()
       .compact();
@@ -71,7 +69,7 @@ export default class IndexController extends Controller.extend(Sortable) {
 
   @computed('model.taskGroup.services.@each.name')
   get groupServices() {
-    return (this.get('model.taskGroup.services') || []).sortBy('name');
+    return (get(this, 'model.taskGroup.services') || []).sortBy('name');
   }
 
   @union('taskServices', 'groupServices') services;
@@ -102,7 +100,7 @@ export default class IndexController extends Controller.extend(Sortable) {
   }
 
   onDismiss() {
-    this.set('error', null);
+    set(this, 'error', null);
   }
 
   @watchRecord('allocation') watchNext;
@@ -123,7 +121,7 @@ export default class IndexController extends Controller.extend(Sortable) {
       // Eagerly update the allocation clientStatus to avoid flickering
       this.model.set('clientStatus', 'complete');
     } catch (err) {
-      this.set('error', {
+      set(this, 'error', {
         title: 'Could Not Stop Allocation',
         description: messageForError(err, 'manage allocation lifecycle'),
       });
@@ -135,7 +133,7 @@ export default class IndexController extends Controller.extend(Sortable) {
     try {
       yield this.model.restart();
     } catch (err) {
-      this.set('error', {
+      set(this, 'error', {
         title: 'Could Not Restart Allocation',
         description: messageForError(err, 'manage allocation lifecycle'),
       });
@@ -147,7 +145,7 @@ export default class IndexController extends Controller.extend(Sortable) {
     try {
       yield this.model.restartAll();
     } catch (err) {
-      this.set('error', {
+      set(this, 'error', {
         title: 'Could Not Restart All Tasks',
         description: messageForError(err, 'manage allocation lifecycle'),
       });
@@ -174,7 +172,7 @@ export default class IndexController extends Controller.extend(Sortable) {
   @tracked activeServiceID = null;
 
   @action handleServiceClick(service) {
-    this.set('activeServiceID', service.refID);
+    set(this, 'activeServiceID', service.refID);
   }
 
   @computed('activeServiceID', 'services')
@@ -183,7 +181,7 @@ export default class IndexController extends Controller.extend(Sortable) {
   }
 
   @action closeSidebar() {
-    this.set('activeServiceID', null);
+    set(this, 'activeServiceID', null);
   }
 
   keyCommands = [

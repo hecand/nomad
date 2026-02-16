@@ -6,9 +6,7 @@
 import AbstractAbility from './abstract';
 import { computed, get } from '@ember/object';
 import { or } from '@ember/object/computed';
-import classic from 'ember-classic-decorator';
 
-@classic
 export default class Client extends AbstractAbility {
   // Map abilities to policy options (which are coarse for nodes)
   // instead of specific behaviors.
@@ -24,7 +22,7 @@ export default class Client extends AbstractAbility {
 
   @computed('token.selfTokenPolicies.[]')
   get policiesIncludeNodeRead() {
-    return policiesIncludePermissions(this.get('token.selfTokenPolicies'), [
+    return policiesIncludePermissions(get(this, 'token.selfTokenPolicies'), [
       'read',
       'write',
     ]);
@@ -32,7 +30,7 @@ export default class Client extends AbstractAbility {
 
   @computed('token.selfTokenPolicies.[]')
   get policiesIncludeNodeWrite() {
-    return policiesIncludePermissions(this.get('token.selfTokenPolicies'), [
+    return policiesIncludePermissions(get(this, 'token.selfTokenPolicies'), [
       'write',
     ]);
   }

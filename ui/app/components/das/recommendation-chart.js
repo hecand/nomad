@@ -4,11 +4,10 @@
  */
 
 import Component from '@glimmer/component';
-import { action } from '@ember/object';
+import { action, get } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { next } from '@ember/runloop';
 import { htmlSafe } from '@ember/string';
-import { get } from '@ember/object';
 
 import { scaleLinear } from 'd3-scale';
 import d3Format from 'd3-format';

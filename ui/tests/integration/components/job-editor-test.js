@@ -3,11 +3,10 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import { assign } from '@ember/polyfills';
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { render } from '@ember/test-helpers';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 import { create } from 'ember-cli-page-object';
 import sinon from 'sinon';
 import { startMirage } from 'nomad-ui/initializers/ember-cli-mirage';
@@ -44,7 +43,7 @@ module('Integration | Component | job-editor', function (hooks) {
   const newJobTaskGroupName = 'redis';
   const jsonJob = (overrides) => {
     return JSON.stringify(
-      assign(
+      Object.assign(
         {},
         {
           Name: newJobName,
@@ -191,7 +190,7 @@ module('Integration | Component | job-editor', function (hooks) {
     await planJob(spec);
     await Editor.cancel();
     assert.ok(Editor.editor.isPresent, 'The editor is shown again');
-    assert.equal(
+    assert.strictEqual(
       Editor.editor.contents,
       spec,
       'The spec that was planned is still in the editor'
@@ -218,7 +217,7 @@ module('Integration | Component | job-editor', function (hooks) {
       .doesNotExist('Run error is not shown');
 
     assert.ok(Editor.parseError.isPresent, 'Parse error is shown');
-    assert.equal(
+    assert.strictEqual(
       Editor.parseError.message,
       errorMessage,
       'The error message from the server is shown in the error in the UI'
@@ -251,7 +250,7 @@ module('Integration | Component | job-editor', function (hooks) {
       .doesNotExist('Run error is not shown');
 
     assert.ok(Editor.planError.isPresent, 'Plan error is shown');
-    assert.equal(
+    assert.strictEqual(
       Editor.planError.message,
       errorMessage,
       'The error message from the server is shown in the error in the UI'
@@ -282,7 +281,7 @@ module('Integration | Component | job-editor', function (hooks) {
       .doesNotExist('Parse error is not shown');
 
     assert.dom('[data-test-error="run"]').exists('Run error is shown');
-    assert.equal(
+    assert.strictEqual(
       Editor.runError.message,
       errorMessage,
       'The error message from the server is shown in the error in the UI'
@@ -492,7 +491,11 @@ module('Integration | Component | job-editor', function (hooks) {
       @onSelect={{this.onSelect}} />`);
 
     // Check if the definition is set on the model
-    assert.equal(job._newDefinition, 'pablo', 'Definition is set on the model');
+    assert.strictEqual(
+      job._newDefinition,
+      'pablo',
+      'Definition is set on the model'
+    );
 
     // Check if the newDefinitionVariables are set on the model
     function jsonToHcl(obj) {

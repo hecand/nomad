@@ -6,7 +6,7 @@
 import Ember from 'ember';
 import Component from '@ember/component';
 import { inject as service } from '@ember/service';
-import { computed } from '@ember/object';
+import { computed, get, set } from '@ember/object';
 import { alias } from '@ember/object/computed';
 import { task, timeout } from 'ember-concurrency';
 import { lazyClick } from '../helpers/lazy-click';
@@ -16,9 +16,7 @@ import {
   tagName,
   attributeBindings,
 } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 
-@classic
 @tagName('tr')
 @classNames('task-row', 'is-interactive')
 @attributeBindings('data-test-task-row')
@@ -40,16 +38,16 @@ export default class TaskRow extends Component {
   // Since all tasks for an allocation share the same tracker, use the registry
   @computed('task.{allocation,isRunning}')
   get stats() {
-    if (!this.get('task.isRunning')) return undefined;
+    if (!get(this, 'task.isRunning')) return undefined;
 
-    return this.statsTrackersRegistry.getTracker(this.get('task.allocation'));
+    return this.statsTrackersRegistry.getTracker(get(this, 'task.allocation'));
   }
 
   @computed('task.name', 'stats.tasks.[]')
   get taskStats() {
     if (!this.stats) return undefined;
 
-    return this.get('stats.tasks').findBy('task', this.get('task.name'));
+    return get(this, 'stats.tasks').findBy('task', get(this, 'task.name'));
   }
 
   @alias('taskStats.cpu.lastObject') cpu;
@@ -65,10 +63,10 @@ export default class TaskRow extends Component {
     do {
       if (this.stats) {
         try {
-          yield this.get('stats.poll').linked().perform();
-          this.set('statsError', false);
+          yield get(this, 'stats.poll').linked().perform();
+          set(this, 'statsError', false);
         } catch (error) {
-          this.set('statsError', true);
+          set(this, 'statsError', true);
         }
       }
 
@@ -79,7 +77,7 @@ export default class TaskRow extends Component {
 
   didReceiveAttrs() {
     super.didReceiveAttrs();
-    const allocation = this.get('task.allocation');
+    const allocation = get(this, 'task.allocation');
 
     if (allocation) {
       this.fetchStats.perform();

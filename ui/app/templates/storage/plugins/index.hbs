@@ -29,7 +29,7 @@
           @source={{p.list}}
           @sortProperty={{this.sortProperty}}
           @sortDescending={{this.sortDescending}}
-          @class="with-foot" as |t|>
+          class="with-foot" as |t|>
           <t.head>
             <t.sort-by @prop="plainId">ID</t.sort-by>
             <t.sort-by @prop="controllersHealthyProportion">Controller Health</t.sort-by>
@@ -73,10 +73,10 @@
             <div class="pagination-numbers">
               {{p.startsAt}}&ndash;{{p.endsAt}} of {{this.sortedPlugins.length}}
             </div>
-            <p.prev @class="pagination-previous">
+            <p.prev class="pagination-previous">
               <Hds::Icon @name="chevron-left" />
             </p.prev>
-            <p.next @class="pagination-next">
+            <p.next class="pagination-next">
               <Hds::Icon @name="chevron-right" />
             </p.next>
             <ul class="pagination-list"></ul>

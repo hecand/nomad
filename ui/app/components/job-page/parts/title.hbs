@@ -5,7 +5,7 @@
 
 <Hds::PageHeader class="job-page-header" as |PH|>
   <PH.Title data-test-job-name>
-    {{or this.title this.job.name}}
+    {{or this.title @job.name}}
     {{#if @job.meta.structured.root.children.pack}}
       <span data-test-pack-tag class="tag is-hollow">
         <Hds::Icon @name="box" @color="faint" />
@@ -29,13 +29,13 @@
     </PH.Generic>
   {{/if}}
   <PH.Actions>
-    {{#if (not (eq this.job.status "dead"))}}
-      {{#if (can "exec allocation" namespace=this.job.namespace)}}
-        {{#if (and this.job.actions.length this.job.allocations.length)}}
-          <ActionsDropdown @actions={{this.job.actions}} />
+    {{#if (not-eq @job.status "dead")}}
+      {{#if (can "exec allocation" namespace=@job.namespace)}}
+        {{#if (and @job.actions.length @job.allocations.length)}}
+          <ActionsDropdown @actions={{@job.actions}} />
         {{/if}}
       {{/if}}
-      <Exec::OpenButton @job={{this.job}} />
+      <Exec::OpenButton @job={{@job}} />
       <TwoStepButton
         data-test-stop
         @alignRight={{true}}
@@ -77,7 +77,7 @@
           2b. If there is no stable version, we should show an "Edit and resubmit" button
        --}}
 
-      {{#if this.job.stopped}}
+      {{#if @job.stopped}}
         <TwoStepButton
           data-test-start
           @alignRight={{true}}
@@ -96,43 +96,43 @@
           }}
         />
       {{else}}
-        {{#if this.job.hasStableNonCurrentVersion}}
+        {{#if @job.hasStableNonCurrentVersion}}
           <TwoStepButton
             data-test-revert
             @alignRight={{true}}
-            @idleText="Revert to last stable version (v{{this.job.latestStableVersion.number}})"
-            @disabled={{not (can "revert job" namespace=this.job.namespace)}}
-            @title={{if (can "revert job" namespace=this.job.namespace) null "You don’t have permission to revert jobs"}}
+            @idleText="Revert to last stable version (v{{@job.latestStableVersion.number}})"
+            @disabled={{not (can "revert job" namespace=@job.namespace)}}
+            @title={{if (can "revert job" namespace=@job.namespace) null "You don't have permission to revert jobs"}}
             @cancelText="Cancel"
             @confirmText="Yes, Revert to last stable version"
             @confirmationMessage="Are you sure you want to revert to the last stable version?"
             @awaitingConfirmation={{this.revertTo.isRunning}}
-            @onConfirm={{perform this.revertTo this.job.latestStableVersion}}
+            @onConfirm={{perform this.revertTo @job.latestStableVersion}}
           />
         {{else if
           (and
-            (not this.job.hasVersionStability)
-            this.job.latestVersion
+            (not @job.hasVersionStability)
+            @job.latestVersion
           )
         }}
           <TwoStepButton
             data-test-revert
             @alignRight={{true}}
-            @idleText="Revert to last version (v{{this.job.latestVersion.number}})"
+            @idleText="Revert to last version (v{{@job.latestVersion.number}})"
             @cancelText="Cancel"
             @confirmText="Yes, Revert to last version"
             @confirmationMessage="Are you sure you want to revert to the last version?"
             @awaitingConfirmation={{this.revertTo.isRunning}}
-            @onConfirm={{perform this.revertTo this.job.latestVersion}}
+            @onConfirm={{perform this.revertTo @job.latestVersion}}
           />
           <Hds::Button
             data-test-edit-and-resubmit
-            @color="primary" @isInline={{true}} @text="Edit and Resubmit job" @route={{"jobs.job.definition" this.job.id}} @query={{hash isEditing=true}} />
+            @color="primary" @isInline={{true}} @text="Edit and Resubmit job" @route={{"jobs.job.definition" @job.id}} @query={{hash isEditing=true}} />
         {{else}}
           <Hds::Button
             data-test-edit-and-resubmit
             {{hds-tooltip "This job has failed and has no stable previous version to fall back to. You can edit and resubmit the job to try again." options=(hash placement="bottom")}}
-            @color="primary" @isInline={{true}} @text="Edit and Resubmit job" @route={{"jobs.job.definition" this.job.id}} @query={{hash isEditing=true}} />
+            @color="primary" @isInline={{true}} @text="Edit and Resubmit job" @route={{"jobs.job.definition" @job.id}} @query={{hash isEditing=true}} />
         {{/if}}
       {{/if}}
     {{/if}}

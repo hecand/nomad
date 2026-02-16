@@ -16,7 +16,7 @@ import {
 import { module, test } from 'qunit';
 import { setupApplicationTest } from 'ember-qunit';
 import { setupMirage } from 'ember-cli-mirage/test-support';
-import { Response } from 'ember-cli-mirage';
+import { Response } from 'miragejs';
 import a11yAudit from 'nomad-ui/tests/helpers/a11y-audit';
 import { selectChoose } from 'ember-power-select/test-support';
 import { clickTrigger } from 'ember-power-select/test-support/helpers';
@@ -118,7 +118,7 @@ module('Acceptance | evaluations list', function (hooks) {
 
     await visit('/evaluations');
 
-    assert.equal(
+    assert.strictEqual(
       currentRouteName(),
       'evaluations.index',
       'The default route in evaluations is evaluations index'
@@ -717,7 +717,9 @@ module('Acceptance | evaluations list', function (hooks) {
           'all related evaluations and the current evaluation are displayed'
         );
 
-      click(`[data-test-rel-eval='fd1cd898-d655-c7e4-17f6-a1a2e98b18ef']`);
+      await click(
+        `[data-test-rel-eval='fd1cd898-d655-c7e4-17f6-a1a2e98b18ef']`
+      );
       await waitFor('[data-test-eval-loading]');
       assert
         .dom('[data-test-eval-loading]')
@@ -727,7 +729,7 @@ module('Acceptance | evaluations list', function (hooks) {
 
       await waitFor('[data-test-eval-detail-header]');
 
-      assert.equal(
+      assert.strictEqual(
         currentURL(),
         '/evaluations?currentEval=fd1cd898-d655-c7e4-17f6-a1a2e98b18ef'
       );
@@ -736,20 +738,20 @@ module('Acceptance | evaluations list', function (hooks) {
         .includesText('fd1cd898', 'New evaluation hash appears in the title');
 
       await click(`[data-test-evaluation='66cb98a6']`);
-      assert.equal(
+      assert.strictEqual(
         currentURL(),
         '/evaluations?currentEval=66cb98a6-7740-d5ef-37e4-fa0f8b1de44b',
         'Clicking an evaluation in the table updates the sidebar'
       );
 
-      click('[data-test-eval-sidebar-x]');
+      await click('[data-test-eval-sidebar-x]');
 
       // We wait until the sidebar closes since it uses a transition of 300ms
       await waitUntil(
         () => !document.querySelector('[data-test-eval-detail-is-open]')
       );
 
-      assert.equal(
+      assert.strictEqual(
         currentURL(),
         '/evaluations',
         'When the user clicks the x button the sidebar closes'
@@ -779,14 +781,14 @@ module('Acceptance | evaluations list', function (hooks) {
           'all related evaluations and the current evaluation are displayed'
         );
 
-      click('[data-test-eval-sidebar-x]');
+      await click('[data-test-eval-sidebar-x]');
 
       // We wait until the sidebar closes since it uses a transition of 300ms
       await waitUntil(
         () => !document.querySelector('[data-test-eval-detail-is-open]')
       );
 
-      assert.equal(
+      assert.strictEqual(
         currentURL(),
         '/evaluations',
         'When the user clicks the x button the sidebar closes'

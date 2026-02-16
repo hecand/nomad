@@ -31,7 +31,7 @@ module('Integration | Component | das/dismissed', function (hooks) {
     await click('[data-test-understood]');
 
     assert.ok(proceedSpy.calledWith({ manuallyDismissed: true }));
-    assert.equal(
+    assert.strictEqual(
       window.localStorage.getItem('nomadRecommendationDismssalUnderstood'),
       'true'
     );

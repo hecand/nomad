@@ -2,7 +2,7 @@
  * Copyright IBM Corp. 2015, 2025
  * SPDX-License-Identifier: BUSL-1.1
  */
-// @ts-check
+
 import { module, test } from 'qunit';
 import { setupApplicationTest } from 'ember-qunit';
 import { setupMirage } from 'ember-cli-mirage/test-support';
@@ -164,25 +164,25 @@ module('Acceptance | actions', function (hooks) {
 
     // Open the dropdown
     await Actions.titleActions.click();
-    assert.equal(Actions.titleActions.expandedValue, 'true');
-    assert.equal(
+    assert.strictEqual(Actions.titleActions.expandedValue, 'true');
+    assert.strictEqual(
       Actions.titleActions.actions.length,
       5,
       '5 actions show up in the dropdown'
     );
 
-    assert.equal(
+    assert.strictEqual(
       Actions.titleActions.multiAllocActions.length,
       4,
       '4 actions in the dropdown have multiple allocs to run against'
     );
-    assert.equal(
+    assert.strictEqual(
       Actions.titleActions.singleAllocActions.length,
       1,
       '1 action in the dropdown has a single alloc to run against'
     );
 
-    assert.equal(
+    assert.strictEqual(
       Actions.titleActions.multiAllocActions[0].button[0].expanded,
       'false',
       "The first action's dropdown is not expanded"
@@ -193,7 +193,7 @@ module('Acceptance | actions', function (hooks) {
     );
 
     await Actions.titleActions.actions[0].click();
-    assert.equal(
+    assert.strictEqual(
       Actions.titleActions.multiAllocActions[0].button[0].expanded,
       'true',
       "The first action's dropdown is expanded"
@@ -213,7 +213,7 @@ module('Acceptance | actions', function (hooks) {
     await Actions.titleActions.multiAllocActions[0].subActions[0].click();
 
     assert.ok(Actions.flyout.isPresent);
-    assert.equal(
+    assert.strictEqual(
       Actions.flyout.instances.length,
       1,
       'A sidebar instance pops up upon running an action'
@@ -236,7 +236,7 @@ module('Acceptance | actions', function (hooks) {
     });
 
     assert.notOk(Actions.flyout.isPresent);
-    assert.equal(Actions.titleActions.expandedValue, 'false');
+    assert.strictEqual(Actions.titleActions.expandedValue, 'false');
 
     await Actions.titleActions.click();
     await Actions.titleActions.multiAllocActions[0].button[0].click();
@@ -245,7 +245,7 @@ module('Acceptance | actions', function (hooks) {
     assert.ok(Actions.flyout.isPresent);
 
     // 2 assets, the second of which has multiple peer allocs within it
-    assert.equal(
+    assert.strictEqual(
       Actions.flyout.instances.length,
       2,
       'Running on all allocs in the group (1) results in 2 total instances'
@@ -270,7 +270,7 @@ module('Acceptance | actions', function (hooks) {
     await Actions.titleActions.click();
     await Actions.titleActions.singleAllocActions[0].button[0].click();
 
-    assert.equal(
+    assert.strictEqual(
       Actions.flyout.instances.length,
       3,
       'Running on an orphan alloc results in 1 further action instance'
@@ -298,14 +298,14 @@ module('Acceptance | actions', function (hooks) {
       .map((a) => a.taskStates.models)
       .flat().length;
 
-    assert.equal(
+    assert.strictEqual(
       Actions.taskRowActions.length,
       numberOfTaskRows,
       'Each task row has an actions dropdown'
     );
     await Actions.taskRowActions[0].click();
 
-    assert.equal(
+    assert.strictEqual(
       Actions.taskRowActions[0].actions.length,
       1,
       'Actions within a task row actions dropdown are shown'
@@ -313,7 +313,7 @@ module('Acceptance | actions', function (hooks) {
 
     await Actions.taskRowActions[0].actions[0].click();
     assert.ok(Actions.flyout.isPresent);
-    assert.equal(
+    assert.strictEqual(
       Actions.flyout.instances.length,
       1,
       'A sidebar instance pops up upon running an action'

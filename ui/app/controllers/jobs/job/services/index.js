@@ -6,9 +6,8 @@
 import Controller from '@ember/controller';
 import WithNamespaceResetting from 'nomad-ui/mixins/with-namespace-resetting';
 import Sortable from 'nomad-ui/mixins/sortable';
-import { alias } from '@ember/object/computed';
+import { alias, union } from '@ember/object/computed';
 import { computed } from '@ember/object';
-import { union } from '@ember/object/computed';
 
 export default class JobsJobServicesIndexController extends Controller.extend(
   WithNamespaceResetting,

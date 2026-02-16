@@ -4,13 +4,10 @@
  */
 
 import Component from '@ember/component';
+import { get } from '@ember/object';
 import { computed } from '@ember/object';
 import { isEmpty } from '@ember/utils';
-import { tagName } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 
-@classic
-@tagName('')
 export default class DirectoryEntry extends Component {
   allocation = null;
   taskState = null;
@@ -18,7 +15,7 @@ export default class DirectoryEntry extends Component {
   @computed('path', 'entry.Name')
   get pathToEntry() {
     const pathWithNoLeadingSlash = this.path.replace(/^\//, '');
-    const name = encodeURIComponent(this.get('entry.Name'));
+    const name = encodeURIComponent(get(this, 'entry.Name'));
 
     if (isEmpty(pathWithNoLeadingSlash)) {
       return name;

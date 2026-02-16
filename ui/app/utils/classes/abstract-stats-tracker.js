@@ -8,6 +8,7 @@ import Mixin from '@ember/object/mixin';
 import { assert } from '@ember/debug';
 import { task, timeout } from 'ember-concurrency';
 import jsonWithDefault from 'nomad-ui/utils/json-with-default';
+import { set } from '@ember/object';
 
 // eslint-disable-next-line ember/no-new-mixins
 export default Mixin.create({
@@ -48,11 +49,11 @@ export default Mixin.create({
       if (this.frameMisses >= this.maxFrameMisses) {
         // Missing enough data consecutively is effectively a pause
         this.pause();
-        this.set('frameMisses', 0);
+        set(this, 'frameMisses', 0);
       }
       return;
     } else {
-      this.set('frameMisses', 0);
+      set(this, 'frameMisses', 0);
 
       // Only append non-error frames
       this.append(frame);

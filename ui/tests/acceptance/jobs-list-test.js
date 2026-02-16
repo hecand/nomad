@@ -47,8 +47,8 @@ module('Acceptance | jobs list', function (hooks) {
   test('visiting /jobs', async function (assert) {
     await JobsList.visit();
 
-    assert.equal(currentURL(), '/jobs');
-    assert.equal(document.title, 'Jobs - Nomad');
+    assert.strictEqual(currentURL(), '/jobs');
+    assert.strictEqual(document.title, 'Jobs - Nomad');
   });
 
   test('/jobs should list the first page of jobs sorted by modify index', async function (assert) {
@@ -64,9 +64,9 @@ module('Acceptance | jobs list', function (hooks) {
       .sortBy('id')
       .sortBy('modifyIndex')
       .reverse();
-    assert.equal(JobsList.jobs.length, JobsList.pageSize);
+    assert.strictEqual(JobsList.jobs.length, JobsList.pageSize);
     JobsList.jobs.forEach((job, index) => {
-      assert.equal(job.name, sortedJobs[index].name, 'Jobs are ordered');
+      assert.strictEqual(job.name, sortedJobs[index].name, 'Jobs are ordered');
     });
   });
 
@@ -84,16 +84,20 @@ module('Acceptance | jobs list', function (hooks) {
 
     const jobRow = JobsList.jobs.objectAt(0);
 
-    assert.equal(jobRow.name, job.name, 'Name');
+    assert.strictEqual(jobRow.name, job.name, 'Name');
     assert.notOk(jobRow.hasNamespace);
-    assert.equal(jobRow.nodePool, job.nodePool, 'Node Pool');
-    assert.equal(jobRow.link, `/ui/jobs/${job.id}@default`, 'Detail Link');
-    assert.equal(
+    assert.strictEqual(jobRow.nodePool, job.nodePool, 'Node Pool');
+    assert.strictEqual(
+      jobRow.link,
+      `/ui/jobs/${job.id}@default`,
+      'Detail Link'
+    );
+    assert.strictEqual(
       jobRow.status,
       jobInStore.aggregateAllocStatus.label,
       'Status'
     );
-    assert.equal(jobRow.type, typeForJob(job), 'Type');
+    assert.strictEqual(jobRow.type, typeForJob(job), 'Type');
   });
 
   test('each job row should link to the corresponding job', async function (assert) {
@@ -103,14 +107,14 @@ module('Acceptance | jobs list', function (hooks) {
     await JobsList.visit();
     await JobsList.jobs.objectAt(0).clickName();
 
-    assert.equal(currentURL(), `/jobs/${job.id}@default`);
+    assert.strictEqual(currentURL(), `/jobs/${job.id}@default`);
   });
 
   test('the new job button transitions to the new job page', async function (assert) {
     await JobsList.visit();
     await JobsList.runJobButton.click();
 
-    assert.equal(currentURL(), '/jobs/run');
+    assert.strictEqual(currentURL(), '/jobs/run');
   });
 
   test('the job run button is disabled when the token lacks permission', async function (assert) {
@@ -148,7 +152,7 @@ module('Acceptance | jobs list', function (hooks) {
     await percySnapshot(assert);
 
     assert.ok(JobsList.isEmpty, 'There is an empty message');
-    assert.equal(
+    assert.strictEqual(
       JobsList.emptyState.headline,
       'No Jobs',
       'The message is appropriate'
@@ -164,7 +168,7 @@ module('Acceptance | jobs list', function (hooks) {
     await JobsList.search.fillIn('dog');
 
     assert.ok(JobsList.isEmpty, 'The empty message is shown');
-    assert.equal(
+    assert.strictEqual(
       JobsList.emptyState.headline,
       'No Matches',
       'The message is appropriate'
@@ -186,7 +190,7 @@ module('Acceptance | jobs list', function (hooks) {
 
     await JobsList.search.fillIn('foobar');
 
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       '/jobs?filter=Name%20matches%20%22(%3Fi)foobar%22',
       'No page query param'
@@ -201,7 +205,7 @@ module('Acceptance | jobs list', function (hooks) {
     await JobsList.visit({ namespace: '*' });
 
     const jobRow = JobsList.jobs.objectAt(0);
-    assert.equal(jobRow.namespace, job.namespaceId);
+    assert.strictEqual(jobRow.namespace, job.namespaceId);
   });
 
   test('when the namespace query param is set, only matching jobs are shown', async function (assert) {
@@ -214,12 +218,16 @@ module('Acceptance | jobs list', function (hooks) {
     });
 
     await JobsList.visit();
-    assert.equal(JobsList.jobs.length, 2, 'All jobs by default');
+    assert.strictEqual(JobsList.jobs.length, 2, 'All jobs by default');
 
     const firstNamespace = server.db.namespaces[0];
     await JobsList.visit({ filter: `Namespace == ${firstNamespace.id}` });
-    assert.equal(JobsList.jobs.length, 1, 'One job in the default namespace');
-    assert.equal(
+    assert.strictEqual(
+      JobsList.jobs.length,
+      1,
+      'One job in the default namespace'
+    );
+    assert.strictEqual(
       JobsList.jobs.objectAt(0).name,
       job1.name,
       'The correct job is shown'
@@ -228,12 +236,12 @@ module('Acceptance | jobs list', function (hooks) {
     const secondNamespace = server.db.namespaces[1];
     await JobsList.visit({ filter: `Namespace == ${secondNamespace.id}` });
 
-    assert.equal(
+    assert.strictEqual(
       JobsList.jobs.length,
       1,
       `One job in the ${secondNamespace.name} namespace`
     );
-    assert.equal(
+    assert.strictEqual(
       JobsList.jobs.objectAt(0).name,
       job2.name,
       'The correct job is shown'
@@ -244,11 +252,11 @@ module('Acceptance | jobs list', function (hooks) {
     server.pretender.get('/v1/jobs/statuses', () => [403, {}, null]);
 
     await JobsList.visit();
-    assert.equal(JobsList.error.title, 'Not Authorized');
+    assert.strictEqual(JobsList.error.title, 'Not Authorized');
     await percySnapshot(assert);
 
     await JobsList.error.seekHelp();
-    assert.equal(currentURL(), '/settings/tokens');
+    assert.strictEqual(currentURL(), '/settings/tokens');
   });
 
   test('when a gateway timeout error occurs, appropriate options are shown', async function (assert) {
@@ -408,7 +416,7 @@ module('Acceptance | jobs list', function (hooks) {
     await JobsList.facets.status.toggle();
     await JobsList.facets.status.options.objectAt(1).toggle();
     assert.ok(JobsList.isEmpty, 'There is an empty message');
-    assert.equal(
+    assert.strictEqual(
       JobsList.emptyState.headline,
       'No Matches',
       'The message is appropriate'
@@ -421,7 +429,7 @@ module('Acceptance | jobs list', function (hooks) {
 
     await JobsList.visit({ filter: 'Type == batch' });
 
-    assert.equal(
+    assert.strictEqual(
       JobsList.jobs.length,
       1,
       'Only one job shown due to query param'
@@ -529,7 +537,7 @@ module('Acceptance | jobs list', function (hooks) {
     await JobsList.facets.type.options[0].toggle();
 
     await JobsList.runJobButton.click();
-    assert.equal(currentURL(), '/jobs/run');
+    assert.strictEqual(currentURL(), '/jobs/run');
   });
 
   test('Parent/child jobs are displayed correctly', async function (assert) {
@@ -959,7 +967,7 @@ module('Acceptance | jobs list', function (hooks) {
             .slice(pageSize * 3),
           'Fourth page is sorted by modify index'
         );
-        assert.equal(
+        assert.strictEqual(
           rows.length,
           jobsToCreate - pageSize * 3,
           'Last page has fewer jobs'
@@ -996,7 +1004,7 @@ module('Acceptance | jobs list', function (hooks) {
             .slice(-pageSize),
           'Last page is sorted by modify index'
         );
-        assert.equal(
+        assert.strictEqual(
           rows.length,
           pageSize,
           'Last page has the correct number of jobs'
@@ -1046,7 +1054,7 @@ module('Acceptance | jobs list', function (hooks) {
         await JobsList.visit();
         assert.dom('.job-row').exists({ count: 10 });
         let rows = document.querySelectorAll('.job-row');
-        assert.equal(rows.length, 10, 'List is still 10 rows');
+        assert.strictEqual(rows.length, 10, 'List is still 10 rows');
         let modifyIndexes = Array.from(rows).map((row) =>
           parseInt(row.getAttribute('data-test-modify-index'))
         );
@@ -1127,8 +1135,8 @@ module('Acceptance | jobs list', function (hooks) {
             await click('[data-test-pager="next"]');
 
             rows = document.querySelectorAll('.job-row');
-            assert.equal(rows.length, 1, 'List is now 1 row');
-            assert.equal(
+            assert.strictEqual(rows.length, 1, 'List is now 1 row');
+            assert.strictEqual(
               rows[0].getAttribute('data-test-modify-index'),
               '1',
               'Job is the first job, now pushed to the second page'
@@ -1147,7 +1155,7 @@ module('Acceptance | jobs list', function (hooks) {
         assert.dom('[data-test-updates-pending-button]').doesNotExist();
 
         let rows = document.querySelectorAll('.job-row');
-        assert.equal(rows.length, 10, 'List is still 10 rows');
+        assert.strictEqual(rows.length, 10, 'List is still 10 rows');
         let modifyIndexes = Array.from(rows).map((row) =>
           parseInt(row.getAttribute('data-test-modify-index'))
         );
@@ -2079,7 +2087,7 @@ function testFacet(
       .reverse();
 
     JobsList.jobs.forEach((job, index) => {
-      assert.equal(
+      assert.strictEqual(
         job.id,
         expectedJobs[index].id,
         `Job at ${index} is ${expectedJobs[index].id}`
@@ -2107,7 +2115,7 @@ function testFacet(
       .reverse();
 
     JobsList.jobs.forEach((job, index) => {
-      assert.equal(
+      assert.strictEqual(
         job.id,
         expectedJobs[index].id,
         `Job at ${index} is ${expectedJobs[index].id}`

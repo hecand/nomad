@@ -60,12 +60,12 @@ module('Acceptance | job versions', function (hooks) {
   });
 
   test('/jobs/:id/versions should list all job versions', async function (assert) {
-    assert.equal(
+    assert.strictEqual(
       Versions.versions.length,
       versions.length,
       'Each version gets a row in the timeline'
     );
-    assert.equal(document.title, `Job ${job.name} versions - Nomad`);
+    assert.strictEqual(document.title, `Job ${job.name} versions - Nomad`);
   });
 
   test('each version mentions the version number, the stability, and the submitted time', async function (assert) {
@@ -79,8 +79,16 @@ module('Acceptance | job versions', function (hooks) {
       versionRow.text.includes(`Version #${version.version}`),
       'Version #'
     );
-    assert.equal(versionRow.stability, version.stable.toString(), 'Stability');
-    assert.equal(versionRow.submitTime, formattedSubmitTime, 'Submit time');
+    assert.strictEqual(
+      versionRow.stability,
+      version.stable.toString(),
+      'Stability'
+    );
+    assert.strictEqual(
+      versionRow.submitTime,
+      formattedSubmitTime,
+      'Submit time'
+    );
   });
 
   test('all versions but the current one have a button to revert to that version', async function (assert) {
@@ -105,7 +113,7 @@ module('Acceptance | job versions', function (hooks) {
         (request) => request.url.includes('revert')
       );
 
-      assert.equal(
+      assert.strictEqual(
         revertRequest.url,
         `/v1/job/${job.id}/revert?namespace=${namespace.id}`
       );
@@ -115,7 +123,7 @@ module('Acceptance | job versions', function (hooks) {
         JobVersion: versionNumberRevertingTo,
       });
 
-      assert.equal(currentURL(), `/jobs/${job.id}@${namespace.id}`);
+      assert.strictEqual(currentURL(), `/jobs/${job.id}@${namespace.id}`);
     }
   });
 
@@ -134,7 +142,7 @@ module('Acceptance | job versions', function (hooks) {
       assert.ok(Layout.inlineError.isShown);
       assert.ok(Layout.inlineError.isDanger);
       assert.ok(Layout.inlineError.title.includes('Could Not Revert'));
-      assert.equal(Layout.inlineError.message, message);
+      assert.strictEqual(Layout.inlineError.message, message);
 
       await Layout.inlineError.dismiss();
 
@@ -159,7 +167,7 @@ module('Acceptance | job versions', function (hooks) {
       assert.ok(Layout.inlineError.isShown);
       assert.ok(Layout.inlineError.isWarning);
       assert.ok(Layout.inlineError.title.includes('Reversion Had No Effect'));
-      assert.equal(
+      assert.strictEqual(
         Layout.inlineError.message,
         'Reverting to an identical older version doesn’t produce a new version'
       );
@@ -171,14 +179,14 @@ module('Acceptance | job versions', function (hooks) {
   test('when the job for the versions is not found, an error message is shown, but the URL persists', async function (assert) {
     await Versions.visit({ id: 'not-a-real-job' });
 
-    assert.equal(
+    assert.strictEqual(
       server.pretender.handledRequests
         .filter((request) => !request.url.includes('policy'))
         .findBy('status', 404).url,
       '/v1/job/not-a-real-job',
       'A request to the nonexistent job is made'
     );
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       '/jobs/not-a-real-job/versions',
       'The URL persists'
@@ -422,7 +430,7 @@ module('Acceptance | job versions (clone and edit)', function (hooks) {
     await click(`${versionBlock} [data-test-clone-and-edit]`);
     await click(`${versionBlock} [data-test-clone-as-new-version]`);
 
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/jobs/${job.id}@${namespace.id}/definition?isEditing=true&version=98&view=job-spec`,
       'Taken to the definition page in edit mode'
@@ -436,7 +444,7 @@ module('Acceptance | job versions (clone and edit)', function (hooks) {
     await click(`${versionBlock} [data-test-clone-and-edit]`);
     await click(`${versionBlock} [data-test-clone-as-new-version]`);
 
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/jobs/${job.id}@${namespace.id}/definition?isEditing=true&version=0&view=job-spec`,
       'Taken to the definition page in edit mode'
@@ -449,7 +457,7 @@ module('Acceptance | job versions (clone and edit)', function (hooks) {
     await click(`${versionBlock} [data-test-clone-and-edit]`);
     await click(`${versionBlock} [data-test-clone-as-new-version]`);
 
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/jobs/${job.id}@${namespace.id}/definition?isEditing=true&version=98&view=full-definition`,
       'Taken to the definition page in edit mode'
@@ -474,7 +482,7 @@ module('Acceptance | job versions (clone and edit)', function (hooks) {
     await click(`${versionBlock} [data-test-clone-and-edit]`);
     await click(`${versionBlock} [data-test-clone-as-new-job]`);
 
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/jobs/run?sourceString=${encodeURIComponent(testString)}`,
       'Taken to the new job page'

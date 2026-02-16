@@ -3,12 +3,10 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-// @ts-check
 import ApplicationSerializer from './application';
-import classic from 'ember-classic-decorator';
+
 import { copy } from 'ember-copy';
 
-@classic
 export default class RoleSerializer extends ApplicationSerializer {
   normalize(typeHash, hash) {
     hash.Policies = hash.Policies || []; // null guard

@@ -45,14 +45,14 @@ module('Acceptance | storage list', function (hooks) {
   test('visiting the now-deprecated /csi redirects to /storage', async function (assert) {
     await visit('/csi');
 
-    assert.equal(currentURL(), '/storage');
+    assert.strictEqual(currentURL(), '/storage');
   });
 
   test('visiting /storage', async function (assert) {
     await StorageList.visit();
 
-    assert.equal(currentURL(), '/storage');
-    assert.equal(document.title, 'Storage - Nomad');
+    assert.strictEqual(currentURL(), '/storage');
+    assert.strictEqual(document.title, 'Storage - Nomad');
   });
 
   test('/storage/volumes should list the first page of volumes sorted by name', async function (assert) {
@@ -65,9 +65,13 @@ module('Acceptance | storage list', function (hooks) {
 
     const sortedVolumes = server.db.csiVolumes.sortBy('id');
 
-    assert.equal(StorageList.csiVolumes.length, StorageList.pageSize);
+    assert.strictEqual(StorageList.csiVolumes.length, StorageList.pageSize);
     StorageList.csiVolumes.forEach((volume, index) => {
-      assert.equal(volume.name, sortedVolumes[index].id, 'Volumes are ordered');
+      assert.strictEqual(
+        volume.name,
+        sortedVolumes[index].id,
+        'Volumes are ordered'
+      );
     });
   });
 
@@ -94,19 +98,22 @@ module('Acceptance | storage list', function (hooks) {
 
     const nodeHealthStr = volume.nodesHealthy > 0 ? 'Healthy' : 'Unhealthy';
 
-    assert.equal(volumeRow.name, volume.id);
+    assert.strictEqual(volumeRow.name, volume.id);
     assert.notOk(volumeRow.hasNamespace);
-    assert.equal(
+    assert.strictEqual(
       volumeRow.schedulable,
       volume.schedulable ? 'Schedulable' : 'Unschedulable'
     );
-    assert.equal(volumeRow.controllerHealth, controllerHealthStr);
-    assert.equal(
+    assert.strictEqual(volumeRow.controllerHealth, controllerHealthStr);
+    assert.strictEqual(
       volumeRow.nodeHealth,
       `${nodeHealthStr} ( ${volume.nodesHealthy} / ${volume.nodesExpected} )`
     );
-    assert.equal(volumeRow.plugin, volume.PluginId);
-    assert.equal(volumeRow.allocations, readAllocs.length + writeAllocs.length);
+    assert.strictEqual(volumeRow.plugin, volume.PluginId);
+    assert.strictEqual(
+      volumeRow.allocations,
+      readAllocs.length + writeAllocs.length
+    );
   });
 
   test('each volume row should link to the corresponding volume', async function (assert) {
@@ -117,13 +124,13 @@ module('Acceptance | storage list', function (hooks) {
 
     await StorageList.visit({ namespace: '*' });
     await StorageList.csiVolumes.objectAt(0).clickName();
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/storage/volumes/csi/${volume.id}@${secondNamespace.id}`
     );
 
     await StorageList.visit({ namespace: '*' });
-    assert.equal(currentURL(), '/storage');
+    assert.strictEqual(currentURL(), '/storage');
   });
 
   test('when there are no csi volumes, there is an empty message', async function (assert) {
@@ -132,7 +139,7 @@ module('Acceptance | storage list', function (hooks) {
     await percySnapshot(assert);
 
     assert.ok(StorageList.csiIsEmpty);
-    assert.equal(StorageList.csiEmptyState, 'No CSI Volumes found');
+    assert.strictEqual(StorageList.csiEmptyState, 'No CSI Volumes found');
   });
 
   test('when there are volumes, but no matches for a search, there is an empty message', async function (assert) {
@@ -153,11 +160,11 @@ module('Acceptance | storage list', function (hooks) {
     await StorageList.visit();
     await StorageList.csiNextPage();
 
-    assert.equal(currentURL(), '/storage?csiPage=2');
+    assert.strictEqual(currentURL(), '/storage?csiPage=2');
 
     await StorageList.csiSearch('foobar');
 
-    assert.equal(currentURL(), '/storage?csiFilter=foobar');
+    assert.strictEqual(currentURL(), '/storage?csiFilter=foobar');
   });
 
   test('when the cluster has namespaces, each volume row includes the volume namespace', async function (assert) {
@@ -167,7 +174,7 @@ module('Acceptance | storage list', function (hooks) {
     await StorageList.visit({ namespace: '*' });
 
     const volumeRow = StorageList.csiVolumes.objectAt(0);
-    assert.equal(volumeRow.namespace, volume.namespaceId);
+    assert.strictEqual(volumeRow.namespace, volume.namespaceId);
   });
 
   test('when the namespace query param is set, only matching volumes are shown and the namespace value is forwarded to app state', async function (assert) {
@@ -180,28 +187,28 @@ module('Acceptance | storage list', function (hooks) {
     });
 
     await StorageList.visit();
-    assert.equal(StorageList.csiVolumes.length, 2);
+    assert.strictEqual(StorageList.csiVolumes.length, 2);
 
     const firstNamespace = server.db.namespaces[0];
     await StorageList.visit({ namespace: firstNamespace.id });
-    assert.equal(StorageList.csiVolumes.length, 1);
-    assert.equal(StorageList.csiVolumes.objectAt(0).name, volume1.id);
+    assert.strictEqual(StorageList.csiVolumes.length, 1);
+    assert.strictEqual(StorageList.csiVolumes.objectAt(0).name, volume1.id);
 
     const secondNamespace = server.db.namespaces[1];
     await StorageList.visit({ namespace: secondNamespace.id });
 
-    assert.equal(StorageList.csiVolumes.length, 1);
-    assert.equal(StorageList.csiVolumes.objectAt(0).name, volume2.id);
+    assert.strictEqual(StorageList.csiVolumes.length, 1);
+    assert.strictEqual(StorageList.csiVolumes.objectAt(0).name, volume2.id);
   });
 
   test('when accessing volumes is forbidden, a message is shown with a link to the tokens page', async function (assert) {
     server.pretender.get('/v1/volumes', () => [403, {}, null]);
 
     await StorageList.visit();
-    assert.equal(StorageList.error.title, 'Not Authorized');
+    assert.strictEqual(StorageList.error.title, 'Not Authorized');
 
     await StorageList.error.seekHelp();
-    assert.equal(currentURL(), '/settings/tokens');
+    assert.strictEqual(currentURL(), '/settings/tokens');
   });
 
   testSingleSelectFacet('Namespace', {
@@ -256,7 +263,7 @@ module('Acceptance | storage list', function (hooks) {
         .sortBy('id');
 
       StorageList.csiVolumes.forEach((volume, index) => {
-        assert.equal(
+        assert.strictEqual(
           volume.name,
           expectedVolumes[index].name,
           `Volume at ${index} is ${expectedVolumes[index].name}`
@@ -288,8 +295,8 @@ module('Acceptance | storage list', function (hooks) {
         const csiRequests = requests.filter((request) =>
           request.url.startsWith('/v1/volumes?namespace=%2A&type=csi')
         );
-        assert.equal(dhvRequests.length, 2, '2 DHV requests were made');
-        assert.equal(csiRequests.length, 2, '2 CSI requests were made');
+        assert.strictEqual(dhvRequests.length, 2, '2 DHV requests were made');
+        assert.strictEqual(csiRequests.length, 2, '2 CSI requests were made');
       });
 
       test('When a new dynamic host volume is created, the page should reflect the changes', async function (assert) {
@@ -306,7 +313,7 @@ module('Acceptance | storage list', function (hooks) {
         let dhvRequests = requests.filter((request) =>
           request.url.startsWith('/v1/volumes?namespace=%2A&type=host')
         );
-        assert.equal(dhvRequests.length, 2, '2 DHV requests were made');
+        assert.strictEqual(dhvRequests.length, 2, '2 DHV requests were made');
 
         assert.dom('[data-test-dhv-row]').exists({ count: 1 });
         assert.dom('[data-test-dhv-row]').containsText('initial-volume');
@@ -324,7 +331,7 @@ module('Acceptance | storage list', function (hooks) {
         dhvRequests = requests.filter((request) =>
           request.url.startsWith('/v1/volumes?namespace=%2A&type=host')
         );
-        assert.equal(dhvRequests.length, 3, '3 DHV requests were made');
+        assert.strictEqual(dhvRequests.length, 3, '3 DHV requests were made');
 
         // and a second row
         assert.dom('[data-test-dhv-row]').exists({ count: 2 });
@@ -344,7 +351,7 @@ module('Acceptance | storage list', function (hooks) {
         let csiRequests = requests.filter((request) =>
           request.url.startsWith('/v1/volumes?namespace=%2A&type=csi')
         );
-        assert.equal(csiRequests.length, 2, '2 CSI requests were made');
+        assert.strictEqual(csiRequests.length, 2, '2 CSI requests were made');
         assert.dom('[data-test-csi-volume-row]').exists({ count: 1 });
         assert.dom('[data-test-csi-volume-row]').containsText('initial-volume');
 
@@ -361,7 +368,7 @@ module('Acceptance | storage list', function (hooks) {
         csiRequests = requests.filter((request) =>
           request.url.startsWith('/v1/volumes?namespace=%2A&type=csi')
         );
-        assert.equal(csiRequests.length, 3, '3 CSI requests were made');
+        assert.strictEqual(csiRequests.length, 3, '3 CSI requests were made');
 
         // and a second row
         assert.dom('[data-test-csi-volume-row]').exists({ count: 2 });
@@ -381,7 +388,7 @@ module('Acceptance | storage list', function (hooks) {
         let dhvRequests = requests.filter((request) =>
           request.url.startsWith('/v1/volumes?namespace=%2A&type=host')
         );
-        assert.equal(dhvRequests.length, 2, '2 DHV requests were made');
+        assert.strictEqual(dhvRequests.length, 2, '2 DHV requests were made');
 
         assert.dom('[data-test-dhv-row]').exists({ count: 1 });
         assert.dom('[data-test-dhv-row]').containsText('initial-volume');
@@ -396,7 +403,7 @@ module('Acceptance | storage list', function (hooks) {
         dhvRequests = requests.filter((request) =>
           request.url.startsWith('/v1/volumes?namespace=%2A&type=host')
         );
-        assert.equal(dhvRequests.length, 3, '3 DHV requests were made');
+        assert.strictEqual(dhvRequests.length, 3, '3 DHV requests were made');
 
         // Still just one row
         assert.dom('[data-test-dhv-row]').exists({ count: 1 });
@@ -417,7 +424,7 @@ module('Acceptance | storage list', function (hooks) {
         let dhvRequests = requests.filter((request) =>
           request.url.startsWith('/v1/volumes?namespace=%2A&type=host')
         );
-        assert.equal(dhvRequests.length, 2, '2 DHV requests were made');
+        assert.strictEqual(dhvRequests.length, 2, '2 DHV requests were made');
 
         assert.dom('[data-test-dhv-row]').exists({ count: 1 });
         assert.dom('[data-test-dhv-row]').containsText('initial-volume');
@@ -432,7 +439,7 @@ module('Acceptance | storage list', function (hooks) {
         dhvRequests = requests.filter((request) =>
           request.url.startsWith('/v1/volumes?namespace=%2A&type=host')
         );
-        assert.equal(dhvRequests.length, 3, '3 DHV requests were made');
+        assert.strictEqual(dhvRequests.length, 3, '3 DHV requests were made');
 
         assert.dom('[data-test-dhv-row]').exists({ count: 0 });
         assert.ok(StorageList.dhvIsEmpty);
@@ -490,7 +497,7 @@ module('Acceptance | storage list', function (hooks) {
 
       // Clicking through to the second page changes the URL and only shows 1 row
       await StorageList.dhvNextPage();
-      assert.equal(currentURL(), '/storage?dhvPage=2');
+      assert.strictEqual(currentURL(), '/storage?dhvPage=2');
 
       // 1 row should be present
       assert.dom('[data-test-dhv-row]').exists({ count: 1 });

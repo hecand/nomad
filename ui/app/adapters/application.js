@@ -4,17 +4,15 @@
  */
 
 import { inject as service } from '@ember/service';
-import { computed } from '@ember/object';
+import { computed, get } from '@ember/object';
 import { camelize } from '@ember/string';
 import RESTAdapter from '@ember-data/adapter/rest';
 import codesForError from '../utils/codes-for-error';
 import removeRecord from '../utils/remove-record';
 import { default as NoLeaderError, NO_LEADER } from '../utils/no-leader-error';
-import classic from 'ember-classic-decorator';
 
 export const namespace = 'v1';
 
-@classic
 export default class ApplicationAdapter extends RESTAdapter {
   namespace = namespace;
 
@@ -23,7 +21,7 @@ export default class ApplicationAdapter extends RESTAdapter {
 
   @computed('token.secret')
   get headers() {
-    const token = this.get('token.secret');
+    const token = get(this, 'token.secret');
     if (token) {
       return {
         'X-Nomad-Token': token,
@@ -59,11 +57,11 @@ export default class ApplicationAdapter extends RESTAdapter {
 
   ajaxOptions(url, verb, options = {}) {
     options.data || (options.data = {});
-    if (options.regionOverride || this.get('system.shouldIncludeRegion')) {
+    if (options.regionOverride || get(this, 'system.shouldIncludeRegion')) {
       // Region should only ever be a query param. The default ajaxOptions
       // behavior is to include data attributes in the requestBody for PUT
       // and POST requests. This works around that.
-      const region = options.regionOverride || this.get('system.activeRegion');
+      const region = options.regionOverride || get(this, 'system.activeRegion');
       if (region) {
         url = associateRegion(url, region);
       }

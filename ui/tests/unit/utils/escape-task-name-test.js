@@ -8,9 +8,9 @@ import { module, test } from 'qunit';
 
 module('Unit | Utility | escape-task-name', function () {
   test('it escapes task names for the faux exec CLI', function (assert) {
-    assert.equal(escapeTaskName('plain'), 'plain');
-    assert.equal(escapeTaskName('a space'), 'a\\ space');
-    assert.equal(escapeTaskName('dollar $ign'), 'dollar\\ \\$ign');
-    assert.equal(escapeTaskName('emoji🥳'), 'emoji\\🥳');
+    assert.strictEqual(escapeTaskName('plain'), 'plain');
+    assert.strictEqual(escapeTaskName('a space'), 'a\\ space');
+    assert.strictEqual(escapeTaskName('dollar $ign'), 'dollar\\ \\$ign');
+    assert.strictEqual(escapeTaskName('emoji🥳'), 'emoji\\🥳');
   });
 });

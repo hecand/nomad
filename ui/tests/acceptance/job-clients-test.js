@@ -76,13 +76,17 @@ module('Acceptance | job clients', function (hooks) {
 
   test('lists all clients for the job', async function (assert) {
     await Clients.visit({ id: job.id });
-    assert.equal(Clients.clients.length, 15, 'Clients are shown in a table');
+    assert.strictEqual(
+      Clients.clients.length,
+      15,
+      'Clients are shown in a table'
+    );
 
     const clientIDs = clients.sortBy('id').map((c) => c.id);
     const clientsInTable = Clients.clients.map((c) => c.id).sort();
     assert.deepEqual(clientsInTable, clientIDs);
 
-    assert.equal(document.title, `Job ${job.name} clients - Nomad`);
+    assert.strictEqual(document.title, `Job ${job.name} clients - Nomad`);
   });
 
   test('dates have tooltip', async function (assert) {
@@ -94,7 +98,7 @@ module('Acceptance | job clients', function (hooks) {
       ['createTime', 'modifyTime'].forEach((col) => {
         if (jobStatus === 'not scheduled') {
           /* eslint-disable-next-line qunit/no-conditional-assertions */
-          assert.equal(
+          assert.strictEqual(
             clientRow[col].text,
             '-',
             `row ${index} doesn't have ${col} tooltip`
@@ -118,7 +122,7 @@ module('Acceptance | job clients', function (hooks) {
     await Clients.visit({ id: job.id });
     await Clients.sortBy('node.name');
 
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/jobs/${job.id}/clients?desc=true&sort=node.name`,
       'the URL persists the sort parameter'
@@ -127,7 +131,7 @@ module('Acceptance | job clients', function (hooks) {
     const sortedClients = clients.sortBy('name').reverse();
     Clients.clients.forEach((client, index) => {
       const shortId = sortedClients[index].id.split('-')[0];
-      assert.equal(
+      assert.strictEqual(
         client.shortId,
         shortId,
         `Client ${index} is ${shortId} with name ${sortedClients[index].name}`
@@ -141,7 +145,11 @@ module('Acceptance | job clients', function (hooks) {
     await Clients.visit({ id: job.id });
     await Clients.search('ffffff');
 
-    assert.equal(Clients.clients.length, 5, 'List is filtered by search term');
+    assert.strictEqual(
+      Clients.clients.length,
+      5,
+      'List is filtered by search term'
+    );
   });
 
   test('when a search yields no results, the search box remains', async function (assert) {
@@ -150,7 +158,7 @@ module('Acceptance | job clients', function (hooks) {
     await Clients.visit({ id: job.id });
     await Clients.search('^nothing will ever match this long regex$');
 
-    assert.equal(
+    assert.strictEqual(
       Clients.emptyState.headline,
       'No Matches',
       'List is empty and the empty state is about search'
@@ -162,20 +170,24 @@ module('Acceptance | job clients', function (hooks) {
   test('when the job for the clients is not found, an error message is shown, but the URL persists', async function (assert) {
     await Clients.visit({ id: 'not-a-real-job' });
 
-    assert.equal(
+    assert.strictEqual(
       server.pretender.handledRequests
         .filter((request) => !request.url.includes('policy'))
         .findBy('status', 404).url,
       '/v1/job/not-a-real-job',
       'A request to the nonexistent job is made'
     );
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       '/jobs/not-a-real-job/clients',
       'The URL persists'
     );
     assert.ok(Clients.error.isPresent, 'Error message is shown');
-    assert.equal(Clients.error.title, 'Not Found', 'Error message is for 404');
+    assert.strictEqual(
+      Clients.error.title,
+      'Not Found',
+      'Error message is for 404'
+    );
   });
 
   test('clicking row goes to client details', async function (assert) {
@@ -183,15 +195,15 @@ module('Acceptance | job clients', function (hooks) {
 
     await Clients.visit({ id: job.id });
     await Clients.clientFor(client.id).click();
-    assert.equal(currentURL(), `/clients/${client.id}`);
+    assert.strictEqual(currentURL(), `/clients/${client.id}`);
 
     await Clients.visit({ id: job.id });
     await Clients.clientFor(client.id).visit();
-    assert.equal(currentURL(), `/clients/${client.id}`);
+    assert.strictEqual(currentURL(), `/clients/${client.id}`);
 
     await Clients.visit({ id: job.id });
     await Clients.clientFor(client.id).visitRow();
-    assert.equal(currentURL(), `/clients/${client.id}`);
+    assert.strictEqual(currentURL(), `/clients/${client.id}`);
   });
 
   testFacet('Job Status', {

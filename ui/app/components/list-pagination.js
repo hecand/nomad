@@ -3,12 +3,10 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import Component from '@ember/component';
-import { computed } from '@ember/object';
+import Component from '@glimmer/component';
+import { computed, get } from '@ember/object';
 import { computed as overridable } from 'ember-overridable-computed';
-import classic from 'ember-classic-decorator';
 
-@classic
 export default class ListPagination extends Component {
   @overridable(() => []) source;
   size = 25;
@@ -22,12 +20,12 @@ export default class ListPagination extends Component {
 
   @computed('source.[]', 'size', 'page')
   get endsAt() {
-    return Math.min(this.page * this.size, this.get('source.length'));
+    return Math.min(this.page * this.size, get(this, 'source.length'));
   }
 
   @computed('source.[]', 'size')
   get lastPage() {
-    return Math.ceil(this.get('source.length') / this.size);
+    return Math.ceil(get(this, 'source.length') / this.size);
   }
 
   @computed('source.[]', 'page', 'spread')

@@ -7,7 +7,7 @@ import { setupRenderingTest } from 'ember-qunit';
 import { module, test } from 'qunit';
 import { findAll, render } from '@ember/test-helpers';
 import { initialize as fragmentSerializerInitializer } from 'nomad-ui/initializers/fragment-serializer';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 import { setupPrimaryMetricMocks, primaryMetric } from './primary-metric';
 import { componentA11yAudit } from 'nomad-ui/tests/helpers/a11y-audit';
 import { startMirage } from 'nomad-ui/initializers/ember-cli-mirage';
@@ -73,7 +73,10 @@ module('Integration | Component | PrimaryMetric::Allocation', function (hooks) {
     this.setProperties({ resource, metric: 'cpu' });
 
     await render(template);
-    assert.equal(findAll('[data-test-chart-area]').length, mockTasks.length);
+    assert.strictEqual(
+      findAll('[data-test-chart-area]').length,
+      mockTasks.length
+    );
   });
 
   primaryMetric({

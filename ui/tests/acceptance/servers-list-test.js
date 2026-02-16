@@ -57,14 +57,14 @@ module('Acceptance | servers list', function (hooks) {
     await ServersList.visit();
     await percySnapshot(assert);
 
-    assert.equal(
+    assert.strictEqual(
       ServersList.servers.length,
       ServersList.pageSize,
       'List is stopped at pageSize'
     );
 
     ServersList.servers.forEach((server, index) => {
-      assert.equal(
+      assert.strictEqual(
         server.name,
         sortedAgents[index].name,
         'Servers are ordered'
@@ -82,17 +82,17 @@ module('Acceptance | servers list', function (hooks) {
 
     const agentRow = ServersList.servers.objectAt(0);
 
-    assert.equal(agentRow.name, agent.name, 'Name');
-    assert.equal(
+    assert.strictEqual(agentRow.name, agent.name, 'Name');
+    assert.strictEqual(
       agentRow.status,
       agent.member.Status[0].toUpperCase() + agent.member.Status.substring(1),
       'Status'
     );
-    assert.equal(agentRow.leader, 'True', 'Leader?');
-    assert.equal(agentRow.address, agent.member.Address, 'Address');
-    assert.equal(agentRow.serfPort, agent.member.Port, 'Serf Port');
-    assert.equal(agentRow.datacenter, agent.member.Tags.dc, 'Datacenter');
-    assert.equal(agentRow.version, agent.version, 'Version');
+    assert.strictEqual(agentRow.leader, 'True', 'Leader?');
+    assert.strictEqual(agentRow.address, agent.member.Address, 'Address');
+    assert.strictEqual(agentRow.serfPort, agent.member.Port, 'Serf Port');
+    assert.strictEqual(agentRow.datacenter, agent.member.Tags.dc, 'Datacenter');
+    assert.strictEqual(agentRow.version, agent.version, 'Version');
   });
 
   test('each server should link to the server detail page', async function (assert) {
@@ -102,7 +102,7 @@ module('Acceptance | servers list', function (hooks) {
     await ServersList.visit();
     await ServersList.servers.objectAt(0).clickRow();
 
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/servers/${agent.name}`,
       'Now at the server detail page'
@@ -114,10 +114,10 @@ module('Acceptance | servers list', function (hooks) {
     server.pretender.get('/v1/agent/members', () => [403, {}, null]);
 
     await ServersList.visit();
-    assert.equal(ServersList.error.title, 'Not Authorized');
+    assert.strictEqual(ServersList.error.title, 'Not Authorized');
 
     await ServersList.error.seekHelp();
-    assert.equal(currentURL(), '/settings/tokens');
+    assert.strictEqual(currentURL(), '/settings/tokens');
   });
 
   test('multiple regions should each show leadership values', async function (assert) {
@@ -130,17 +130,17 @@ module('Acceptance | servers list', function (hooks) {
     server.db.agents[1].member.Tags.region = 'galactic';
     server.db.agents[2].member.Tags.region = 'galactic';
     await ServersList.visit();
-    assert.equal(
+    assert.strictEqual(
       ServersList.servers.objectAt(0).leader,
       'True (galactic)',
       'Leadership is shown for the galactic region'
     );
-    assert.equal(
+    assert.strictEqual(
       ServersList.servers.objectAt(1).leader,
       'True (global)',
       'Leadership is shown for the global region'
     );
-    assert.equal(
+    assert.strictEqual(
       ServersList.servers.objectAt(2).leader,
       'False',
       'Non-leader servers are shown'

@@ -12,7 +12,7 @@ import {
 } from '@ember/test-helpers';
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 import sinon from 'sinon';
 import moment from 'moment';
 import { componentA11yAudit } from 'nomad-ui/tests/helpers/a11y-audit';
@@ -52,7 +52,7 @@ module('Integration | Component | line-chart', function (hooks) {
     const sortedAnnotations = annotations.sortBy('x');
     findAll('[data-test-annotation]').forEach((annotation, idx) => {
       const datum = sortedAnnotations[idx];
-      assert.equal(
+      assert.strictEqual(
         annotation.querySelector('button').getAttribute('title'),
         `${datum.type} event at ${datum.x}`
       );
@@ -101,7 +101,7 @@ module('Integration | Component | line-chart', function (hooks) {
     const sortedAnnotations = annotations.sortBy('x').reverse();
     findAll('[data-test-annotation]').forEach((annotation, idx) => {
       const datum = sortedAnnotations[idx];
-      assert.equal(
+      assert.strictEqual(
         annotation.querySelector('button').getAttribute('title'),
         `${datum.type} event at ${moment(datum.x).format('MMM DD, HH:mm')}`
       );
@@ -204,7 +204,10 @@ module('Integration | Component | line-chart', function (hooks) {
       .sortBy('y')
       .reverse()
       .forEach((annotation, index) => {
-        assert.equal(annotationEls[index].textContent.trim(), annotation.label);
+        assert.strictEqual(
+          annotationEls[index].textContent.trim(),
+          annotation.label
+        );
       });
   });
 
@@ -269,12 +272,12 @@ module('Integration | Component | line-chart', function (hooks) {
     await triggerEvent(hoverTarget, 'mousemove', {
       clientX: xOffset + interval * 1 + 5,
     });
-    assert.equal(findAll('[data-test-chart-tooltip] li').length, 1);
-    assert.equal(
+    assert.strictEqual(findAll('[data-test-chart-tooltip] li').length, 1);
+    assert.strictEqual(
       find('[data-test-chart-tooltip] .label').textContent.trim(),
       this.data[1].series
     );
-    assert.equal(
+    assert.strictEqual(
       find('[data-test-chart-tooltip] .value').textContent.trim(),
       series2.find((d) => d.x === 2).y
     );
@@ -290,13 +293,13 @@ module('Integration | Component | line-chart', function (hooks) {
     await triggerEvent(hoverTarget, 'mousemove', {
       clientX: xOffset + interval * 1.5 + 5,
     });
-    assert.equal(findAll('[data-test-chart-tooltip] li').length, 2);
+    assert.strictEqual(findAll('[data-test-chart-tooltip] li').length, 2);
     findAll('[data-test-chart-tooltip] li').forEach((tooltipEntry, index) => {
-      assert.equal(
+      assert.strictEqual(
         tooltipEntry.querySelector('.label').textContent.trim(),
         expected[index].label
       );
-      assert.equal(
+      assert.strictEqual(
         tooltipEntry.querySelector('.value').textContent.trim(),
         expected[index].value
       );

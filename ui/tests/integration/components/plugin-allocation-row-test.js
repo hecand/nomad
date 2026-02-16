@@ -5,7 +5,7 @@
 
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 import { startMirage } from 'nomad-ui/initializers/ember-cli-mirage';
 import { render, settled } from '@ember/test-helpers';
 import { initialize as fragmentSerializerInitializer } from 'nomad-ui/initializers/fragment-serializer';
@@ -48,7 +48,7 @@ module('Integration | Component | plugin allocation row', function (hooks) {
     const allocationRequest = this.server.pretender.handledRequests.find(
       (req) => req.url.startsWith('/v1/allocation')
     );
-    assert.equal(
+    assert.strictEqual(
       allocationRequest.url,
       `/v1/allocation/${storageController.allocID}`
     );
@@ -74,7 +74,7 @@ module('Integration | Component | plugin allocation row', function (hooks) {
 
     const [statsRequest] = this.server.pretender.handledRequests.slice(-1);
 
-    assert.equal(
+    assert.strictEqual(
       statsRequest.url,
       `/v1/client/allocation/${storageController.allocID}/stats`
     );
@@ -104,7 +104,7 @@ module('Integration | Component | plugin allocation row', function (hooks) {
       (req) => req.url.startsWith('/v1/allocation')
     );
 
-    assert.equal(
+    assert.strictEqual(
       allocationRequest.url,
       `/v1/allocation/${storageController.allocID}`
     );
@@ -116,7 +116,7 @@ module('Integration | Component | plugin allocation row', function (hooks) {
       .filter((req) => req.url.startsWith('/v1/allocation'))
       .reverse()[0];
 
-    assert.equal(
+    assert.strictEqual(
       latestAllocationRequest.url,
       `/v1/allocation/${storageController2.allocID}`
     );

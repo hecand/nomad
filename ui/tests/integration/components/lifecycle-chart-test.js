@@ -7,7 +7,7 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { render, settled } from '@ember/test-helpers';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 import { set } from '@ember/object';
 import { componentA11yAudit } from 'nomad-ui/tests/helpers/a11y-audit';
 import { create } from 'ember-cli-page-object';
@@ -57,10 +57,10 @@ module('Integration | Component | lifecycle-chart', function (hooks) {
     await render(hbs`<LifecycleChart @tasks={{tasks}} />`);
     assert.ok(Chart.isPresent);
 
-    assert.equal(Chart.phases[0].name, 'Prestart');
-    assert.equal(Chart.phases[1].name, 'Main');
-    assert.equal(Chart.phases[2].name, 'Poststart');
-    assert.equal(Chart.phases[3].name, 'Poststop');
+    assert.strictEqual(Chart.phases[0].name, 'Prestart');
+    assert.strictEqual(Chart.phases[1].name, 'Main');
+    assert.strictEqual(Chart.phases[2].name, 'Poststart');
+    assert.strictEqual(Chart.phases[3].name, 'Poststop');
 
     Chart.phases.forEach((phase) => assert.notOk(phase.isActive));
 
@@ -113,7 +113,7 @@ module('Integration | Component | lifecycle-chart', function (hooks) {
     this.set('tasks', [tasks[0], tasks[6]]);
 
     await render(hbs`<LifecycleChart @tasks={{tasks}} />`);
-    assert.equal(Chart.phases.length, 4);
+    assert.strictEqual(Chart.phases.length, 4);
   });
 
   test('it reflects phase and task states when states are passed in', async function (assert) {

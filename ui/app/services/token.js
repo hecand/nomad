@@ -4,19 +4,17 @@
  */
 
 import Service, { inject as service } from '@ember/service';
-import { computed } from '@ember/object';
+import { computed, get, set } from '@ember/object';
 import { alias, reads } from '@ember/object/computed';
 import { getOwner } from '@ember/application';
-import { assign } from '@ember/polyfills';
 import { task, timeout } from 'ember-concurrency';
 import queryString from 'query-string';
 import fetch from 'nomad-ui/utils/fetch';
-import classic from 'ember-classic-decorator';
 import moment from 'moment';
 
 const MINUTES_LEFT_AT_WARNING = 10;
 const EXPIRY_NOTIFICATION_TITLE = 'Your access is about to expire';
-@classic
+
 export default class TokenService extends Service {
   @service store;
   @service system;
@@ -45,7 +43,7 @@ export default class TokenService extends Service {
     try {
       var token = yield TokenAdapter.findSelf();
       if (token.accessor === 'acls-disabled') {
-        this.set('aclEnabled', false);
+        set(this, 'aclEnabled', false);
         return null;
       }
       this.secret = token.secret;
@@ -53,7 +51,7 @@ export default class TokenService extends Service {
     } catch (e) {
       const errors = e.errors ? e.errors.mapBy('detail') : [];
       if (errors.find((error) => error === 'ACL token not found')) {
-        this.set('tokenNotFound', true);
+        set(this, 'tokenNotFound', true);
       }
       return null;
     }
@@ -125,12 +123,12 @@ export default class TokenService extends Service {
       headers['X-Nomad-Token'] = token;
     }
 
-    return fetch(url, assign(options, { headers, credentials }));
+    return fetch(url, Object.assign(options, { headers, credentials }));
   }
 
   authorizedRequest(url, options) {
-    if (this.get('system.shouldIncludeRegion')) {
-      const region = this.get('system.activeRegion');
+    if (get(this, 'system.shouldIncludeRegion')) {
+      const region = get(this, 'system.activeRegion');
       if (region && url.indexOf('region=') === -1) {
         url = addParams(url, { region });
       }
@@ -180,7 +178,7 @@ export default class TokenService extends Service {
                 color: 'warning',
                 sticky: true,
                 customCloseAction: () => {
-                  this.set('expirationNotificationDismissed', true);
+                  set(this, 'expirationNotificationDismissed', true);
                 },
                 customAction: {
                   label: 'Re-authenticate',

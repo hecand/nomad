@@ -44,13 +44,13 @@ module('Acceptance | clients list', function (hooks) {
 
     await percySnapshot(assert);
 
-    assert.equal(ClientsList.nodes.length, ClientsList.pageSize);
+    assert.strictEqual(ClientsList.nodes.length, ClientsList.pageSize);
     assert.ok(ClientsList.hasPagination, 'Pagination found on the page');
 
     const sortedNodes = server.db.nodes.sortBy('modifyIndex').reverse();
 
     ClientsList.nodes.forEach((node, index) => {
-      assert.equal(
+      assert.strictEqual(
         node.id,
         sortedNodes[index].id.split('-')[0],
         'Clients are ordered'
@@ -72,18 +72,22 @@ module('Acceptance | clients list', function (hooks) {
     const nodeRow = ClientsList.nodes.objectAt(0);
     const allocations = server.db.allocations.where({ nodeId: node.id });
 
-    assert.equal(nodeRow.id, node.id.split('-')[0], 'ID');
-    assert.equal(nodeRow.name, node.name, 'Name');
-    assert.equal(nodeRow.nodePool, node.nodePool, 'Node Pool');
-    assert.equal(
+    assert.strictEqual(nodeRow.id, node.id.split('-')[0], 'ID');
+    assert.strictEqual(nodeRow.name, node.name, 'Name');
+    assert.strictEqual(nodeRow.nodePool, node.nodePool, 'Node Pool');
+    assert.strictEqual(
       nodeRow.compositeStatus.text,
       'Ready Ineligible Draining',
       'Combined status, draining, and eligbility'
     );
-    assert.equal(nodeRow.address, node.httpAddr);
-    assert.equal(nodeRow.datacenter, node.datacenter, 'Datacenter');
-    assert.equal(nodeRow.version, node.version, 'Version');
-    assert.equal(nodeRow.allocations, allocations.length, '# Allocations');
+    assert.strictEqual(nodeRow.address, node.httpAddr);
+    assert.strictEqual(nodeRow.datacenter, node.datacenter, 'Datacenter');
+    assert.strictEqual(nodeRow.version, node.version, 'Version');
+    assert.strictEqual(
+      nodeRow.allocations,
+      allocations.length,
+      '# Allocations'
+    );
   });
 
   test('each client record should show running allocations', async function (assert) {
@@ -108,13 +112,13 @@ module('Acceptance | clients list', function (hooks) {
 
     const nodeRow = ClientsList.nodes.objectAt(0);
 
-    assert.equal(nodeRow.id, node.id.split('-')[0], 'ID');
-    assert.equal(
+    assert.strictEqual(nodeRow.id, node.id.split('-')[0], 'ID');
+    assert.strictEqual(
       nodeRow.compositeStatus.text,
       'Ready Eligible Not Draining',
       'Combined status, draining, and eligbility'
     );
-    assert.equal(nodeRow.allocations, running.length, '# Allocations');
+    assert.strictEqual(nodeRow.allocations, running.length, '# Allocations');
   });
 
   test('client status, draining, and eligibility are combined into one column that stays sorted on status', async function (assert) {
@@ -157,27 +161,27 @@ module('Acceptance | clients list', function (hooks) {
     });
 
     await ClientsList.visit();
-    assert.equal(
+    assert.strictEqual(
       ClientsList.nodes[0].compositeStatus.text,
       'Ready Eligible Not Draining'
     );
-    assert.equal(
+    assert.strictEqual(
       ClientsList.nodes[1].compositeStatus.text,
       'Initializing Eligible Not Draining'
     );
-    assert.equal(
+    assert.strictEqual(
       ClientsList.nodes[2].compositeStatus.text,
       'Down Eligible Not Draining'
     );
-    assert.equal(
+    assert.strictEqual(
       ClientsList.nodes[3].compositeStatus.text,
       'Down Ineligible Not Draining'
     );
-    assert.equal(
+    assert.strictEqual(
       ClientsList.nodes[4].compositeStatus.text,
       'Ready Ineligible Not Draining'
     );
-    assert.equal(
+    assert.strictEqual(
       ClientsList.nodes[5].compositeStatus.text,
       'Ready Eligible Draining'
     );
@@ -228,7 +232,7 @@ module('Acceptance | clients list', function (hooks) {
     await ClientsList.visit();
     await ClientsList.nodes.objectAt(0).clickRow();
 
-    assert.equal(currentURL(), `/clients/${node.id}`);
+    assert.strictEqual(currentURL(), `/clients/${node.id}`);
   });
 
   test('when there are no clients, there is an empty message', async function (assert) {
@@ -240,7 +244,7 @@ module('Acceptance | clients list', function (hooks) {
     await percySnapshot(assert);
 
     assert.ok(ClientsList.isEmpty);
-    assert.equal(ClientsList.empty.headline, 'No Clients');
+    assert.strictEqual(ClientsList.empty.headline, 'No Clients');
   });
 
   test('when there are clients, but no matches for a search term, there is an empty message', async function (assert) {
@@ -251,7 +255,7 @@ module('Acceptance | clients list', function (hooks) {
 
     await ClientsList.search('client');
     assert.ok(ClientsList.isEmpty);
-    assert.equal(ClientsList.empty.headline, 'No Matches');
+    assert.strictEqual(ClientsList.empty.headline, 'No Matches');
   });
 
   test('when accessing clients is forbidden, show a message with a link to the tokens page', async function (assert) {
@@ -261,11 +265,11 @@ module('Acceptance | clients list', function (hooks) {
 
     await ClientsList.visit();
 
-    assert.equal(ClientsList.error.title, 'Not Authorized');
+    assert.strictEqual(ClientsList.error.title, 'Not Authorized');
 
     await ClientsList.error.seekHelp();
 
-    assert.equal(currentURL(), '/settings/tokens');
+    assert.strictEqual(currentURL(), '/settings/tokens');
   });
 
   pageSizeSelect({
@@ -429,7 +433,7 @@ module('Acceptance | clients list', function (hooks) {
     await ClientsList.facets.state.toggle();
     await ClientsList.facets.state.options.objectAt(1).toggle();
     assert.ok(ClientsList.isEmpty, 'There is an empty message');
-    assert.equal(
+    assert.strictEqual(
       ClientsList.empty.headline,
       'No Matches',
       'The message is appropriate'
@@ -443,7 +447,7 @@ module('Acceptance | clients list', function (hooks) {
 
     await ClientsList.visit({ class: JSON.stringify(['wtf-tiny']) });
 
-    assert.equal(
+    assert.strictEqual(
       ClientsList.nodes.length,
       1,
       'Only one client shown due to query param'
@@ -490,7 +494,7 @@ module('Acceptance | clients list', function (hooks) {
         .reverse();
 
       ClientsList.nodes.forEach((node, index) => {
-        assert.equal(
+        assert.strictEqual(
           node.id,
           expectedNodes[index].id.split('-')[0],
           `Node at ${index} is ${expectedNodes[index].id}`
@@ -517,7 +521,7 @@ module('Acceptance | clients list', function (hooks) {
         .reverse();
 
       ClientsList.nodes.forEach((node, index) => {
-        assert.equal(
+        assert.strictEqual(
           node.id,
           expectedNodes[index].id.split('-')[0],
           `Node at ${index} is ${expectedNodes[index].id}`
@@ -549,7 +553,7 @@ module('Acceptance | clients list', function (hooks) {
         JSON.stringify(selection)
       )}`;
 
-      assert.equal(
+      assert.strictEqual(
         currentURL(),
         paramName === 'state' ? stateString : nonStateString,
         'URL has the correct query param key and value'

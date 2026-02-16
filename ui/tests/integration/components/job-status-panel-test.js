@@ -6,7 +6,7 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { find, render, settled } from '@ember/test-helpers';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 import { startMirage } from 'nomad-ui/initializers/ember-cli-mirage';
 import { initialize as fragmentSerializerInitializer } from 'nomad-ui/initializers/fragment-serializer';
 import { componentA11yAudit } from 'nomad-ui/tests/helpers/a11y-audit';
@@ -42,8 +42,8 @@ module(
 
       this.set('job', this.store.peekAll('job').get('firstObject'));
       await render(hbs`
-      <JobStatus::Panel @job={{this.job}} />)
-    `);
+    <JobStatus::Panel @job={{this.job}} />)
+  `);
 
       assert.notOk(find('.active-deployment'), 'No active deployment');
     });
@@ -99,8 +99,8 @@ module(
       await this.get('job.allocations');
 
       await render(hbs`
-        <JobStatus::Panel @job={{this.job}} />
-      `);
+      <JobStatus::Panel @job={{this.job}} />
+    `);
 
       // Initially no active deployment
       assert.notOk(
@@ -200,7 +200,7 @@ module(
           'Correct number of unplaced allocations are shown'
         );
 
-      assert.equal(
+      assert.strictEqual(
         find('[data-test-new-allocation-tally] > span').textContent.trim(),
         `New allocations: ${
           this.job.allocations.filter(
@@ -256,8 +256,8 @@ module(
         );
 
       await render(hbs`
-        <JobStatus::Panel @job={{this.job}} />
-      `);
+      <JobStatus::Panel @job={{this.job}} />
+    `);
       assert
         .dom(
           '.new-allocations .allocation-status-row .represented-allocation.running.canary'
@@ -291,7 +291,7 @@ module(
           'Pending Canaries shown when deployment info dictates'
         );
 
-      assert.equal(
+      assert.strictEqual(
         find('[data-test-new-allocation-tally] > span').textContent.trim(),
         `New allocations: ${
           this.job.allocations.filter(
@@ -303,7 +303,7 @@ module(
         'Summary text shows accurate numbers when some are running/healthy'
       );
 
-      assert.equal(
+      assert.strictEqual(
         find('[data-test-old-allocation-tally] > span').textContent.trim(),
         `Previous allocations: ${
           this.job.allocations.filter(
@@ -315,7 +315,7 @@ module(
         'Old Alloc Summary text shows accurate numbers'
       );
 
-      assert.equal(
+      assert.strictEqual(
         find('[data-test-previous-allocations-legend]')
           .textContent.trim()
           .replace(/\s\s+/g, ' '),
@@ -355,7 +355,7 @@ module(
           'Correct number of old allocations are in completed state'
         );
 
-      assert.equal(
+      assert.strictEqual(
         find('[data-test-old-allocation-tally] > span').textContent.trim(),
         `Previous allocations: ${
           this.job.allocations.filter(
@@ -367,7 +367,7 @@ module(
         'Old Alloc Summary text shows accurate numbers after some are marked complete'
       );
 
-      assert.equal(
+      assert.strictEqual(
         find('[data-test-previous-allocations-legend]')
           .textContent.trim()
           .replace(/\s\s+/g, ' '),
@@ -440,8 +440,8 @@ module(
       await this.get('job.allocations');
 
       await render(hbs`
-        <JobStatus::Panel @job={{this.job}} />
-      `);
+      <JobStatus::Panel @job={{this.job}} />
+    `);
 
       assert
         .dom('.allocation-status-block .represented-allocation.failed')
@@ -535,8 +535,8 @@ module(
       await this.get('job.allocations');
 
       await render(hbs`
-        <JobStatus::Panel @job={{this.job}} />
-      `);
+      <JobStatus::Panel @job={{this.job}} />
+    `);
 
       assert
         .dom(find('.legend-item .represented-allocation.running').parentElement)
@@ -649,8 +649,8 @@ module(
 
       this.set('job', this.store.peekAll('job').get('firstObject'));
       await render(hbs`
-      <JobStatus::Panel @job={{this.job}} />
-    `);
+    <JobStatus::Panel @job={{this.job}} />
+  `);
 
       assert.notOk(find('.active-deployment'), 'No active deployment');
       assert.ok(

@@ -43,7 +43,7 @@
       {{#if this.model.writeAllocations.length}}
         <ListTable
           @source={{this.sortedWriteAllocations}}
-          @class="with-foot" as |t|>
+          class="with-foot" as |t|>
           <t.head>
             <th class="is-narrow"><span class="visually-hidden">Driver Health, Scheduling, and Preemption</span></th>
             <th>ID</th>
@@ -85,7 +85,7 @@
       {{#if this.model.readAllocations.length}}
         <ListTable
           @source={{this.sortedReadAllocations}}
-          @class="with-foot" as |t|>
+          class="with-foot" as |t|>
           <t.head>
             <th class="is-narrow"><span class="visually-hidden">Driver Health, Scheduling, and Preemption</span></th>
             <th>ID</th>

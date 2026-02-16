@@ -4,15 +4,14 @@
  */
 
 import Service, { inject as service } from '@ember/service';
-import { computed } from '@ember/object';
+import { computed, get } from '@ember/object';
 import { alias } from '@ember/object/computed';
 import PromiseObject from '../utils/classes/promise-object';
 import PromiseArray from '../utils/classes/promise-array';
 import { namespace } from '../adapters/application';
 import jsonWithDefault from '../utils/json-with-default';
-import classic from 'ember-classic-decorator';
 import { task } from 'ember-concurrency';
-@classic
+
 export default class SystemService extends Service {
   @service token;
   @service store;
@@ -103,20 +102,18 @@ export default class SystemService extends Service {
 
   @computed('regions.[]')
   get shouldShowRegions() {
-    return this.get('regions.length') > 1;
+    return get(this, 'regions.length') > 1;
   }
 
   get hasNonDefaultRegion() {
-    return this.get('regions')
-      .toArray()
-      .some((region) => region !== 'global');
+    return this.regions.toArray().some((region) => region !== 'global');
   }
 
   @computed('activeRegion', 'defaultRegion.region', 'shouldShowRegions')
   get shouldIncludeRegion() {
     return (
       this.shouldShowRegions &&
-      this.activeRegion !== this.get('defaultRegion.region')
+      this.activeRegion !== get(this, 'defaultRegion.region')
     );
   }
 
@@ -177,6 +174,6 @@ export default class SystemService extends Service {
 
   @computed('license.License.Features.[]')
   get features() {
-    return this.get('license.License.Features') || [];
+    return get(this, 'license.License.Features') || [];
   }
 }

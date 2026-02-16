@@ -3,19 +3,16 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-// @ts-check
-
 /* eslint-disable ember/no-controller-access-in-routes */
 import { inject as service } from '@ember/service';
 import { later, next } from '@ember/runloop';
 import Route from '@ember/routing/route';
 import { AbortError } from '@ember-data/adapter/error';
 import RSVP from 'rsvp';
-import { action } from '@ember/object';
-import classic from 'ember-classic-decorator';
+import { action, get, set } from '@ember/object';
+
 import { handleRouteRedirects } from '../utils/route-redirector';
 
-@classic
 export default class ApplicationRoute extends Route {
   @service config;
   @service system;
@@ -50,7 +47,7 @@ export default class ApplicationRoute extends Route {
       let exchangeOneTimeToken;
 
       if (transition.to.queryParams.ott) {
-        exchangeOneTimeToken = this.get('token').exchangeOneTimeToken(
+        exchangeOneTimeToken = this.token.exchangeOneTimeToken(
           transition.to.queryParams.ott
         );
       } else {
@@ -63,34 +60,36 @@ export default class ApplicationRoute extends Route {
         this.controllerFor('application').set('error', e);
       }
 
-      const fetchSelfTokenAndPolicies = await this.get(
+      const fetchSelfTokenAndPolicies = await get(
+        this,
         'token.fetchSelfTokenAndPolicies'
       )
         .perform()
         .catch();
 
-      const fetchLicense = this.get('system.fetchLicense').perform().catch();
+      const fetchLicense = get(this, 'system.fetchLicense').perform().catch();
 
-      const checkFuzzySearchPresence = this.get(
+      const checkFuzzySearchPresence = get(
+        this,
         'system.checkFuzzySearchPresence'
       )
         .perform()
         .catch();
 
       promises = await RSVP.all([
-        this.get('system.regions'),
-        this.get('system.defaultRegion'),
+        get(this, 'system.regions'),
+        get(this, 'system.defaultRegion'),
         fetchLicense,
         fetchSelfTokenAndPolicies,
         checkFuzzySearchPresence,
       ]);
     }
 
-    if (!this.get('system.shouldShowRegions')) return promises;
+    if (!get(this, 'system.shouldShowRegions')) return promises;
 
     const queryParam = transition.to.queryParams.region;
-    const defaultRegion = this.get('system.defaultRegion.region');
-    const currentRegion = this.get('system.activeRegion') || defaultRegion;
+    const defaultRegion = get(this, 'system.defaultRegion.region');
+    const currentRegion = get(this, 'system.activeRegion') || defaultRegion;
 
     // Only reset the store if the region actually changed
     if (
@@ -100,7 +99,7 @@ export default class ApplicationRoute extends Route {
       this.store.unloadAll();
     }
 
-    this.set('system.activeRegion', queryParam || defaultRegion);
+    set(this, 'system.activeRegion', queryParam || defaultRegion);
 
     return promises;
   }
@@ -122,7 +121,7 @@ export default class ApplicationRoute extends Route {
   }
 
   setupController(controller, { region, hasOneTimeToken }) {
-    if (region === this.get('system.defaultRegion.region')) {
+    if (region === get(this, 'system.defaultRegion.region')) {
       next(() => {
         controller.set('region', null);
       });
@@ -140,7 +139,7 @@ export default class ApplicationRoute extends Route {
 
   @action
   didTransition() {
-    if (!this.get('config.isTest')) {
+    if (!get(this, 'config.isTest')) {
       window.scrollTo(0, 0);
     }
   }

@@ -3,18 +3,14 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import { computed } from '@ember/object';
+import { computed, set } from '@ember/object';
 import { equal } from '@ember/object/computed';
-import Model from '@ember-data/model';
-import { attr } from '@ember-data/model';
-import { hasMany } from '@ember-data/model';
+import Model, { attr, hasMany } from '@ember-data/model';
 import { fragment, fragmentArray } from 'ember-data-model-fragments/attributes';
 import RSVP from 'rsvp';
 import shortUUIDProperty from '../utils/properties/short-uuid';
 import ipParts from '../utils/ip-parts';
-import classic from 'ember-classic-decorator';
 
-@classic
 export default class Node extends Model {
   // Available from list response
   @attr('string') name;
@@ -137,14 +133,14 @@ export default class Node extends Model {
   setEligible() {
     if (this.isEligible) return RSVP.resolve();
     // Optimistically update schedulingEligibility for immediate feedback
-    this.set('schedulingEligibility', 'eligible');
+    set(this, 'schedulingEligibility', 'eligible');
     return this.store.adapterFor('node').setEligible(this);
   }
 
   setIneligible() {
     if (!this.isEligible) return RSVP.resolve();
     // Optimistically update schedulingEligibility for immediate feedback
-    this.set('schedulingEligibility', 'ineligible');
+    set(this, 'schedulingEligibility', 'ineligible');
     return this.store.adapterFor('node').setIneligible(this);
   }
 
@@ -166,7 +162,7 @@ export default class Node extends Model {
       .addMeta(this, newMeta);
 
     if (!this.meta) {
-      this.set('meta', this.store.createFragment('structured-attributes'));
+      set(this, 'meta', this.store.createFragment('structured-attributes'));
     }
 
     this.meta.recomputeRawProperties(metaResponse.Meta);

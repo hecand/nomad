@@ -98,7 +98,7 @@
         {{#if this.model.controllers}}
           <ListTable
             @source={{take 10 this.sortedControllers}}
-            @class="with-foot" as |t|>
+            class="with-foot" as |t|>
             <t.head>
               <th class="is-narrow"><span class="visually-hidden">Driver Health, Scheduling, and Preemption</span></th>
               <td>ID</td>
@@ -149,7 +149,7 @@
       {{#if this.model.nodes}}
         <ListTable
           @source={{take 10 this.sortedNodes}}
-          @class="with-foot" as |t|>
+          class="with-foot" as |t|>
           <t.head>
             <th class="is-narrow"><span class="visually-hidden">Driver Health, Scheduling, and Preemption</span></th>
             <td>ID</td>

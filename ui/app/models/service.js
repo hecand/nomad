@@ -3,9 +3,7 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-// @ts-check
-import { attr, belongsTo } from '@ember-data/model';
-import Model from '@ember-data/model';
+import Model, { attr, belongsTo } from '@ember-data/model';
 import { alias } from '@ember/object/computed';
 
 export default class Service extends Model {

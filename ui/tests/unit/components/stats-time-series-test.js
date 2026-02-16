@@ -56,7 +56,7 @@ module('Unit | Component | stats-time-series', function (hooks) {
     const chart = this.createComponent({ data: wideData });
 
     wideData.forEach((datum) => {
-      assert.equal(
+      assert.strictEqual(
         chart.xFormat(datum.timestamp),
         d3TimeFormat.timeFormat('%H:%M:%S')(datum.timestamp)
       );
@@ -69,7 +69,7 @@ module('Unit | Component | stats-time-series', function (hooks) {
     const chart = this.createComponent({ data: wideData });
 
     wideData.forEach((datum) => {
-      assert.equal(
+      assert.strictEqual(
         chart.yFormat(datum.percent),
         d3Format.format('.1~%')(datum.percent)
       );
@@ -79,7 +79,7 @@ module('Unit | Component | stats-time-series', function (hooks) {
   test('x scale domain is at least five minutes', function (assert) {
     const chart = this.createComponent({ data: narrowData });
 
-    assert.equal(
+    assert.strictEqual(
       +chart.xScale(narrowData, 0).domain()[0],
       +moment(Math.max(...narrowData.mapBy('timestamp')))
         .subtract(5, 'm')
@@ -91,7 +91,7 @@ module('Unit | Component | stats-time-series', function (hooks) {
   test('x scale domain is greater than five minutes when the domain of the data is larger than five minutes', function (assert) {
     const chart = this.createComponent({ data: wideData });
 
-    assert.equal(
+    assert.strictEqual(
       +chart.xScale(wideData, 0).domain()[0],
       Math.min(...wideData.mapBy('timestamp')),
       'The lower bound of the xScale is the oldest timestamp in the dataset'

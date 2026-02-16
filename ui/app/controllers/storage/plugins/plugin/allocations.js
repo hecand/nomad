@@ -5,7 +5,7 @@
 
 import Controller from '@ember/controller';
 import { inject as service } from '@ember/service';
-import { action, computed } from '@ember/object';
+import { action, computed, set } from '@ember/object';
 import { alias, readOnly } from '@ember/object/computed';
 import SortableFactory from 'nomad-ui/mixins/sortable-factory';
 import { lazyClick } from 'nomad-ui/helpers/lazy-click';
@@ -13,9 +13,7 @@ import {
   serialize,
   deserializedQueryParam as selection,
 } from 'nomad-ui/utils/qp-serialize';
-import classic from 'ember-classic-decorator';
 
-@classic
 export default class AllocationsController extends Controller.extend(
   SortableFactory(['updateTime', 'healthy'])
 ) {
@@ -102,12 +100,12 @@ export default class AllocationsController extends Controller.extend(
 
   resetPagination() {
     if (this.currentPage != null) {
-      this.set('currentPage', 1);
+      set(this, 'currentPage', 1);
     }
   }
 
   setFacetQueryParam(queryParam, selection) {
-    this.set(queryParam, serialize(selection));
+    set(this, queryParam, serialize(selection));
   }
 
   @action

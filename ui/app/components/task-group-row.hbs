@@ -16,9 +16,7 @@
     class="button-bar is-shadowless is-text bumper-left {{if (or this.runningDeployment (cannot "scale job" namespace=this.namespace)) "tooltip multiline"}}"
     aria-label={{this.tooltipText}}>
       <button
-        data-test-scale="decrement"
-        role="button"
-        aria-label="decrement"
+        data-test-scale="decrement" aria-label="decrement"
         class="button is-xsmall is-light"
         disabled={{or this.isMinimum this.runningDeployment (cannot "scale job" namespace=this.namespace)}}
         onclick={{action "countDown"}}
@@ -27,9 +25,7 @@
       </button>
       <button
         data-test-scale-controls-increment
-        data-test-scale="increment"
-        role="button"
-        aria-label="increment"
+        data-test-scale="increment" aria-label="increment"
         class="button is-xsmall is-light"
         disabled={{or this.isMaximum this.runningDeployment (cannot "scale job" namespace=this.namespace)}}
         onclick={{action "countUp"}}

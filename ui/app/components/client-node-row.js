@@ -8,11 +8,9 @@ import Component from '@ember/component';
 import { lazyClick } from '../helpers/lazy-click';
 import { watchRelationship } from 'nomad-ui/utils/properties/watch';
 import WithVisibilityDetection from 'nomad-ui/mixins/with-component-visibility-detection';
-import { computed } from '@ember/object';
+import { computed, get } from '@ember/object';
 import { classNames, tagName } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 
-@classic
 @tagName('tr')
 @classNames('client-node-row', 'is-interactive')
 export default class ClientNodeRow extends Component.extend(
@@ -59,7 +57,7 @@ export default class ClientNodeRow extends Component.extend(
 
   @computed('node.status')
   get nodeStatusColor() {
-    let status = this.get('node.status');
+    let status = get(this, 'node.status');
     if (status === 'disconnected') {
       return 'warning';
     } else if (status === 'down') {
@@ -74,7 +72,7 @@ export default class ClientNodeRow extends Component.extend(
   }
   @computed('node.status')
   get nodeStatusIcon() {
-    let status = this.get('node.status');
+    let status = get(this, 'node.status');
     if (status === 'disconnected') {
       return 'skip';
     } else if (status === 'down') {

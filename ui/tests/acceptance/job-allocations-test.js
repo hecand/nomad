@@ -57,7 +57,7 @@ module('Acceptance | job allocations', function (hooks) {
 
     await Allocations.visit({ id: job.id });
 
-    assert.equal(
+    assert.strictEqual(
       Allocations.allocations.length,
       Allocations.pageSize - 1,
       'Allocations are shown in a table'
@@ -67,14 +67,14 @@ module('Acceptance | job allocations', function (hooks) {
 
     Allocations.allocations.forEach((allocation, index) => {
       const shortId = sortedAllocations[index].id.split('-')[0];
-      assert.equal(
+      assert.strictEqual(
         allocation.shortId,
         shortId,
         `Allocation ${index} is ${shortId}`
       );
     });
 
-    assert.equal(document.title, `Job ${job.name} allocations - Nomad`);
+    assert.strictEqual(document.title, `Job ${job.name} allocations - Nomad`);
   });
 
   test('clicking an allocation results in the correct endpoint being hit', async function (assert) {
@@ -96,7 +96,7 @@ module('Acceptance | job allocations', function (hooks) {
 
     assert.ok(requestToAllocationEndpoint, 'the correct endpoint is hit');
 
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/allocations/${firstAllocation.dataset.testAllocation}`,
       'the URL is correct'
@@ -110,7 +110,7 @@ module('Acceptance | job allocations', function (hooks) {
     await Allocations.visit({ id: job.id });
     await Allocations.sortBy('taskGroupName');
 
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/jobs/${job.id}/allocations?sort=taskGroupName`,
       'the URL persists the sort parameter'
@@ -118,7 +118,7 @@ module('Acceptance | job allocations', function (hooks) {
     const sortedAllocations = allocations.sortBy('taskGroup').reverse();
     Allocations.allocations.forEach((allocation, index) => {
       const shortId = sortedAllocations[index].id.split('-')[0];
-      assert.equal(
+      assert.strictEqual(
         allocation.shortId,
         shortId,
         `Allocation ${index} is ${shortId} with task group ${sortedAllocations[index].taskGroup}`
@@ -134,7 +134,7 @@ module('Acceptance | job allocations', function (hooks) {
     await Allocations.visit({ id: job.id });
     await Allocations.search('ffffff');
 
-    assert.equal(
+    assert.strictEqual(
       Allocations.allocations.length,
       5,
       'List is filtered by search term'
@@ -149,7 +149,7 @@ module('Acceptance | job allocations', function (hooks) {
     await Allocations.visit({ id: job.id });
     await Allocations.search('^nothing will ever match this long regex$');
 
-    assert.equal(
+    assert.strictEqual(
       Allocations.emptyState.headline,
       'No Matches',
       'List is empty and the empty state is about search'
@@ -161,20 +161,20 @@ module('Acceptance | job allocations', function (hooks) {
   test('when the job for the allocations is not found, an error message is shown, but the URL persists', async function (assert) {
     await Allocations.visit({ id: 'not-a-real-job' });
 
-    assert.equal(
+    assert.strictEqual(
       server.pretender.handledRequests
         .filter((request) => !request.url.includes('policy'))
         .findBy('status', 404).url,
       '/v1/job/not-a-real-job',
       'A request to the nonexistent job is made'
     );
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       '/jobs/not-a-real-job/allocations',
       'The URL persists'
     );
     assert.ok(Allocations.error.isPresent, 'Error message is shown');
-    assert.equal(
+    assert.strictEqual(
       Allocations.error.title,
       'Not Found',
       'Error message is for 404'
@@ -290,7 +290,7 @@ function testFacet(
       .reverse();
 
     Allocations.allocations.forEach((alloc, index) => {
-      assert.equal(
+      assert.strictEqual(
         alloc.id,
         expectedAllocs[index].id,
         `Allocation at ${index} is ${expectedAllocs[index].id}`
@@ -317,7 +317,7 @@ function testFacet(
       .reverse();
 
     Allocations.allocations.forEach((alloc, index) => {
-      assert.equal(
+      assert.strictEqual(
         alloc.id,
         expectedAllocs[index].id,
         `Allocation at ${index} is ${expectedAllocs[index].id}`
@@ -338,7 +338,7 @@ function testFacet(
     await option2.toggle();
     selection.push(option2.key);
 
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/jobs/${job.id}/allocations?${paramName}=${encodeURIComponent(
         JSON.stringify(selection)

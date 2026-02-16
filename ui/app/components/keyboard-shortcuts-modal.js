@@ -3,11 +3,9 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import { set } from '@ember/object';
+import { set, computed, action } from '@ember/object';
 import Component from '@glimmer/component';
 import { inject as service } from '@ember/service';
-import { computed } from '@ember/object';
-import { action } from '@ember/object';
 import Tether from 'tether';
 
 export default class KeyboardShortcutsModalComponent extends Component {

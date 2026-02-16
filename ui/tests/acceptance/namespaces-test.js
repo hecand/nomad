@@ -28,7 +28,7 @@ module('Acceptance | namespaces', function (hooks) {
     window.localStorage.nomadTokenSecret = server.db.tokens[0].secretId;
     await visit('/administration/namespaces');
     assert.dom('[data-test-gutter-link="administration"]').exists();
-    assert.equal(currentURL(), '/administration/namespaces');
+    assert.strictEqual(currentURL(), '/administration/namespaces');
     assert
       .dom('[data-test-namespace-row]')
       .exists({ count: server.db.namespaces.length });
@@ -42,7 +42,7 @@ module('Acceptance | namespaces', function (hooks) {
     allScenarios.namespacesTestCluster(server);
     window.localStorage.nomadTokenSecret = server.db.tokens[1].secretId;
     await visit('/administration/namespaces');
-    assert.equal(currentURL(), '/jobs');
+    assert.strictEqual(currentURL(), '/jobs');
     assert.dom('[data-test-gutter-link="administration"]').doesNotExist();
     // Reset Token
     window.localStorage.nomadTokenSecret = null;
@@ -54,19 +54,19 @@ module('Acceptance | namespaces', function (hooks) {
     window.localStorage.nomadTokenSecret = server.db.tokens[0].secretId;
     await visit('/administration/namespaces');
     await click('[data-test-create-namespace]');
-    assert.equal(currentURL(), '/administration/namespaces/new');
+    assert.strictEqual(currentURL(), '/administration/namespaces/new');
     await typeIn('[data-test-namespace-name-input]', 'My New Namespace');
     await click('button[data-test-save-namespace]');
     assert
       .dom('.flash-message.alert-critical')
       .exists('Doesnt let you save a bad name');
-    assert.equal(currentURL(), '/administration/namespaces/new');
+    assert.strictEqual(currentURL(), '/administration/namespaces/new');
     document.querySelector('[data-test-namespace-name-input]').value = ''; // clear
     await typeIn('[data-test-namespace-name-input]', 'My-New-Namespace');
     await click('button[data-test-save-namespace]');
     assert.dom('.flash-message.alert-success').exists();
 
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       '/administration/namespaces/My-New-Namespace',
       'redirected to the now-created namespace'
@@ -77,7 +77,10 @@ module('Acceptance | namespaces', function (hooks) {
     )[0];
     assert.ok(newNs, 'Namespace is in the list');
     await click(newNs);
-    assert.equal(currentURL(), '/administration/namespaces/My-New-Namespace');
+    assert.strictEqual(
+      currentURL(),
+      '/administration/namespaces/My-New-Namespace'
+    );
     await percySnapshot(assert);
     // Reset Token
     window.localStorage.nomadTokenSecret = null;
@@ -138,7 +141,7 @@ module('Acceptance | namespaces', function (hooks) {
     let firstNamespace = server.db.namespaces.sort((a, b) => {
       return a.name.localeCompare(b.name);
     })[0];
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/administration/namespaces/${firstNamespace.name}`
     );
@@ -146,7 +149,7 @@ module('Acceptance | namespaces', function (hooks) {
     assert.dom('[data-test-title]').includesText(firstNamespace.name);
     await click('button[data-test-save-namespace]');
     assert.dom('.flash-message.alert-success').exists();
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/administration/namespaces/${firstNamespace.name}`,
       'remain on page after save'
@@ -167,7 +170,7 @@ module('Acceptance | namespaces', function (hooks) {
     ].filter((row) => row.textContent.includes('default'))[0];
     await click(defaultNamespaceLink);
 
-    assert.equal(currentURL(), `/administration/namespaces/default`);
+    assert.strictEqual(currentURL(), `/administration/namespaces/default`);
     let deleteButton = find('[data-test-delete-namespace] button');
     assert
       .dom(deleteButton)
@@ -183,7 +186,7 @@ module('Acceptance | namespaces', function (hooks) {
       (row) => row.textContent.includes(nonDefaultNamespace.name)
     )[0];
     await click(nonDefaultNsLink);
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/administration/namespaces/${nonDefaultNamespace.name}`
     );
@@ -195,7 +198,7 @@ module('Acceptance | namespaces', function (hooks) {
       .exists('confirmation message is present');
     await click(find('[data-test-confirm-button]'));
     assert.dom('.flash-message.alert-success').exists();
-    assert.equal(currentURL(), '/administration/namespaces');
+    assert.strictEqual(currentURL(), '/administration/namespaces');
     assert
       .dom(`[data-test-namespace-name="${nonDefaultNamespace.name}"]`)
       .doesNotExist();
@@ -203,7 +206,10 @@ module('Acceptance | namespaces', function (hooks) {
     // Namespace with variables errors properly
     // "with-variables" hard-coded into scenario to be a NS with variables attached
     await visit('/administration/namespaces/with-variables');
-    assert.equal(currentURL(), '/administration/namespaces/with-variables');
+    assert.strictEqual(
+      currentURL(),
+      '/administration/namespaces/with-variables'
+    );
     deleteButton = find('[data-test-delete-namespace] button');
     await click(deleteButton);
     await click(find('[data-test-confirm-button]'));
@@ -211,7 +217,10 @@ module('Acceptance | namespaces', function (hooks) {
       .dom('.flash-message.alert-critical')
       .exists('Doesnt let you delete a namespace with variables');
 
-    assert.equal(currentURL(), '/administration/namespaces/with-variables');
+    assert.strictEqual(
+      currentURL(),
+      '/administration/namespaces/with-variables'
+    );
 
     // Reset Token
     window.localStorage.nomadTokenSecret = null;
@@ -236,7 +245,10 @@ module('Acceptance | namespaces', function (hooks) {
     assert
       .dom('.flash-message.alert-critical')
       .exists('Doesnt let you delete a namespace with variables');
-    assert.equal(currentURL(), '/administration/namespaces/with-variables');
+    assert.strictEqual(
+      currentURL(),
+      '/administration/namespaces/with-variables'
+    );
 
     // Navigate back to the page via the index
     await visit('/administration/namespaces');
@@ -247,6 +259,9 @@ module('Acceptance | namespaces', function (hooks) {
     )[0];
     await click(notDeletedNSLink);
 
-    assert.equal(currentURL(), `/administration/namespaces/with-variables`);
+    assert.strictEqual(
+      currentURL(),
+      `/administration/namespaces/with-variables`
+    );
   });
 });

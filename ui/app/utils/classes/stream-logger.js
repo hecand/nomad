@@ -3,15 +3,13 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import EmberObject, { computed } from '@ember/object';
+import EmberObject, { computed, set } from '@ember/object';
 import { task } from 'ember-concurrency';
 import TextDecoder from 'nomad-ui/utils/classes/text-decoder';
 import { decode } from 'nomad-ui/utils/stream-frames';
 import AbstractLogger from './abstract-logger';
 import { fetchFailure } from './log';
-import classic from 'ember-classic-decorator';
 
-@classic
 export default class StreamLogger extends EmberObject.extend(AbstractLogger) {
   reader = null;
 
@@ -58,7 +56,7 @@ export default class StreamLogger extends EmberObject.extend(AbstractLogger) {
       return;
     }
 
-    this.set('reader', reader);
+    set(this, 'reader', reader);
 
     let streamClosed = false;
     let buffer = '';
@@ -87,7 +85,7 @@ export default class StreamLogger extends EmberObject.extend(AbstractLogger) {
           // point chunk is a series of valid JSON objects with no delimiter.
           const { offset, message } = decode(chunk);
           if (message) {
-            this.set('endOffset', offset);
+            set(this, 'endOffset', offset);
             this.write(message);
           }
         }

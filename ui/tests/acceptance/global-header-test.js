@@ -40,8 +40,11 @@ module('Acceptance | global header', function (hooks) {
     await visit('/');
 
     assert.true(Layout.navbar.end.consulLink.isVisible);
-    assert.equal(Layout.navbar.end.consulLink.text, 'Consul');
-    assert.equal(Layout.navbar.end.consulLink.link, 'http://localhost:8500/ui');
+    assert.strictEqual(Layout.navbar.end.consulLink.text, 'Consul');
+    assert.strictEqual(
+      Layout.navbar.end.consulLink.link,
+      'http://localhost:8500/ui'
+    );
   });
 
   test('it diplays Vault link', async function (assert) {
@@ -50,8 +53,11 @@ module('Acceptance | global header', function (hooks) {
     await visit('/');
 
     assert.true(Layout.navbar.end.vaultLink.isVisible);
-    assert.equal(Layout.navbar.end.vaultLink.text, 'Vault');
-    assert.equal(Layout.navbar.end.vaultLink.link, 'http://localhost:8200/ui');
+    assert.strictEqual(Layout.navbar.end.vaultLink.text, 'Vault');
+    assert.strictEqual(
+      Layout.navbar.end.vaultLink.link,
+      'http://localhost:8200/ui'
+    );
   });
 
   test('it diplays SignIn', async function (assert) {
@@ -75,7 +81,7 @@ module('Acceptance | global header', function (hooks) {
     await Layout.navbar.end.profileDropdown.open();
 
     await click('[data-test-profile-dropdown-profile-link]');
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       '/settings/tokens',
       'Authroization link takes you to the tokens page'
@@ -83,7 +89,15 @@ module('Acceptance | global header', function (hooks) {
 
     await Layout.navbar.end.profileDropdown.open();
     await click('[data-test-profile-dropdown-sign-out-link]');
-    assert.equal(window.localStorage.nomadTokenSecret, null, 'Token is wiped');
-    assert.equal(currentURL(), '/jobs', 'After signout, back on the jobs page');
+    assert.strictEqual(
+      window.localStorage.nomadTokenSecret,
+      null,
+      'Token is wiped'
+    );
+    assert.strictEqual(
+      currentURL(),
+      '/jobs',
+      'After signout, back on the jobs page'
+    );
   });
 });

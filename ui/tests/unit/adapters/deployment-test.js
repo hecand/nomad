@@ -71,7 +71,7 @@ module('Unit | Adapter | Deployment', function (hooks) {
 
       const request = this.server.pretender.handledRequests[0];
 
-      assert.equal(
+      assert.strictEqual(
         `${request.method} ${request.url}`,
         testCase.promote(deployment.id)
       );
@@ -87,7 +87,7 @@ module('Unit | Adapter | Deployment', function (hooks) {
 
       const request = this.server.pretender.handledRequests[0];
 
-      assert.equal(
+      assert.strictEqual(
         `${request.method} ${request.url}`,
         testCase.fail(deployment.id)
       );

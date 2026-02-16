@@ -7,9 +7,7 @@ import { attr } from '@ember-data/model';
 import Fragment from 'ember-data-model-fragments/fragment';
 import { fragment } from 'ember-data-model-fragments/attributes';
 import { computed } from '@ember/object';
-import classic from 'ember-classic-decorator';
 
-@classic
 export default class Service extends Fragment {
   @attr('string') name;
   @attr('string') portLabel;
@@ -28,11 +26,11 @@ export default class Service extends Fragment {
   @computed('healthChecks.[]')
   get mostRecentChecks() {
     // Get unique check names, then get the most recent one
-    return this.get('healthChecks')
+    return this.healthChecks
       .mapBy('Check')
       .uniq()
       .map((name) => {
-        return this.get('healthChecks')
+        return this.healthChecks
           .sortBy('Timestamp')
           .reverse()
           .find((x) => x.Check === name);
@@ -43,11 +41,9 @@ export default class Service extends Fragment {
   @computed('mostRecentChecks.[]')
   get mostRecentCheckStatus() {
     // Get unique check names, then get the most recent one
-    return this.get('mostRecentChecks')
-      .mapBy('Status')
-      .reduce((acc, curr) => {
-        acc[curr] = (acc[curr] || 0) + 1;
-        return acc;
-      }, {});
+    return this.mostRecentChecks.mapBy('Status').reduce((acc, curr) => {
+      acc[curr] = (acc[curr] || 0) + 1;
+      return acc;
+    }, {});
   }
 }

@@ -11,9 +11,7 @@ import { once } from '@ember/runloop';
 import d3Shape from 'd3-shape';
 import WindowResizable from 'nomad-ui/mixins/window-resizable';
 import { classNames } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 
-@classic
 @classNames('chart', 'gauge-chart')
 export default class GaugeChart extends Component.extend(WindowResizable) {
   value = null;

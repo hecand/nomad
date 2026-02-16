@@ -6,15 +6,14 @@
 import Ember from 'ember';
 import { inject as service } from '@ember/service';
 import Component from '@ember/component';
+import { get, set } from '@ember/object';
 import { action, computed } from '@ember/object';
 import { equal, gt } from '@ember/object/computed';
 import RSVP from 'rsvp';
 import Log from 'nomad-ui/utils/classes/log';
 import timeout from 'nomad-ui/utils/timeout';
 import { classNames, attributeBindings } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 
-@classic
 @classNames('boxed-section', 'task-log')
 @attributeBindings('data-test-file-viewer')
 export default class File extends Component {
@@ -94,7 +93,7 @@ export default class File extends Component {
 
   @computed('allocation.{id,node.httpAddr}', 'fetchMode', 'useServer')
   get fileUrl() {
-    const address = this.get('allocation.node.httpAddr');
+    const address = get(this, 'allocation.node.httpAddr');
     const url = `/v1/client/fs/${this.fetchMode}/${this.allocation.id}`;
     return this.useServer ? url : `//${address}${url}`;
   }
@@ -153,7 +152,7 @@ export default class File extends Component {
 
   nextErrorState(error) {
     if (this.useServer) {
-      this.set('noConnection', true);
+      set(this, 'noConnection', true);
     } else {
       this.send('failoverToServer');
     }
@@ -162,25 +161,25 @@ export default class File extends Component {
 
   @action
   toggleStream() {
-    this.set('mode', 'streaming');
+    set(this, 'mode', 'streaming');
     this.toggleProperty('isStreaming');
   }
 
   @action
   gotoHead() {
-    this.set('mode', 'head');
-    this.set('isStreaming', false);
+    set(this, 'mode', 'head');
+    set(this, 'isStreaming', false);
   }
 
   @action
   gotoTail() {
-    this.set('mode', 'tail');
-    this.set('isStreaming', false);
+    set(this, 'mode', 'tail');
+    set(this, 'isStreaming', false);
   }
 
   @action
   failoverToServer() {
-    this.set('useServer', true);
+    set(this, 'useServer', true);
   }
 
   @action

@@ -4,7 +4,8 @@
 ~}}
 
 {{page-title "New Variable"}}
-<Breadcrumb @crumb={{hash label="New" args=(array "variables.new")}} />
+
+<Breadcrumb @label="New" @route="variables.new" />
 
 <section class="section">
   <Hds::PageHeader class="variable-title" as |PH|>
@@ -12,7 +13,7 @@
     <PH.Actions>
       <Hds::Form::Toggle::Field
         @value="enable"
-        {{keyboard-shortcut 
+        {{keyboard-shortcut
           label="Toggle View (JSON/List)"
           pattern=(array "j")
           action=(action this.toggleView)

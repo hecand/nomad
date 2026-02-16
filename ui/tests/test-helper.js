@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import 'core-js';
 import Application from 'nomad-ui/app';
 import config from 'nomad-ui/config/environment';
 import * as QUnit from 'qunit';

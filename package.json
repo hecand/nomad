@@ -2,7 +2,10 @@
   "name": "nomad-ui",
   "private": true,
   "scripts": {},
-  "packageManager": "pnpm@10.15.0+sha512.486ebc259d3e999a4e8691ce03b5cac4a71cbeca39372a9b762cb500cfdf0873e2cb16abe3d951b1ee2cf012503f027b98b6584e4df22524e0c7450d9ec7aa7b",
+  "devDependencies": {
+    "@babel/plugin-proposal-decorators": "^7.28.0"
+  },
+  "packageManager": "pnpm@10.29.3+sha512.498e1fb4cca5aa06c1dcf2611e6fafc50972ffe7189998c409e90de74566444298ffe43e6cd2acdc775ba1aa7cc5e092a8b7054c811ba8c5770f84693d33d2dc",
   "engines": {
     "node": "20.19.4",
     "pnpm": ">= 10"
@@ -19,7 +22,9 @@
       "micromatch@<4.0.8": ">=4.0.8",
       "ansi-html@<0.0.8": ">=0.0.8",
       "@babel/runtime@<7.26.10": ">=7.26.10",
-      "on-headers@<1.1.0": ">=1.1.0"
+      "on-headers@<1.1.0": ">=1.1.0",
+      "@ember-data/store>@embroider/addon-shim": "~1.9",
+      "@ember-data/store>@embroider/macros": "~1.16"
     }
   }
 }

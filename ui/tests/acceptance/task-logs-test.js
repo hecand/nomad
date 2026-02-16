@@ -51,7 +51,7 @@ module('Acceptance | task logs', function (hooks) {
 
   test('/allocation/:id/:task_name/logs should have a log component', async function (assert) {
     await TaskLogs.visit({ id: allocation.id, name: task.name });
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/allocations/${allocation.id}/${task.name}/logs`,
       'No redirect'

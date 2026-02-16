@@ -3,15 +3,11 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import Component from '@ember/component';
+import Component from '@glimmer/component';
 import { computed } from '@ember/object';
 import { alias } from '@ember/object/computed';
 import { formatBytes, formatHertz } from 'nomad-ui/utils/units';
-import { tagName } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 
-@classic
-@tagName('')
 export default class AllocationStat extends Component {
   allocation = null;
   statsTracker = null;

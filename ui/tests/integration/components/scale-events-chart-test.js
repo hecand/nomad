@@ -6,7 +6,7 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { click, find, findAll, render } from '@ember/test-helpers';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 import moment from 'moment';
 import setupCodeMirror from 'nomad-ui/tests/helpers/codemirror';
 import { componentA11yAudit } from 'nomad-ui/tests/helpers/a11y-audit';
@@ -62,7 +62,7 @@ module('Integration | Component | scale-events-chart', function (hooks) {
     this.set('events', events);
     await render(hbs`<ScaleEventsChart @events={{this.events}} />`);
 
-    assert.equal(
+    assert.strictEqual(
       findAll('[data-test-annotation]').length,
       events.filter((ev) => ev.count == null).length
     );
@@ -81,12 +81,15 @@ module('Integration | Component | scale-events-chart', function (hooks) {
     await click('[data-test-annotation] button');
 
     assert.ok(find('[data-test-event-details]'));
-    assert.equal(
+    assert.strictEqual(
       find('[data-test-timestamp]').textContent,
       moment(annotation.time).format('MMM DD HH:mm:ss ZZ')
     );
-    assert.equal(find('[data-test-message]').textContent, annotation.message);
-    assert.equal(
+    assert.strictEqual(
+      find('[data-test-message]').textContent,
+      annotation.message
+    );
+    assert.strictEqual(
       getCodeMirrorInstance('[data-test-json-viewer]').getValue(),
       JSON.stringify(annotation.meta, null, 2)
     );

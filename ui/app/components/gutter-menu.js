@@ -4,11 +4,9 @@
  */
 
 import { inject as service } from '@ember/service';
-import Component from '@ember/component';
-import { computed } from '@ember/object';
-import classic from 'ember-classic-decorator';
+import Component from '@glimmer/component';
+import { computed, get } from '@ember/object';
 
-@classic
 export default class GutterMenu extends Component {
   @service system;
   @service router;
@@ -16,7 +14,7 @@ export default class GutterMenu extends Component {
 
   @computed('system.namespaces.@each.name')
   get sortedNamespaces() {
-    const namespaces = this.get('system.namespaces').toArray() || [];
+    const namespaces = get('system.namespaces').toArray() || [];
 
     return namespaces.sort((a, b) => {
       const aName = a.get('name');

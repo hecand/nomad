@@ -3,11 +3,10 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import AllocationRow from 'nomad-ui/components/allocation-row';
-import classic from 'ember-classic-decorator';
 import { attributeBindings } from '@ember-decorators/component';
+import { set } from '@ember/object';
+import AllocationRow from 'nomad-ui/components/allocation-row';
 
-@classic
 @attributeBindings(
   'data-test-controller-allocation',
   'data-test-node-allocation'
@@ -18,7 +17,7 @@ export default class PluginAllocationRow extends AllocationRow {
 
   didReceiveAttrs() {
     // Allocation is always set through pluginAllocation
-    this.set('allocation', null);
+    set(this, 'allocation', null);
     this.setAllocation();
   }
 
@@ -29,7 +28,7 @@ export default class PluginAllocationRow extends AllocationRow {
     if (this.pluginAllocation && !this.allocation) {
       const allocation = await this.pluginAllocation.getAllocation();
       if (!this.isDestroyed) {
-        this.set('allocation', allocation);
+        set(this, 'allocation', allocation);
         this.updateStatsTracker();
       }
     }

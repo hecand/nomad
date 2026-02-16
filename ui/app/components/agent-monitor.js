@@ -4,17 +4,14 @@
  */
 
 import { inject as service } from '@ember/service';
-import Component from '@ember/component';
-import { computed } from '@ember/object';
+import Component from '@glimmer/component';
+import { computed, set } from '@ember/object';
 import { assert } from '@ember/debug';
-import { tagName } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
+
 import Log from 'nomad-ui/utils/classes/log';
 
 const LEVELS = ['error', 'warn', 'info', 'debug', 'trace'];
 
-@classic
-@tagName('')
 export default class AgentMonitor extends Component {
   @service token;
 
@@ -60,7 +57,8 @@ export default class AgentMonitor extends Component {
     if (currentTail) {
       currentTail += `\n...changing log level to ${this.level}...\n\n`;
     }
-    this.set(
+    set(
+      this,
       'logger',
       Log.create({
         logFetch: (url) => this.token.authorizedRequest(url),
@@ -73,13 +71,13 @@ export default class AgentMonitor extends Component {
 
   setLevel(level) {
     this.logger.stop();
-    this.set('level', level);
+    set(this, 'level', level);
     this.onLevelChange(level);
     this.updateLogger();
   }
 
   toggleStream() {
-    this.set('streamMode', 'streaming');
+    set(this, 'streamMode', 'streaming');
     this.toggleProperty('isStreaming');
   }
 }

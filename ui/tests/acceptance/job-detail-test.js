@@ -180,7 +180,7 @@ moduleForJob(
         .reverse()[0];
 
       assert.ok(JobDetail.jobsHeader.hasSubmitTime);
-      assert.equal(
+      assert.strictEqual(
         JobDetail.jobs[0].submitTime,
         moment(mostRecentLaunch.submitTime / 1000000).format(
           'MMM DD HH:mm:ss ZZ'
@@ -233,7 +233,7 @@ moduleForJob(
         .reverse()[0];
 
       assert.ok(JobDetail.jobsHeader.hasSubmitTime);
-      assert.equal(
+      assert.strictEqual(
         JobDetail.jobs[0].submitTime,
         moment(mostRecentLaunch.submitTime / 1000000).format(
           'MMM DD HH:mm:ss ZZ'
@@ -318,22 +318,26 @@ moduleForJob(
   {
     'the subnav links to deployment': async (job, assert) => {
       await JobDetail.tabFor('deployments').visit();
-      assert.equal(currentURL(), `/jobs/${job.id}/deployments`);
+      assert.strictEqual(currentURL(), `/jobs/${job.id}/deployments`);
     },
     'when the job is not found, an error message is shown, but the URL persists':
       async (job, assert) => {
         await JobDetail.visit({ id: 'not-a-real-job' });
 
-        assert.equal(
+        assert.strictEqual(
           server.pretender.handledRequests
             .filter((request) => !request.url.includes('policy'))
             .findBy('status', 404).url,
           '/v1/job/not-a-real-job',
           'A request to the nonexistent job is made'
         );
-        assert.equal(currentURL(), '/jobs/not-a-real-job', 'The URL persists');
+        assert.strictEqual(
+          currentURL(),
+          '/jobs/not-a-real-job',
+          'The URL persists'
+        );
         assert.ok(JobDetail.error.isPresent, 'Error message is shown');
-        assert.equal(
+        assert.strictEqual(
           JobDetail.error.title,
           'Not Found',
           'Error message is for 404'
@@ -574,12 +578,12 @@ module('Acceptance | job detail (with namespaces)', function (hooks) {
     await JobDetail.visit({ id: `${jobFromPack.id}@${namespace}` });
 
     assert.ok(JobDetail.packTag, 'Pack tag is present');
-    assert.equal(
+    assert.strictEqual(
       JobDetail.packStatFor('name').text,
       `Name ${jobFromPack.meta['pack.name']}`,
       `Pack name is ${jobFromPack.meta['pack.name']}`
     );
-    assert.equal(
+    assert.strictEqual(
       JobDetail.packStatFor('version').text,
       `Version ${jobFromPack.meta['pack.version']}`,
       `Pack version is ${jobFromPack.meta['pack.version']}`
@@ -610,21 +614,24 @@ module('Acceptance | job detail (with namespaces)', function (hooks) {
 
     const firstRecommendationGroup = groupsWithRecommendations.models[0];
 
-    assert.equal(JobDetail.recommendations.length, jobRecommendationCount);
+    assert.strictEqual(
+      JobDetail.recommendations.length,
+      jobRecommendationCount
+    );
 
     const recommendation = JobDetail.recommendations[0];
 
-    assert.equal(recommendation.group, firstRecommendationGroup.name);
+    assert.strictEqual(recommendation.group, firstRecommendationGroup.name);
     assert.ok(recommendation.card.isHidden);
 
     const toggle = recommendation.toggleButton;
 
-    assert.equal(toggle.text, 'Show');
+    assert.strictEqual(toggle.text, 'Show');
 
     await toggle.click();
 
     assert.ok(recommendation.card.isPresent);
-    assert.equal(toggle.text, 'Collapse');
+    assert.strictEqual(toggle.text, 'Collapse');
 
     await toggle.click();
 
@@ -632,19 +639,25 @@ module('Acceptance | job detail (with namespaces)', function (hooks) {
 
     await toggle.click();
 
-    assert.equal(
+    assert.strictEqual(
       recommendation.card.slug.groupName,
       firstRecommendationGroup.name
     );
 
     await recommendation.card.acceptButton.click();
 
-    assert.equal(JobDetail.recommendations.length, jobRecommendationCount - 1);
+    assert.strictEqual(
+      JobDetail.recommendations.length,
+      jobRecommendationCount - 1
+    );
 
     await JobDetail.tabFor('definition').visit();
     await JobDetail.tabFor('overview').visit();
 
-    assert.equal(JobDetail.recommendations.length, jobRecommendationCount - 1);
+    assert.strictEqual(
+      JobDetail.recommendations.length,
+      jobRecommendationCount - 1
+    );
   });
 
   test('resource recommendations are not fetched when the feature doesn’t exist', async function (assert) {
@@ -653,9 +666,9 @@ module('Acceptance | job detail (with namespaces)', function (hooks) {
       id: `${job.id}@${server.db.namespaces[1].name}`,
     });
 
-    assert.equal(JobDetail.recommendations.length, 0);
+    assert.strictEqual(JobDetail.recommendations.length, 0);
 
-    assert.equal(
+    assert.strictEqual(
       server.pretender.handledRequests.filter((request) =>
         request.url.includes('recommendations')
       ).length,
@@ -753,7 +766,7 @@ module('Acceptance | job detail (with namespaces)', function (hooks) {
 
     await JobDetail.visit({ id: `${job.id}@${namespace.id}` });
 
-    assert.equal(currentURL(), `/jobs/${job.id}%40${namespace.id}`);
+    assert.strictEqual(currentURL(), `/jobs/${job.id}%40${namespace.id}`);
 
     // Simulate a 404 error on the job watcher
     const controller = this.owner.lookup('controller:jobs.job');
@@ -763,7 +776,7 @@ module('Acceptance | job detail (with namespaces)', function (hooks) {
     await settled();
 
     // User should be booted off the page
-    assert.equal(currentURL(), '/jobs');
+    assert.strictEqual(currentURL(), '/jobs');
 
     // A notification should be present
     assert
@@ -792,7 +805,10 @@ module('Acceptance | job detail (with namespaces)', function (hooks) {
     await JobDetail.visit({ id: `${job.id}@${namespace.id}` });
     await JobDetail.tabFor('allocations').visit();
 
-    assert.equal(currentURL(), `/jobs/${job.id}@${namespace.id}/allocations`);
+    assert.strictEqual(
+      currentURL(),
+      `/jobs/${job.id}@${namespace.id}/allocations`
+    );
 
     // Simulate a 404 error on the job watcher
     const controller = this.owner.lookup('controller:jobs.job');
@@ -802,7 +818,7 @@ module('Acceptance | job detail (with namespaces)', function (hooks) {
     await settled();
 
     // User should be booted off the page
-    assert.equal(currentURL(), '/jobs');
+    assert.strictEqual(currentURL(), '/jobs');
 
     // A notification should be present
     assert
@@ -863,7 +879,10 @@ module('Job Start/Stop/Revert/Edit and Resubmit', function (hooks) {
     await JobDetail.visit({ id: revertableJob.id });
 
     assert.ok(JobDetail.revert.isPresent);
-    assert.equal(JobDetail.revert.text, 'Revert to last stable version (v1)');
+    assert.strictEqual(
+      JobDetail.revert.text,
+      'Revert to last stable version (v1)'
+    );
 
     await JobDetail.visit({ id: nonRevertableJob.id });
     assert.notOk(JobDetail.revert.isPresent);
@@ -876,14 +895,14 @@ module('Job Start/Stop/Revert/Edit and Resubmit', function (hooks) {
     );
     await JobDetail.visit({ id: revertableSystemJob.id });
     assert.ok(JobDetail.revert.isPresent);
-    assert.equal(JobDetail.revert.text, 'Revert to last version (v0)');
+    assert.strictEqual(JobDetail.revert.text, 'Revert to last version (v0)');
   });
 
   test('Clicking the resubmit button navigates to the job definition page in edit mode', async function (assert) {
     const job = server.db.jobs.findBy((j) => j.name === 'non-revertable-job');
     await JobDetail.visit({ id: job.id });
     await JobDetail.editAndResubmit.click();
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/jobs/${job.id}/definition?isEditing=true&view=job-spec`
     );

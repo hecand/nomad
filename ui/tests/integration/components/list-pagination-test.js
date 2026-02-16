@@ -6,7 +6,7 @@
 import { findAll, find, render } from '@ember/test-helpers';
 import { module, skip, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 import { componentA11yAudit } from 'nomad-ui/tests/helpers/a11y-audit';
 
 module('Integration | Component | list pagination', function (hooks) {
@@ -54,7 +54,7 @@ module('Integration | Component | list pagination', function (hooks) {
     );
     await componentA11yAudit(this.element, assert);
 
-    assert.equal(
+    assert.strictEqual(
       findAll('.link').length,
       defaults.spread + 1,
       'Pages links spread to the right by the spread amount'
@@ -77,14 +77,14 @@ module('Integration | Component | list pagination', function (hooks) {
     );
     await componentA11yAudit(this.element, assert);
 
-    assert.equal(
+    assert.strictEqual(
       findAll('.item').length,
       defaults.size,
       `Only ${defaults.size} (the default) number of items are rendered`
     );
 
     for (var item = 0; item < defaults.size; item++) {
-      assert.equal(
+      assert.strictEqual(
         findAll('.item')[item].textContent,
         item,
         'Rendered items are in the current page'
@@ -104,7 +104,7 @@ module('Integration | Component | list pagination', function (hooks) {
     `);
 
     const totalPages = Math.ceil(this.source.length / this.size);
-    assert.equal(
+    assert.strictEqual(
       find('.page-info').textContent,
       `1 of ${totalPages}`,
       `${totalPages} total pages`
@@ -185,8 +185,12 @@ module('Integration | Component | list pagination', function (hooks) {
     assert.notOk(findAll('.next').length, 'No next link');
     assert.notOk(findAll('.last').length, 'No last link');
 
-    assert.equal(find('.page-info').textContent, '1 of 1', 'Only one page');
-    assert.equal(
+    assert.strictEqual(
+      find('.page-info').textContent,
+      '1 of 1',
+      'Only one page'
+    );
+    assert.strictEqual(
       findAll('.item').length,
       this.get('source.length'),
       'Number of items equals length of source'
@@ -223,7 +227,7 @@ module('Integration | Component | list pagination', function (hooks) {
     assert.ok(findAll('.prev').length, 'Prev page still exists');
     assert.ok(findAll('.next').length, 'Next page still exists');
     assert.ok(findAll('.last').length, 'Last page still exists');
-    assert.equal(
+    assert.strictEqual(
       findAll('.link').length,
       totalPages,
       'Every page gets a page link'
@@ -237,7 +241,7 @@ module('Integration | Component | list pagination', function (hooks) {
   });
 
   function testSpread(assert) {
-    const { spread, currentPage } = this.getProperties('spread', 'currentPage');
+    const { spread, currentPage } = this;
     for (
       var pageNumber = currentPage - spread;
       pageNumber <= currentPage + spread;
@@ -251,9 +255,9 @@ module('Integration | Component | list pagination', function (hooks) {
   }
 
   function testItems(assert) {
-    const { currentPage, size } = this.getProperties('currentPage', 'size');
+    const { currentPage, size } = this;
     for (var item = 0; item < size; item++) {
-      assert.equal(
+      assert.strictEqual(
         findAll('.item')[item].textContent,
         item + (currentPage - 1) * size,
         `Rendered items are in the current page, ${currentPage} (${

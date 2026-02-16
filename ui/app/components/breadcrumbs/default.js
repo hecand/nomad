@@ -12,8 +12,7 @@ export default class BreadcrumbsTemplate extends Component {
   @service router;
 
   @action
-  traverseUpALevel(args) {
-    const [path, ...rest] = args;
+  traverseUpALevel(path, ...rest) {
     this.router.transitionTo(path, ...rest);
   }
 

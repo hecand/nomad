@@ -3,8 +3,10 @@
   SPDX-License-Identifier: BUSL-1.1
 ~}}
 
-<Breadcrumb @crumb={{hash label="Run" args=(array "jobs.run")}} />
 {{page-title "Run a job"}}
+
+<Breadcrumb @label="Run" @route="jobs.run" />
+
 <section class="section">
   {{#if (and this.sourceString (not this.disregardNameWarning))}}
     <Hds::Alert @type="inline" @color="warning" data-test-job-name-warning as |A|>

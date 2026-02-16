@@ -43,14 +43,14 @@ module('Acceptance | client monitor', function (hooks) {
   test('/clients/:id/monitor should have a breadcrumb trail linking back to clients', async function (assert) {
     await ClientMonitor.visit({ id: node.id });
 
-    assert.equal(Layout.breadcrumbFor('clients.index').text, 'Clients');
-    assert.equal(
+    assert.strictEqual(Layout.breadcrumbFor('clients.index').text, 'Clients');
+    assert.strictEqual(
       Layout.breadcrumbFor('clients.client').text,
       `Client ${node.id.split('-')[0]}`
     );
 
     await Layout.breadcrumbFor('clients.index').visit();
-    assert.equal(currentURL(), '/clients');
+    assert.strictEqual(currentURL(), '/clients');
   });
 
   test('the monitor page immediately streams agent monitor output at the info level', async function (assert) {
@@ -67,7 +67,7 @@ module('Acceptance | client monitor', function (hooks) {
   test('switching the log level persists the new log level as a query param', async function (assert) {
     await ClientMonitor.visit({ id: node.id });
     await ClientMonitor.selectLogLevel('Debug');
-    assert.equal(currentURL(), `/clients/${node.id}/monitor?level=debug`);
+    assert.strictEqual(currentURL(), `/clients/${node.id}/monitor?level=debug`);
   });
 
   test('when the current access token does not include the agent:read rule, a descriptive error message is shown', async function (assert) {
@@ -76,10 +76,10 @@ module('Acceptance | client monitor', function (hooks) {
     await ClientMonitor.visit({ id: node.id });
     assert.notOk(ClientMonitor.logsArePresent);
     assert.ok(ClientMonitor.error.isShown);
-    assert.equal(ClientMonitor.error.title, 'Not Authorized');
+    assert.strictEqual(ClientMonitor.error.title, 'Not Authorized');
     assert.ok(ClientMonitor.error.message.includes('agent:read'));
 
     await ClientMonitor.error.seekHelp();
-    assert.equal(currentURL(), '/settings/tokens');
+    assert.strictEqual(currentURL(), '/settings/tokens');
   });
 });

@@ -45,7 +45,7 @@ module('Acceptance | plugin allocations', function (hooks) {
     });
 
     await PluginAllocations.visit({ id: plugin.id });
-    assert.equal(PluginAllocations.allocations.length, 6);
+    assert.strictEqual(PluginAllocations.allocations.length, 6);
   });
 
   pageSizeSelect({
@@ -123,7 +123,7 @@ module('Acceptance | plugin allocations', function (hooks) {
         .sortBy('updateTime');
 
       PluginAllocations.allocations.forEach((allocation, index) => {
-        assert.equal(allocation.id, expectedAllocations[index].allocID);
+        assert.strictEqual(allocation.id, expectedAllocations[index].allocID);
       });
     });
 
@@ -149,7 +149,7 @@ module('Acceptance | plugin allocations', function (hooks) {
         .sortBy('updateTime');
 
       PluginAllocations.allocations.forEach((allocation, index) => {
-        assert.equal(allocation.id, expectedAllocations[index].allocID);
+        assert.strictEqual(allocation.id, expectedAllocations[index].allocID);
       });
     });
 
@@ -170,7 +170,7 @@ module('Acceptance | plugin allocations', function (hooks) {
         JSON.stringify(selection)
       )}`;
 
-      assert.equal(
+      assert.strictEqual(
         currentURL(),
         `/storage/plugins/${plugin.id}/allocations?${queryString}`
       );

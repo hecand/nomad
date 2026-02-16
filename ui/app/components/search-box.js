@@ -5,12 +5,10 @@
 
 import { reads } from '@ember/object/computed';
 import Component from '@ember/component';
-import { action } from '@ember/object';
+import { action, set } from '@ember/object';
 import { debounce } from '@ember/runloop';
 import { classNames } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 
-@classic
 @classNames('search-box', 'field', 'has-addons')
 export default class SearchBox extends Component {
   // Passed to the component (mutable)
@@ -27,13 +25,13 @@ export default class SearchBox extends Component {
 
   @action
   setSearchTerm(e) {
-    this.set('_searchTerm', e.target.value);
+    set(this, '_searchTerm', e.target.value);
     debounce(this, updateSearch, this.debounce);
   }
 
   @action
   clear() {
-    this.set('_searchTerm', '');
+    set(this, '_searchTerm', '');
     debounce(this, updateSearch, this.debounce);
   }
 }
@@ -41,5 +39,5 @@ export default class SearchBox extends Component {
 function updateSearch() {
   const newTerm = this._searchTerm;
   this.onChange(newTerm);
-  this.set('searchTerm', newTerm);
+  set(this, 'searchTerm', newTerm);
 }

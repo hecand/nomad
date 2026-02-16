@@ -5,13 +5,11 @@
 
 import Component from '@ember/component';
 import { inject as service } from '@ember/service';
-import { computed } from '@ember/object';
+import { computed, get, set } from '@ember/object';
 import { alias, readOnly } from '@ember/object/computed';
 import Sortable from 'nomad-ui/mixins/sortable';
 import { classNames } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 
-@classic
 @classNames('boxed-section')
 export default class Children extends Component.extend(Sortable) {
   @service system;
@@ -28,7 +26,7 @@ export default class Children extends Component.extend(Sortable) {
 
   @computed('job.taskGroups.[]')
   get taskGroups() {
-    return this.get('job.taskGroups') || [];
+    return get(this, 'job.taskGroups') || [];
   }
 
   @computed('jobs.[]')
@@ -41,7 +39,7 @@ export default class Children extends Component.extend(Sortable) {
 
   resetPagination() {
     if (this.currentPage != null) {
-      this.set('currentPage', 1);
+      set(this, 'currentPage', 1);
     }
   }
 }

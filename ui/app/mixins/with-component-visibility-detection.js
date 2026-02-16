@@ -7,6 +7,7 @@ import Ember from 'ember';
 import Mixin from '@ember/object/mixin';
 import { assert } from '@ember/debug';
 import { on } from '@ember/object/evented';
+import { set } from '@ember/object';
 
 // eslint-disable-next-line ember/no-new-mixins
 export default Mixin.create({
@@ -16,7 +17,7 @@ export default Mixin.create({
 
   setupDocumentVisibility: on('init', function () {
     if (!Ember.testing) {
-      this.set('_visibilityHandler', this.visibilityHandler.bind(this));
+      set(this, '_visibilityHandler', this.visibilityHandler.bind(this));
       document.addEventListener('visibilitychange', this._visibilityHandler);
     }
   }),

@@ -6,9 +6,7 @@
 import ApplicationSerializer from './application';
 import { get, set } from '@ember/object';
 import { capitalize } from '@ember/string';
-import classic from 'ember-classic-decorator';
 
-@classic
 export default class DynamicHostVolumeSerializer extends ApplicationSerializer {
   embeddedRelationships = ['allocations'];
   separateNanos = ['CreateTime', 'ModifyTime'];

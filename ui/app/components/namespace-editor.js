@@ -3,8 +3,6 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-// @ts-check
-
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import { alias } from '@ember/object/computed';
@@ -16,7 +14,7 @@ export default class NamespaceEditorComponent extends Component {
   @service notifications;
   @service router;
   @service store;
-  @service can;
+  @service abilities;
 
   @alias('args.namespace') namespace;
 
@@ -106,11 +104,11 @@ export default class NamespaceEditorComponent extends Component {
     definitionHash['Capabilities'] = namespace.capabilities;
     definitionHash['Meta'] = namespace.meta;
 
-    if (this.can.can('configure-in-namespace node-pool')) {
+    if (this.abilities.can('configure-in-namespace node-pool')) {
       definitionHash['NodePoolConfiguration'] = namespace.nodePoolConfiguration;
     }
 
-    if (this.can.can('configure-in-namespace quota')) {
+    if (this.abilities.can('configure-in-namespace quota')) {
       definitionHash['Quota'] = namespace.quota;
     }
 
@@ -127,7 +125,7 @@ export default class NamespaceEditorComponent extends Component {
     );
     this.namespace.set('capabilities', capabilities);
 
-    if (this.can.can('configure-in-namespace node-pool')) {
+    if (this.abilities.can('configure-in-namespace node-pool')) {
       let npConfig = definitionHash['NodePoolConfiguration'] || {};
       this.store.create;
 
@@ -150,7 +148,7 @@ export default class NamespaceEditorComponent extends Component {
       this.namespace.set('nodePoolConfiguration', nodePoolConfiguration);
     }
 
-    if (this.can.can('configure-in-namespace quota')) {
+    if (this.abilities.can('configure-in-namespace quota')) {
       this.namespace.set('quota', definitionHash['Quota']);
     }
   }

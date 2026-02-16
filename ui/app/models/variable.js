@@ -3,14 +3,12 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-// @ts-check
-import Model from '@ember-data/model';
-import { computed } from '@ember/object';
-import classic from 'ember-classic-decorator';
+import Model, { attr } from '@ember-data/model';
+import { computed, set } from '@ember/object';
+
 // eslint-disable-next-line no-unused-vars
 import MutableArray from '@ember/array/mutable';
 import { trimPath } from '../helpers/trim-path';
-import { attr } from '@ember-data/model';
 
 /**
  * @typedef KeyValue
@@ -30,7 +28,7 @@ import { attr } from '@ember-data/model';
  * @class
  * @extends Model
  */
-@classic
+
 export default class VariableModel extends Model {
   /**
    * Can be any arbitrary string, but behaves best when used as a slash-delimited file path.
@@ -71,9 +69,9 @@ export default class VariableModel extends Model {
    * Removes starting and trailing slashes, pathLinkedEntitiesand sets the ID property
    */
   setAndTrimPath() {
-    this.set('path', trimPath([this.path]));
-    if (!this.get('id')) {
-      this.set('id', `${this.get('path')}@${this.get('namespace')}`);
+    set(this, 'path', trimPath([this.path]));
+    if (!this.id) {
+      set(this, 'id', `${this.path}@${this.namespace}`);
     }
   }
 

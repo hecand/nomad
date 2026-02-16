@@ -3,9 +3,12 @@
   SPDX-License-Identifier: BUSL-1.1
 ~}}
 
-<Breadcrumb @crumb={{hash label="Dispatch" args=(array "jobs.job.dispatch")}} />
 {{page-title "Dispatch new " this.model.name}}
+
+<Breadcrumb @label="Dispatch" @route="jobs.job.dispatch" />
+
 <JobSubnav @job={{this.model}} />
+
 <section class="section">
   <JobDispatch @job={{this.model}} />
 </section>

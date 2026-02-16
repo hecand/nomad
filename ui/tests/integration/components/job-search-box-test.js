@@ -31,10 +31,10 @@ module('Integration | Component | job-search-box', function (hooks) {
 
     const element = find('input');
     await fillIn('input', 'test1');
-    assert.equal(message, 'test1', 'Initial typing');
+    assert.strictEqual(message, 'test1', 'Initial typing');
     element.value += ' wont be ';
     triggerEvent('input', 'input');
-    assert.equal(
+    assert.strictEqual(
       message,
       'test1',
       'Typing has happened within debounce window'
@@ -42,7 +42,7 @@ module('Integration | Component | job-search-box', function (hooks) {
     element.value += 'seen ';
     triggerEvent('input', 'input');
     await delay(DEBOUNCE_MS - 100);
-    assert.equal(
+    assert.strictEqual(
       message,
       'test1',
       'Typing has happened within debounce window, albeit a little slower'
@@ -50,7 +50,7 @@ module('Integration | Component | job-search-box', function (hooks) {
     element.value += 'until now.';
     triggerEvent('input', 'input');
     await delay(DEBOUNCE_MS + 100);
-    assert.equal(
+    assert.strictEqual(
       message,
       'test1 wont be seen until now.',
       'debounce window has closed'

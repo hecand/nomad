@@ -14,11 +14,11 @@ import {
 import { collect } from '@ember/object/computed';
 
 export default class ClientsRoute extends Route.extend(WithWatchers) {
-  @service can;
+  @service abilities;
   @service store;
 
   beforeModel() {
-    if (this.can.cannot('read client')) {
+    if (this.abilities.cannot('read client')) {
       this.transitionTo('jobs.job');
     }
   }

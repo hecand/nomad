@@ -41,7 +41,7 @@ export function expectStartRequest(assert, server, job) {
 }
 
 export async function expectError(assert, title) {
-  assert.equal(
+  assert.strictEqual(
     find('[data-test-job-error-title]').textContent,
     title,
     'Appropriate error is shown'

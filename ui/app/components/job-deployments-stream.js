@@ -8,9 +8,7 @@ import { computed } from '@ember/object';
 import { computed as overridable } from 'ember-overridable-computed';
 import moment from 'moment';
 import { classNames, tagName } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 
-@classic
 @tagName('ol')
 @classNames('timeline')
 export default class JobDeploymentsStream extends Component {

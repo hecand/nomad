@@ -7,14 +7,13 @@ import { inject as service } from '@ember/service';
 import Route from '@ember/routing/route';
 import RSVP from 'rsvp';
 import notifyError from 'nomad-ui/utils/notify-error';
-import classic from 'ember-classic-decorator';
+
 import { watchRecord } from 'nomad-ui/utils/properties/watch';
 import { collect } from '@ember/object/computed';
 import WithWatchers from 'nomad-ui/mixins/with-watchers';
 
-@classic
 export default class JobRoute extends Route.extend(WithWatchers) {
-  @service can;
+  @service abilities;
   @service store;
   @service token;
   @service router;
@@ -47,12 +46,12 @@ export default class JobRoute extends Route.extend(WithWatchers) {
           this.store.findAll('namespace'),
         ];
 
-        if (this.can.can('accept recommendation')) {
+        if (this.abilities.can('accept recommendation')) {
           relatedModelsQueries.push(job.get('recommendationSummaries'));
         }
 
         // Optimizing future node look ups by preemptively loading everything
-        if (job.get('hasClientStatus') && this.can.can('read client')) {
+        if (job.get('hasClientStatus') && this.abilities.can('read client')) {
           relatedModelsQueries.push(this.store.findAll('node'));
         }
 

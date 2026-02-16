@@ -4,10 +4,8 @@
  */
 
 import ApplicationSerializer from './application';
-import isIp from 'is-ip';
-import classic from 'ember-classic-decorator';
+import { isIPv6 } from 'is-ip';
 
-@classic
 export default class PortSerializer extends ApplicationSerializer {
   attrs = {
     hostIp: 'HostIP',
@@ -16,7 +14,7 @@ export default class PortSerializer extends ApplicationSerializer {
   normalize(typeHash, hash) {
     const ip = hash.HostIP;
 
-    if (isIp.v6(ip)) {
+    if (isIPv6(ip)) {
       hash.HostIP = `[${ip}]`;
     }
 

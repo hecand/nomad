@@ -10,7 +10,7 @@ import { setupApplicationTest } from 'ember-qunit';
 import { currentURL, visit } from '@ember/test-helpers';
 import { setupMirage } from 'ember-cli-mirage/test-support';
 import a11yAudit from 'nomad-ui/tests/helpers/a11y-audit';
-import Response from 'ember-cli-mirage/response';
+import { Response } from 'miragejs';
 import moment from 'moment';
 import { formatBytes, formatHertz, replaceMinus } from 'nomad-ui/utils/units';
 
@@ -107,24 +107,27 @@ module('Acceptance | optimize', function (hooks) {
 
     await Optimize.visit();
 
-    assert.equal(Layout.breadcrumbFor('optimize').text, 'Recommendations');
+    assert.strictEqual(
+      Layout.breadcrumbFor('optimize').text,
+      'Recommendations'
+    );
 
-    assert.equal(
+    assert.strictEqual(
       Optimize.recommendationSummaries[0].slug,
       `${this.job1.name} / ${currentTaskGroup.name}`
     );
 
-    assert.equal(
+    assert.strictEqual(
       Layout.breadcrumbFor('optimize.summary').text,
       `${this.job1.name} / ${currentTaskGroup.name}`
     );
 
-    assert.equal(
+    assert.strictEqual(
       Optimize.recommendationSummaries[0].namespace,
       this.job1.namespace
     );
 
-    assert.equal(
+    assert.strictEqual(
       Optimize.recommendationSummaries[1].slug,
       `${this.job2.name} / ${nextTaskGroup.name}`
     );
@@ -139,7 +142,7 @@ module('Acceptance | optimize', function (hooks) {
     );
 
     Optimize.recommendationSummaries[0].as((summary) => {
-      assert.equal(
+      assert.strictEqual(
         summary.date,
         moment(new Date(latestSubmitTime / 1000000)).format(
           'MMM DD HH:mm:ss ZZ'
@@ -150,7 +153,10 @@ module('Acceptance | optimize', function (hooks) {
         jobId: currentTaskGroup.job.name,
         taskGroup: currentTaskGroup.name,
       });
-      assert.equal(summary.allocationCount, currentTaskGroupAllocations.length);
+      assert.strictEqual(
+        summary.allocationCount,
+        currentTaskGroupAllocations.length
+      );
 
       const { currCpu, currMem } = currentTaskGroup.tasks.models.reduce(
         (currentResources, task) => {
@@ -183,7 +189,7 @@ module('Acceptance | optimize', function (hooks) {
       const cpuDiffPercent = Math.round((100 * cpuDiff) / currCpu);
       const memDiffPercent = Math.round((100 * memDiff) / currMem);
 
-      assert.equal(
+      assert.strictEqual(
         replaceMinus(summary.cpu),
         cpuDiff
           ? `${cpuSign}${formatHertz(
@@ -192,7 +198,7 @@ module('Acceptance | optimize', function (hooks) {
             )} ${cpuSign}${cpuDiffPercent}%`
           : ''
       );
-      assert.equal(
+      assert.strictEqual(
         replaceMinus(summary.memory),
         memDiff
           ? `${memSign}${formattedMemDiff(
@@ -201,7 +207,7 @@ module('Acceptance | optimize', function (hooks) {
           : ''
       );
 
-      assert.equal(
+      assert.strictEqual(
         replaceMinus(summary.aggregateCpu),
         cpuDiff
           ? `${cpuSign}${formatHertz(
@@ -211,7 +217,7 @@ module('Acceptance | optimize', function (hooks) {
           : ''
       );
 
-      assert.equal(
+      assert.strictEqual(
         replaceMinus(summary.aggregateMemory),
         memDiff
           ? `${memSign}${formattedMemDiff(
@@ -224,8 +230,8 @@ module('Acceptance | optimize', function (hooks) {
     assert.ok(Optimize.recommendationSummaries[0].isActive);
     assert.notOk(Optimize.recommendationSummaries[1].isActive);
 
-    assert.equal(Optimize.card.slug.jobName, this.job1.name);
-    assert.equal(Optimize.card.slug.groupName, currentTaskGroup.name);
+    assert.strictEqual(Optimize.card.slug.jobName, this.job1.name);
+    assert.strictEqual(Optimize.card.slug.groupName, currentTaskGroup.name);
 
     const summaryMemoryBefore = Optimize.recommendationSummaries[0].memory;
 
@@ -243,7 +249,7 @@ module('Acceptance | optimize', function (hooks) {
       toggledAnything = false;
     }
 
-    assert.equal(
+    assert.strictEqual(
       Optimize.recommendationSummaries[0].memory,
       summaryMemoryBefore,
       'toggling recommendations doesn’t affect the summary table diffs'
@@ -274,13 +280,13 @@ module('Acceptance | optimize', function (hooks) {
       .pop();
     const { Apply, Dismiss } = JSON.parse(request.requestBody);
 
-    assert.equal(request.url, '/v1/recommendations/apply');
+    assert.strictEqual(request.url, '/v1/recommendations/apply');
 
     assert.deepEqual(Apply, appliedIds);
     assert.deepEqual(Dismiss, dismissedIds);
 
-    assert.equal(Optimize.card.slug.jobName, this.job2.name);
-    assert.equal(Optimize.card.slug.groupName, nextTaskGroup.name);
+    assert.strictEqual(Optimize.card.slug.jobName, this.job2.name);
+    assert.strictEqual(Optimize.card.slug.groupName, nextTaskGroup.name);
 
     assert.ok(Optimize.recommendationSummaries[1].isActive);
   });
@@ -296,7 +302,7 @@ module('Acceptance | optimize', function (hooks) {
     await Optimize.visit();
     await Optimize.recommendationSummaries[1].click();
 
-    assert.equal(
+    assert.strictEqual(
       `${Optimize.card.slug.jobName} / ${Optimize.card.slug.groupName}`,
       Optimize.recommendationSummaries[1].slug
     );
@@ -324,12 +330,12 @@ module('Acceptance | optimize', function (hooks) {
       `/optimize/${collapsedSlug}?namespace=${lastSummary.namespace}`
     );
 
-    assert.equal(
+    assert.strictEqual(
       `${Optimize.card.slug.jobName} / ${Optimize.card.slug.groupName}`,
       lastSummary.slug
     );
     assert.ok(lastSummary.isActive);
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/optimize/${collapsedSlug}?namespace=${lastSummary.namespace}`
     );
@@ -338,12 +344,12 @@ module('Acceptance | optimize', function (hooks) {
   test('when a summary is not found, an error message is shown, but the URL persists', async function (assert) {
     await visit('/optimize/nonexistent/summary?namespace=anamespace');
 
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       '/optimize/nonexistent/summary?namespace=anamespace'
     );
     assert.ok(Optimize.applicationError.isPresent);
-    assert.equal(Optimize.applicationError.title, 'Not Found');
+    assert.strictEqual(Optimize.applicationError.title, 'Not Found');
   });
 
   test('cannot return to already-processed summaries', async function (assert) {
@@ -376,7 +382,7 @@ module('Acceptance | optimize', function (hooks) {
       .pop();
     const { Apply, Dismiss } = JSON.parse(request.requestBody);
 
-    assert.equal(request.url, '/v1/recommendations/apply');
+    assert.strictEqual(request.url, '/v1/recommendations/apply');
 
     assert.deepEqual(Apply, []);
     assert.deepEqual(Dismiss, idsBeforeDismissal);
@@ -391,14 +397,14 @@ module('Acceptance | optimize', function (hooks) {
     await Optimize.card.acceptButton.click();
 
     assert.ok(Optimize.error.isPresent);
-    assert.equal(Optimize.error.headline, 'Recommendation error');
-    assert.equal(
+    assert.strictEqual(Optimize.error.headline, 'Recommendation error');
+    assert.strictEqual(
       Optimize.error.errors,
       'Error: Ember Data Request POST /v1/recommendations/apply returned a 500 Payload (application/json)'
     );
 
     await Optimize.error.dismiss();
-    assert.equal(Optimize.card.slug.jobName, this.job2.name);
+    assert.strictEqual(Optimize.card.slug.jobName, this.job2.name);
   });
 
   test('it displays an empty message when there are no recommendations', async function (assert) {
@@ -406,7 +412,7 @@ module('Acceptance | optimize', function (hooks) {
     await Optimize.visit();
 
     assert.ok(Optimize.empty.isPresent);
-    assert.equal(Optimize.empty.headline, 'No Recommendations');
+    assert.strictEqual(Optimize.empty.headline, 'No Recommendations');
   });
 
   test('it displays an empty message after all recommendations have been processed', async function (assert) {
@@ -422,7 +428,7 @@ module('Acceptance | optimize', function (hooks) {
     window.localStorage.nomadTokenSecret = clientToken.secretId;
     await Optimize.visit();
 
-    assert.equal(currentURL(), '/jobs');
+    assert.strictEqual(currentURL(), '/jobs');
     assert.ok(Layout.gutter.optimize.isHidden);
   });
 
@@ -430,7 +436,7 @@ module('Acceptance | optimize', function (hooks) {
     await JobsList.visit();
     await Optimize.visit();
 
-    assert.equal(Optimize.recommendationSummaries.length, 2);
+    assert.strictEqual(Optimize.recommendationSummaries.length, 2);
   });
 });
 
@@ -480,31 +486,31 @@ module('Acceptance | optimize search and facets', function (hooks) {
 
     await Optimize.visit();
 
-    assert.equal(Optimize.card.slug.jobName, 'zzzzzz');
+    assert.strictEqual(Optimize.card.slug.jobName, 'zzzzzz');
 
-    assert.equal(
+    assert.strictEqual(
       collapseWhitespace(Optimize.search.placeholder),
       `Search ${Optimize.recommendationSummaries.length} recommendations...`
     );
 
     await Optimize.search.fillIn('ooo');
 
-    assert.equal(Optimize.recommendationSummaries.length, 2);
+    assert.strictEqual(Optimize.recommendationSummaries.length, 2);
     assert.ok(Optimize.recommendationSummaries[0].slug.startsWith('oooooo'));
 
-    assert.equal(Optimize.card.slug.jobName, 'oooooo');
+    assert.strictEqual(Optimize.card.slug.jobName, 'oooooo');
     assert.ok(currentURL().includes('oooooo'));
 
     await Optimize.search.fillIn('qqq');
 
     assert.notOk(Optimize.card.isPresent);
     assert.ok(Optimize.empty.isPresent);
-    assert.equal(Optimize.empty.headline, 'No Matches');
-    assert.equal(currentURL(), '/optimize?search=qqq');
+    assert.strictEqual(Optimize.empty.headline, 'No Matches');
+    assert.strictEqual(currentURL(), '/optimize?search=qqq');
 
     await Optimize.search.fillIn('');
 
-    assert.equal(Optimize.card.slug.jobName, 'zzzzzz');
+    assert.strictEqual(Optimize.card.slug.jobName, 'zzzzzz');
     assert.ok(Optimize.recommendationSummaries[0].isActive);
   });
 
@@ -567,7 +573,7 @@ module('Acceptance | optimize search and facets', function (hooks) {
     await Optimize.search.fillIn('ooo');
     await Optimize.card.acceptButton.click();
 
-    assert.equal(Optimize.card.slug.jobName, 'ooo222');
+    assert.strictEqual(Optimize.card.slug.jobName, 'ooo222');
   });
 
   test('the optimize page has appropriate faceted search options', async function (assert) {
@@ -788,7 +794,7 @@ module('Acceptance | optimize search and facets', function (hooks) {
 
       Optimize.recommendationSummaries.forEach((summary, index) => {
         const group = recommendationTaskGroups[index];
-        assert.equal(summary.slug, `${group.job.name} / ${group.name}`);
+        assert.strictEqual(summary.slug, `${group.job.name} / ${group.name}`);
       });
     });
 
@@ -838,7 +844,7 @@ module('Acceptance | optimize search and facets', function (hooks) {
 
       Optimize.recommendationSummaries.forEach((summary, index) => {
         const group = recommendationTaskGroups[index];
-        assert.equal(summary.slug, `${group.job.name} / ${group.name}`);
+        assert.strictEqual(summary.slug, `${group.job.name} / ${group.name}`);
       });
     });
 
@@ -867,7 +873,7 @@ module('Acceptance | optimize search and facets', function (hooks) {
 
       Optimize.recommendationSummaries.forEach((summary, index) => {
         const group = recommendationTaskGroups[index];
-        assert.equal(summary.slug, `${group.job.name} / ${group.name}`);
+        assert.strictEqual(summary.slug, `${group.job.name} / ${group.name}`);
       });
     });
 

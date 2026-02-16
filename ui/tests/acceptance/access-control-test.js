@@ -31,14 +31,14 @@ module('Acceptance | access control', function (hooks) {
     assert.expect(7);
     await Administration.visit();
 
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       '/jobs',
       'redirected to the jobs page if a non-management token on /administration'
     );
 
     await Administration.visitTokens();
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       '/jobs',
       'redirected to the jobs page if a non-management token on /tokens'
@@ -56,7 +56,7 @@ module('Acceptance | access control', function (hooks) {
     assert.dom('[data-test-gutter-link="administration"]').exists();
 
     await Administration.visit();
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       '/administration',
       'management token can access /administration'
@@ -65,7 +65,7 @@ module('Acceptance | access control', function (hooks) {
     await a11yAudit(assert);
 
     await Administration.visitTokens();
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       '/administration/tokens',
       'management token can access /administration/tokens'
@@ -98,7 +98,7 @@ module('Acceptance | access control', function (hooks) {
     assert.dom('[data-test-sentinel-policies-card]').exists();
     await percySnapshot(assert);
     await click('[data-test-sentinel-policies-card] a');
-    assert.equal(currentURL(), '/administration/sentinel-policies');
+    assert.strictEqual(currentURL(), '/administration/sentinel-policies');
   });
 
   test('Access control index content', async function (assert) {
@@ -144,12 +144,12 @@ module('Acceptance | access control', function (hooks) {
 
     await Administration.visit();
 
-    assert.equal(currentURL(), '/administration');
+    assert.strictEqual(currentURL(), '/administration');
 
     await triggerKeyEvent('.page-layout', 'keydown', 'ArrowRight', {
       shiftKey: true,
     });
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/administration/tokens`,
       'Shift+ArrowRight takes you to the next tab (Tokens)'
@@ -158,7 +158,7 @@ module('Acceptance | access control', function (hooks) {
     await triggerKeyEvent('.page-layout', 'keydown', 'ArrowRight', {
       shiftKey: true,
     });
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/administration/roles`,
       'Shift+ArrowRight takes you to the next tab (Roles)'
@@ -167,7 +167,7 @@ module('Acceptance | access control', function (hooks) {
     await triggerKeyEvent('.page-layout', 'keydown', 'ArrowRight', {
       shiftKey: true,
     });
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/administration/policies`,
       'Shift+ArrowRight takes you to the next tab (Policies)'
@@ -176,7 +176,7 @@ module('Acceptance | access control', function (hooks) {
     await triggerKeyEvent('.page-layout', 'keydown', 'ArrowRight', {
       shiftKey: true,
     });
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/administration/namespaces`,
       'Shift+ArrowRight takes you to the next tab (Namespaces)'
@@ -185,7 +185,7 @@ module('Acceptance | access control', function (hooks) {
     await triggerKeyEvent('.page-layout', 'keydown', 'ArrowRight', {
       shiftKey: true,
     });
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/administration`,
       'Shift+ArrowLeft takes you back to the Access Control index page'

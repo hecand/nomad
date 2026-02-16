@@ -7,7 +7,7 @@ import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { find, findAll, render } from '@ember/test-helpers';
 import { startMirage } from 'nomad-ui/initializers/ember-cli-mirage';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 import { componentA11yAudit } from 'nomad-ui/tests/helpers/a11y-audit';
 import moment from 'moment';
 
@@ -50,12 +50,12 @@ module('Integration | Component | reschedule event timeline', function (hooks) {
     this.set('allocation', allocation);
     await render(commonTemplate);
 
-    assert.equal(
+    assert.strictEqual(
       findAll('[data-test-allocation]').length,
       attempts + 1,
       'Total allocations equals current allocation plus all past allocations'
     );
-    assert.equal(
+    assert.strictEqual(
       find('[data-test-allocation]'),
       find(`[data-test-allocation="${allocation.id}"]`),
       'First allocation is the current allocation'
@@ -64,14 +64,14 @@ module('Integration | Component | reschedule event timeline', function (hooks) {
     assert.notOk(find('[data-test-stop-warning]'), 'No stop warning');
     assert.notOk(find('[data-test-attempt-notice]'), 'No attempt notice');
 
-    assert.equal(
+    assert.strictEqual(
       find(
         `[data-test-allocation="${allocation.id}"] [data-test-allocation-link]`
       ).textContent.trim(),
       allocation.get('shortId'),
       'The "this" allocation is correct'
     );
-    assert.equal(
+    assert.strictEqual(
       find(
         `[data-test-allocation="${allocation.id}"] [data-test-allocation-status]`
       ).textContent.trim(),
@@ -167,13 +167,13 @@ module('Integration | Component | reschedule event timeline', function (hooks) {
     this.set('allocation', allocation);
     await render(commonTemplate);
 
-    assert.equal(
+    assert.strictEqual(
       find('[data-test-reschedule-label]').textContent.trim(),
       'Next Allocation',
       'The first allocation is the next allocation and labeled as such'
     );
 
-    assert.equal(
+    assert.strictEqual(
       find(
         '[data-test-allocation] [data-test-allocation-link]'
       ).textContent.trim(),
@@ -181,7 +181,7 @@ module('Integration | Component | reschedule event timeline', function (hooks) {
       'The next allocation item is for the correct allocation'
     );
 
-    assert.equal(
+    assert.strictEqual(
       findAll('[data-test-allocation]')[1],
       find(`[data-test-allocation="${allocation.id}"]`),
       'Second allocation is the current allocation'

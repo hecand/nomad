@@ -3,12 +3,9 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import { assign } from '@ember/polyfills';
 import ApplicationSerializer from './application';
 import queryString from 'query-string';
-import classic from 'ember-classic-decorator';
 
-@classic
 export default class JobSerializer extends ApplicationSerializer {
   attrs = {
     parameterized: 'ParameterizedJob',
@@ -198,7 +195,7 @@ export default class JobSerializer extends ApplicationSerializer {
       delete hash._aggregate;
     }
 
-    return assign(super.extractRelationships(...arguments), {
+    return Object.assign(super.extractRelationships(...arguments), {
       allocations: {
         data: hash.Allocs?.map((alloc) => ({
           id: alloc.ID,

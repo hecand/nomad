@@ -8,15 +8,15 @@ import { inject as service } from '@ember/service';
 import Controller from '@ember/controller';
 import { next } from '@ember/runloop';
 import { observes } from '@ember-decorators/object';
-import { computed } from '@ember/object';
+import { computed, get } from '@ember/object';
 import Ember from 'ember';
 import codesForError from '../utils/codes-for-error';
 import NoLeaderError from '../utils/no-leader-error';
 import OTTExchangeError from '../utils/ott-exchange-error';
-import classic from 'ember-classic-decorator';
+
 // eslint-disable-next-line no-unused-vars
 import KeyboardService from '../services/keyboard';
-@classic
+
 export default class ApplicationController extends Controller {
   @service config;
   @service system;
@@ -89,7 +89,7 @@ export default class ApplicationController extends Controller {
 
   @observes('error')
   throwError() {
-    if (this.get('config.isDev')) {
+    if (get(this, 'config.isDev')) {
       next(() => {
         throw this.error;
       });

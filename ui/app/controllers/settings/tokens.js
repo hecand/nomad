@@ -3,13 +3,12 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-// @ts-check
 import { inject as service } from '@ember/service';
 import Controller from '@ember/controller';
 import { getOwner } from '@ember/application';
 import { alias } from '@ember/object/computed';
-import { action } from '@ember/object';
-import classic from 'ember-classic-decorator';
+import { action, set } from '@ember/object';
+
 import { tracked } from '@glimmer/tracking';
 import Ember from 'ember';
 
@@ -18,7 +17,6 @@ import Ember from 'ember';
  */
 const JWT_MATCH_EXPRESSION = /^[a-zA-Z0-9-_]+\.[a-zA-Z0-9-_]+\.[a-zA-Z0-9-_]+$/;
 
-@classic
 export default class Tokens extends Controller {
   @service token;
   @service store;
@@ -137,7 +135,7 @@ export default class Tokens extends Controller {
             secret: token.secret,
             tokenNotFound: false,
           });
-          this.set('secret', null);
+          set(this, 'secret', null);
 
           // Clear out all data to ensure only data the new token is privileged to see is shown
           this.resetStore();
@@ -156,7 +154,7 @@ export default class Tokens extends Controller {
     } else {
       this.clearTokenProperties();
       this.token.set('secret', secret);
-      this.set('secret', null);
+      set(this, 'secret', null);
 
       TokenAdapter.findSelf().then(
         () => {

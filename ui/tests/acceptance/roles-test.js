@@ -39,7 +39,7 @@ module('Acceptance | roles', function (hooks) {
     assert.expect(3);
     await a11yAudit(assert);
 
-    assert.equal(currentURL(), '/administration/roles');
+    assert.strictEqual(currentURL(), '/administration/roles');
 
     assert
       .dom('[data-test-role-row]')
@@ -73,12 +73,12 @@ module('Acceptance | roles', function (hooks) {
     const policiesCellTags = rolePoliciesCell
       .querySelector('.tag-group')
       .querySelectorAll('span');
-    assert.equal(policiesCellTags.length, 2);
-    assert.equal(policiesCellTags[0].textContent.trim(), 'client-reader');
-    assert.equal(policiesCellTags[1].textContent.trim(), 'job-reader');
+    assert.strictEqual(policiesCellTags.length, 2);
+    assert.strictEqual(policiesCellTags[0].textContent.trim(), 'client-reader');
+    assert.strictEqual(policiesCellTags[1].textContent.trim(), 'job-reader');
 
     await click(policiesCellTags[0].querySelector('a'));
-    assert.equal(currentURL(), '/administration/policies/client-reader');
+    assert.strictEqual(currentURL(), '/administration/policies/client-reader');
     assert.dom('[data-test-title]').containsText('client-reader');
   });
 
@@ -86,7 +86,7 @@ module('Acceptance | roles', function (hooks) {
     assert.expect(8);
     const role = server.db.roles.findBy((r) => r.name === 'reader');
     await click('[data-test-role-name="reader"] a');
-    assert.equal(currentURL(), `/administration/roles/${role.id}`);
+    assert.strictEqual(currentURL(), `/administration/roles/${role.id}`);
 
     assert.dom('[data-test-role-name-input]').hasValue(role.name);
     assert.dom('[data-test-role-description-input]').hasValue(role.description);
@@ -97,7 +97,7 @@ module('Acceptance | roles', function (hooks) {
     await fillIn('[data-test-role-description-input]', 'edited description');
     await click('button[data-test-save-role]');
     assert.dom('.flash-message.alert-success').exists();
-    assert.equal(
+    assert.strictEqual(
       currentURL(),
       `/administration/roles/${role.name}`,
       'remain on page after save'
@@ -108,7 +108,7 @@ module('Acceptance | roles', function (hooks) {
     await Administration.visitRoles();
     let readerRoleRow = find('[data-test-role-row="reader-edited"]');
     assert.dom(readerRoleRow).exists();
-    assert.equal(
+    assert.strictEqual(
       readerRoleRow
         .querySelector('[data-test-role-description]')
         .textContent.trim(),
@@ -119,7 +119,7 @@ module('Acceptance | roles', function (hooks) {
   test('Edit Role: Policies', async function (assert) {
     const role = server.db.roles.findBy((r) => r.name === 'reader');
     await click('[data-test-role-name="reader"] a');
-    assert.equal(currentURL(), `/administration/roles/${role.id}`);
+    assert.strictEqual(currentURL(), `/administration/roles/${role.id}`);
 
     // Policies table is sortable
 
@@ -159,7 +159,7 @@ module('Acceptance | roles', function (hooks) {
     const rolePolicies = role.policyIds;
     // All possible policies are shown
     const allPolicies = server.db.policies;
-    assert.equal(
+    assert.strictEqual(
       findAll('[data-test-role-policies] tbody tr').length,
       allPolicies.length,
       'all policies are shown'
@@ -169,7 +169,7 @@ module('Acceptance | roles', function (hooks) {
       '[data-test-role-policies] tbody tr input:checked'
     );
 
-    assert.equal(
+    assert.strictEqual(
       checkedPolicyRows.length,
       rolePolicies.length,
       'correct number of policies are checked'
@@ -207,7 +207,7 @@ module('Acceptance | roles', function (hooks) {
     const readerRolePolicies = readerRoleRow
       .querySelector('[data-test-role-policies]')
       .querySelectorAll('span');
-    assert.equal(
+    assert.strictEqual(
       readerRolePolicies.length,
       allPolicies.length,
       'all policies are attached to the role at index level'
@@ -219,7 +219,7 @@ module('Acceptance | roles', function (hooks) {
     const role = server.db.roles.findBy((r) => r.name === 'reader');
 
     await click('[data-test-role-name="reader"] a');
-    assert.equal(currentURL(), `/administration/roles/${role.id}`);
+    assert.strictEqual(currentURL(), `/administration/roles/${role.id}`);
     assert.dom('table.tokens').exists();
 
     // "Reader" role has a single token with it applied by default
@@ -254,7 +254,7 @@ module('Acceptance | roles', function (hooks) {
   test('Edit Role: Deletion', async function (assert) {
     const role = server.db.roles.findBy((r) => r.name === 'reader');
     await click('[data-test-role-name="reader"] a');
-    assert.equal(currentURL(), `/administration/roles/${role.id}`);
+    assert.strictEqual(currentURL(), `/administration/roles/${role.id}`);
     const deleteButton = find('[data-test-delete-role] button');
     assert.dom(deleteButton).exists('delete button is present');
     await click(deleteButton);
@@ -263,12 +263,12 @@ module('Acceptance | roles', function (hooks) {
       .exists('confirmation message is present');
     await click(find('[data-test-confirm-button]'));
     assert.dom('.flash-message.alert-success').exists();
-    assert.equal(currentURL(), '/administration/roles');
+    assert.strictEqual(currentURL(), '/administration/roles');
     assert.dom('[data-test-role-row="reader"]').doesNotExist();
   });
   test('New Role', async function (assert) {
     await click('[data-test-create-role]');
-    assert.equal(currentURL(), '/administration/roles/new');
+    assert.strictEqual(currentURL(), '/administration/roles/new');
     await fillIn('[data-test-role-name-input]', 'test-role');
     await click('button[data-test-save-role]');
     assert
@@ -279,7 +279,7 @@ module('Acceptance | roles', function (hooks) {
     await click('[data-test-role-policies] tbody tr input');
     await click('button[data-test-save-role]');
     assert.dom('.flash-message.alert-success').exists();
-    assert.equal(currentURL(), '/administration/roles/1'); // default id created via mirage
+    assert.strictEqual(currentURL(), '/administration/roles/1'); // default id created via mirage
     await Administration.visitRoles();
     assert.dom('[data-test-role-row="test-role"]').exists();
 
