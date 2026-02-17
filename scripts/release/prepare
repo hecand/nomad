@@ -9,7 +9,7 @@
 [ -n "$DEBUG" ] && set -x
 set -euo pipefail
 
-source "$(dirname "${BASH_SOURCE[0]}")/shared"
+source "$(dirname "${BASH_SOURCE[0]}")/check-working-dir"
 
 echo 'Checking variables'
   # starting with a release line branch like 'release/A.B.x'
@@ -76,4 +76,10 @@ echo '::group::Generate static assets'
 echo '::endgroup::'
 echo
 
-git_add_check # from source ./shared
+# there should be no stray unexpected changes
+if ! git diff --color=always --exit-code; then
+  git status
+  echo "::error::Unexpected changes left unstaged by prepare script"
+  exit 1
+fi
+
