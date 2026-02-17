@@ -3,23 +3,14 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import Component from '@ember/component';
-import { computed } from '@ember/object';
-import { computed as overridable } from 'ember-overridable-computed';
+import Component from '@glimmer/component';
 import moment from 'moment';
-import { classNames, tagName } from '@ember-decorators/component';
 
-@tagName('ol')
-@classNames('timeline')
 export default class JobDeploymentsStream extends Component {
-  @overridable(() => []) deployments;
-
-  @computed('deployments.@each.versionSubmitTime')
   get sortedDeployments() {
-    return this.deployments.sortBy('versionSubmitTime').reverse();
+    return (this.args.deployments || []).sortBy('versionSubmitTime').reverse();
   }
 
-  @computed('sortedDeployments.@each.version')
   get annotatedDeployments() {
     const deployments = this.sortedDeployments;
     return deployments.map((deployment, index) => {

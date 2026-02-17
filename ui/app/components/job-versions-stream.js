@@ -3,25 +3,12 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import Component from '@ember/component';
-import { computed } from '@ember/object';
-import { computed as overridable } from 'ember-overridable-computed';
+import Component from '@glimmer/component';
 import moment from 'moment';
-import { classNames, tagName } from '@ember-decorators/component';
 
-@tagName('ol')
-@classNames('timeline')
 export default class JobVersionsStream extends Component {
-  @overridable(() => []) versions;
-
-  // Passes through to the job-diff component
-  verbose = true;
-
-  diffs = [];
-
-  @computed('versions.[]', 'diffs.[]')
   get annotatedVersions() {
-    const versions = this.versions.sortBy('submitTime').reverse();
+    const versions = (this.args.versions || []).sortBy('submitTime').reverse();
     return versions.map((version, index) => {
       const meta = {};
 
@@ -38,7 +25,7 @@ export default class JobVersionsStream extends Component {
         }
       }
 
-      const diff = this.diffs.objectAt(index);
+      const diff = (this.args.diffs || []).objectAt(index);
       return { version, meta, diff };
     });
   }

@@ -4,13 +4,15 @@
 ~}}
 
 {{! template-lint-disable }}
-<input
-  data-test-input
-  type="checkbox"
-  checked={{this.isActive}}
-  disabled={{this.isDisabled}}
-  class="input"
-  {{on "change" this.onToggle}}
-/>
-<span data-test-toggler class="toggler"></span>
-{{yield}}
+<label class="toggle {{if @isActive "is-active"}} {{if @isDisabled "is-disabled"}}" data-test-label ...attributes>
+  <input
+    data-test-input
+    type="checkbox"
+    checked={{@isActive}}
+    disabled={{@isDisabled}}
+    class="input"
+    {{on "change" @onToggle}}
+  />
+  <span data-test-toggler class="toggler"></span>
+  {{yield}}
+</label>

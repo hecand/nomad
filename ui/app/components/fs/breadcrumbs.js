@@ -3,28 +3,12 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import Component from '@ember/component';
-import { computed } from '@ember/object';
+import Component from '@glimmer/component';
 import { isEmpty } from '@ember/utils';
-import {
-  classNames,
-  tagName,
-  attributeBindings,
-} from '@ember-decorators/component';
 
-@tagName('nav')
-@classNames('breadcrumb')
-@attributeBindings('data-test-fs-breadcrumbs')
 export default class Breadcrumbs extends Component {
-  'data-test-fs-breadcrumbs' = true;
-
-  allocation = null;
-  taskState = null;
-  path = null;
-
-  @computed('path')
   get breadcrumbs() {
-    const breadcrumbs = this.path
+    const breadcrumbs = this.args.path
       .split('/')
       .reject(isEmpty)
       .reduce((breadcrumbs, pathSegment, index) => {

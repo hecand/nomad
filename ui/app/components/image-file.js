@@ -3,32 +3,20 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import Component from '@ember/component';
-import { action, computed } from '@ember/object';
-import {
-  classNames,
-  tagName,
-  attributeBindings,
-} from '@ember-decorators/component';
+import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
+import { action } from '@ember/object';
 
-@tagName('figure')
-@classNames('image-file')
-@attributeBindings('data-test-image-file')
 export default class ImageFile extends Component {
-  'data-test-image-file' = true;
-
-  src = null;
-  alt = null;
-  size = null;
-
   // Set by updateImageMeta
-  width = 0;
-  height = 0;
+  @tracked width = 0;
+  @tracked height = 0;
 
-  @computed('src')
   get fileName() {
-    if (!this.src) return undefined;
-    return this.src.includes('/') ? this.src.match(/^.*\/(.*)$/)[1] : this.src;
+    if (!this.args.src) return undefined;
+    return this.args.src.includes('/')
+      ? this.args.src.match(/^.*\/(.*)$/)[1]
+      : this.args.src;
   }
 
   @action
@@ -38,9 +26,7 @@ export default class ImageFile extends Component {
 
   updateImageMeta(event) {
     const img = event.target;
-    this.setProperties({
-      width: img.naturalWidth,
-      height: img.naturalHeight,
-    });
+    this.width = img.naturalWidth;
+    this.height = img.naturalHeight;
   }
 }

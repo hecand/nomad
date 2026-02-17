@@ -26,7 +26,7 @@ module('Integration | Component | list table', function (hooks) {
     this.set('source', commonTable);
     await render(hbs`
       <ListTable @source={{source}} @sortProperty={{sortProperty}} @sortDescending={{sortDescending}} as |t|>
-        <t.head @class="head">
+        <t.head class="head">
           <th>First Name</th>
           <th>Last Name</th>
           <th>Age</th>
@@ -53,7 +53,7 @@ module('Integration | Component | list table', function (hooks) {
     });
     await render(hbs`
       <ListTable @source={{source}} @sortProperty={{sortProperty}} @sortDescending={{sortDescending}} as |t|>
-        <t.body @class="body" as |row index|>
+        <t.body class="body" as |row index|>
           <tr class="item">
             <td>{{row.model.firstName}}</td>
             <td>{{row.model.lastName}}</td>

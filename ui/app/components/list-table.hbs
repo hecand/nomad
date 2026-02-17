@@ -3,11 +3,13 @@
   SPDX-License-Identifier: BUSL-1.1
 ~}}
 
-{{yield (hash
-  head=(component "list-table/table-head")
-  body=(component "list-table/table-body" rows=this.decoratedSource)
-  sort-by=(component "list-table/sort-by"
-    currentProp=this.sortProperty
-    sortDescending=this.sortDescending
-  )
-)}}
+<table class="table" ...attributes>
+  {{yield (hash
+    head=(component "list-table/table-head")
+    body=(component "list-table/table-body" rows=this.decoratedSource)
+    sort-by=(component "list-table/sort-by"
+      currentProp=@sortProperty
+      sortDescending=@sortDescending
+    )
+  )}}
+</table>
