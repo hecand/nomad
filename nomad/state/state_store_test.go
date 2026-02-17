@@ -4979,11 +4979,11 @@ func TestStateStore_EvalsByJob(t *testing.T) {
 		state := testStateStore(t)
 		eval1 := mock.Eval()
 		eval1.JobID = "hello"
-		state.UpsertEvals(structs.MsgTypeTestSetup, 1, []*structs.Evaluation{eval1})
+		must.NoError(t, state.UpsertEvals(structs.MsgTypeTestSetup, 1, []*structs.Evaluation{eval1}))
 
 		eval2 := mock.Eval()
 		eval2.JobID = "hellohello"
-		state.UpsertEvals(structs.MsgTypeTestSetup, 2, []*structs.Evaluation{eval2})
+		must.NoError(t, state.UpsertEvals(structs.MsgTypeTestSetup, 2, []*structs.Evaluation{eval2}))
 
 		ws := memdb.NewWatchSet()
 		evals, err := state.EvalsByJob(ws, structs.DefaultNamespace, "hello")
@@ -7316,9 +7316,8 @@ func TestStateStore_GetJobStatus(t *testing.T) {
 			name: "reschedulable alloc is pending waiting for replacement",
 			setup: func(t *testing.T, txn *txn) *structs.Job {
 				j := mock.Job()
-				if j.TaskGroups[0].ReschedulePolicy == nil {
-					t.Fatal("test job has no reschedule policy")
-				}
+				must.NotNil(t, j.TaskGroups[0].ReschedulePolicy)
+
 				a := mock.Alloc()
 				a.Job = j
 				a.JobID = j.ID
@@ -7375,9 +7374,7 @@ func TestStateStore_GetJobStatus(t *testing.T) {
 			setup: func(t *testing.T, txn *txn) *structs.Job {
 
 				j := mock.Job()
-				if j.TaskGroups[0].ReschedulePolicy == nil {
-					t.Fatal("test job has no reschedule policy")
-				}
+				must.NotNil(t, j.TaskGroups[0].ReschedulePolicy)
 
 				e1 := mock.Eval()
 				e1.JobID = j.ID
