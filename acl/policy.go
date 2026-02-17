@@ -141,6 +141,17 @@ const (
 	OperatorCapabilityLicenseRead  = "license-read"
 )
 
+const (
+	// The following are the fine-grained capabilities that can be granted for
+	// Sentinel CRUD operations. Deny takes precedence and overwrites all other
+	// capabilities.
+	SentinelCapabilityDeny   = "deny"
+	SentinelCapabilityRead   = "sentinel-read"
+	SentinelCapabilityCreate = "sentinel-create"
+	SentinelCapabilityUpdate = "sentinel-update"
+	SentinelCapabilityDelete = "sentinel-delete"
+)
+
 // Policy represents a parsed HCL or JSON policy.
 type Policy struct {
 	Namespaces  []*NamespacePolicy  `hcl:"namespace,expand"`
@@ -149,6 +160,7 @@ type Policy struct {
 	Agent       *AgentPolicy        `hcl:"agent"`
 	Node        *NodePolicy         `hcl:"node"`
 	Operator    *OperatorPolicy     `hcl:"operator"`
+	Sentinel    *SentinelPolicy     `hcl:"sentinel"`
 	Quota       *QuotaPolicy        `hcl:"quota"`
 	Plugin      *PluginPolicy       `hcl:"plugin"`
 	Raw         string              `hcl:"-"`
@@ -174,6 +186,7 @@ func (p *Policy) IsEmpty() bool {
 		p.Agent == nil &&
 		p.Node == nil &&
 		p.Operator == nil &&
+		p.Sentinel == nil &&
 		p.Quota == nil &&
 		p.Plugin == nil
 }
@@ -226,6 +239,11 @@ type NodePolicy struct {
 }
 
 type OperatorPolicy struct {
+	Policy       string
+	Capabilities []string
+}
+
+type SentinelPolicy struct {
 	Policy       string
 	Capabilities []string
 }
@@ -400,6 +418,17 @@ func isOperatorCapabilityValid(cap string) bool {
 	}
 }
 
+// isSentinelCapabilityValid ensures the given capability is valid for a sentinel policy
+func isSentinelCapabilityValid(cap string) bool {
+	switch cap {
+	case SentinelCapabilityDeny, SentinelCapabilityRead, SentinelCapabilityCreate,
+		SentinelCapabilityUpdate, SentinelCapabilityDelete:
+		return true
+	default:
+		return false
+	}
+}
+
 func expandNodePoolPolicy(policy string) []string {
 	switch policy {
 	case PolicyDeny:
@@ -427,6 +456,23 @@ func expandOperatorPolicy(policy string) []string {
 		return []string{OperatorCapabilityLicenseRead}
 	case PolicyWrite:
 		return []string{OperatorCapabilitySnapshotSave, OperatorCapabilityLicenseRead}
+	default:
+		return nil
+	}
+}
+
+// expandSentinelPolicy provides the equivalent set of capabilities for
+// a sentinel policy
+func expandSentinelPolicy(policy string) []string {
+	switch policy {
+	case PolicyDeny:
+		return []string{SentinelCapabilityDeny}
+	case PolicyRead:
+		return []string{SentinelCapabilityRead}
+	case PolicyWrite:
+		return []string{SentinelCapabilityRead, SentinelCapabilityCreate,
+			SentinelCapabilityUpdate, SentinelCapabilityDelete,
+		}
 	default:
 		return nil
 	}
@@ -647,6 +693,24 @@ func Parse(rules string, strict bool) (*Policy, error) {
 		if p.Operator.Policy != "" {
 			extraCap := expandOperatorPolicy(p.Operator.Policy)
 			p.Operator.Capabilities = append(p.Operator.Capabilities, extraCap...)
+		}
+	}
+
+	if p.Sentinel != nil {
+		if p.Sentinel.Policy != "" && !isPolicyValid(p.Sentinel.Policy) {
+			return nil, fmt.Errorf("Invalid sentinel policy: %#v", p.Sentinel)
+		}
+		for _, cap := range p.Sentinel.Capabilities {
+			if !isSentinelCapabilityValid(cap) {
+				return nil, fmt.Errorf("Invalid sentinel capability '%s'", cap)
+			}
+		}
+
+		// Expand the short hand policy to the capabilities and
+		// add to any existing capabilities
+		if p.Sentinel.Policy != "" {
+			extraCap := expandSentinelPolicy(p.Sentinel.Policy)
+			p.Sentinel.Capabilities = append(p.Sentinel.Capabilities, extraCap...)
 		}
 	}
 
