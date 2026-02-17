@@ -3,15 +3,15 @@
   SPDX-License-Identifier: BUSL-1.1
 ~}}
 
-{{#if this.errorMessage}}
+{{#if @errorMessage}}
   <div class="notification is-danger">
     <div class="columns">
       <div class="column">
-        <h3 data-test-job-error-title class="title is-4">{{this.errorMessage.title}}</h3>
-        <p data-test-job-error-body>{{this.errorMessage.description}}</p>
+        <h3 data-test-job-error-title class="title is-4">{{@errorMessage.title}}</h3>
+        <p data-test-job-error-body>{{@errorMessage.description}}</p>
       </div>
       <div class="column is-centered is-minimum">
-        <button data-test-job-error-close class="button is-danger" {{on "click" this.onDismiss}} type="button">Okay</button>
+        <button data-test-job-error-close class="button is-danger" {{on "click" @onDismiss}} type="button">Okay</button>
       </div>
     </div>
   </div>

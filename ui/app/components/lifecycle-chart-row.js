@@ -3,23 +3,29 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import Component from '@ember/component';
-import { computed } from '@ember/object';
-import { tagName } from '@ember-decorators/component';
+import Component from '@glimmer/component';
+import { get } from '@ember/object';
 
-@tagName('')
 export default class LifecycleChartRow extends Component {
-  @computed('taskState.{failed,state}')
+  get taskState() {
+    return this.args.taskState;
+  }
+
+  get taskStateValue() {
+    return this.taskState ? get(this.taskState, 'state') : undefined;
+  }
+
   get taskColor() {
     let color = 'neutral';
-    if (this.taskState?.state === 'running') {
+    const state = this.taskStateValue;
+    if (state === 'running') {
       color = 'success';
     }
-    if (this.taskState?.state === 'pending') {
+    if (state === 'pending') {
       color = 'neutral';
     }
-    if (this.taskState?.state === 'dead') {
-      if (this.taskState?.failed) {
+    if (state === 'dead') {
+      if (get(this.taskState, 'failed')) {
         color = 'critical';
       } else {
         color = 'neutral';
@@ -30,17 +36,18 @@ export default class LifecycleChartRow extends Component {
 
   get taskIcon() {
     let icon;
-    if (this.taskState?.state === 'running') {
+    const state = this.taskStateValue;
+    if (state === 'running') {
       icon = 'running';
     }
-    if (this.taskState?.state === 'pending') {
+    if (state === 'pending') {
       icon = 'test';
     }
-    if (this.taskState?.state === 'dead') {
-      if (this.taskState?.failed) {
+    if (state === 'dead') {
+      if (get(this.taskState, 'failed')) {
         icon = 'alert-circle';
       } else {
-        if (this.taskState?.startedAt) {
+        if (get(this.taskState, 'startedAt')) {
           icon = 'check-circle';
         } else {
           icon = 'minus-circle';
@@ -51,31 +58,28 @@ export default class LifecycleChartRow extends Component {
     return icon;
   }
 
-  @computed('taskState.state')
   get activeClass() {
-    if (this.taskState && this.taskState.state === 'running') {
+    if (this.taskStateValue === 'running') {
       return 'is-active';
     }
 
     return undefined;
   }
 
-  @computed('taskState.state')
   get finishedClass() {
-    if (this.taskState && this.taskState.state === 'dead') {
+    if (this.taskStateValue === 'dead') {
       return 'is-finished';
     }
 
     return undefined;
   }
 
-  @computed('task.lifecycleName')
   get lifecycleLabel() {
-    if (!this.task) {
+    if (!this.args.task) {
       return '';
     }
 
-    const name = this.task.lifecycleName;
+    const name = this.args.task.lifecycleName;
 
     if (name.includes('sidecar')) {
       return 'sidecar';

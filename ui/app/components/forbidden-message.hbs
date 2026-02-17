@@ -8,8 +8,8 @@
   <p data-test-error-message class="empty-message-body">
     {{#if this.token.secret}}
       You currently lack the
-      {{#if this.permission}}
-        <code>{{this.permission}}</code>
+      {{#if @permission}}
+        <code>{{@permission}}</code>
       {{else}}
         required
       {{/if}}
@@ -24,8 +24,8 @@
       {{/if}}
 
       {{conditionally-capitalize "provide" (not this.authMethods.length)}} a <LinkTo @route="settings.tokens">token</LinkTo> with the
-      {{#if this.permission}}
-        <code>{{this.permission}}</code>
+      {{#if @permission}}
+        <code>{{@permission}}</code>
       {{else}}
         requisite
       {{/if}}

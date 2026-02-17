@@ -3,34 +3,25 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import Component from '@ember/component';
-import { computed } from '@ember/object';
-import { filterBy } from '@ember/object/computed';
-import { tagName } from '@ember-decorators/component';
+import Component from '@glimmer/component';
 
-@tagName('')
 export default class Browser extends Component {
-  model = null;
-
-  @computed('model.allocation')
   get allocation() {
-    if (this.model.allocation) {
-      return this.model.allocation;
+    if (this.args.model?.allocation) {
+      return this.args.model.allocation;
     } else {
-      return this.model;
+      return this.args.model;
     }
   }
 
-  @computed('model.allocation')
   get taskState() {
-    if (this.model.allocation) {
-      return this.model;
+    if (this.args.model?.allocation) {
+      return this.args.model;
     }
 
     return undefined;
   }
 
-  @computed('taskState')
   get type() {
     if (this.taskState) {
       return 'task';
@@ -39,18 +30,16 @@ export default class Browser extends Component {
     }
   }
 
-  @filterBy('directoryEntries', 'IsDir') directories;
-  @filterBy('directoryEntries', 'IsDir', false) files;
+  get directories() {
+    return (this.args.directoryEntries || []).filterBy('IsDir');
+  }
 
-  @computed(
-    'directories',
-    'directoryEntries.[]',
-    'files',
-    'sortDescending',
-    'sortProperty'
-  )
+  get files() {
+    return (this.args.directoryEntries || []).filterBy('IsDir', false);
+  }
+
   get sortedDirectoryEntries() {
-    const sortProperty = this.sortProperty;
+    const sortProperty = this.args.sortProperty;
 
     const directorySortProperty =
       sortProperty === 'Size' ? 'Name' : sortProperty;
@@ -60,7 +49,7 @@ export default class Browser extends Component {
 
     const sortedDirectoryEntries = sortedDirectories.concat(sortedFiles);
 
-    if (this.sortDescending) {
+    if (this.args.sortDescending) {
       return sortedDirectoryEntries.reverse();
     } else {
       return sortedDirectoryEntries;

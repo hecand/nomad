@@ -6,13 +6,13 @@
 <div class="border-and-label">
   <div class="border"></div>
   <div class="task-label">
-    {{#if this.active}}
+    {{#if @active}}
       <Hds::Icon @name="dot" @isInline={{true}} class="active-identifier icon-vertical-bump-down" />
     {{/if}}
-    {{this.task.name}}
+    {{@task.name}}
   </div>
 </div>
-{{#if this.shouldOpenInNewWindow}}
+{{#if @shouldOpenInNewWindow}}
   <span class="tooltip" aria-label="Open in a new window">
     <Hds::Icon @name="external-link" @color="faint" @isInline={{true}} class="show-on-hover" />
   </span>

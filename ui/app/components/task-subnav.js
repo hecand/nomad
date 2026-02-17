@@ -3,22 +3,24 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import Component from '@ember/component';
+import Component from '@glimmer/component';
 import { inject as service } from '@ember/service';
-import { equal, or } from '@ember/object/computed';
-import { tagName } from '@ember-decorators/component';
 
-@tagName('')
 export default class TaskSubnav extends Component {
   @service router;
   @service keyboard;
 
-  @equal('router.currentRouteName', 'allocations.allocation.task.fs')
-  fsIsActive;
+  get fsIsActive() {
+    return this.router.currentRouteName === 'allocations.allocation.task.fs';
+  }
 
-  @equal('router.currentRouteName', 'allocations.allocation.task.fs-root')
-  fsRootIsActive;
+  get fsRootIsActive() {
+    return (
+      this.router.currentRouteName === 'allocations.allocation.task.fs-root'
+    );
+  }
 
-  @or('fsIsActive', 'fsRootIsActive')
-  filesLinkActive;
+  get filesLinkActive() {
+    return this.fsIsActive || this.fsRootIsActive;
+  }
 }

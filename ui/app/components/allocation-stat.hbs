@@ -3,10 +3,10 @@
   SPDX-License-Identifier: BUSL-1.1
 ~}}
 
-{{#if this.allocation.isRunning}}
-  {{#if (and (not this.stat) this.isLoading)}}
+{{#if @allocation.isRunning}}
+  {{#if (and (not this.stat) @isLoading)}}
     &hellip;
-  {{else if this.error}}
+  {{else if @error}}
     <span class="tooltip is-small text-center" role="tooltip" aria-label="Couldn't collect stats">
       <Hds::Icon @name="alert-triangle-fill" @color="warning" class="icon-vertical-bump-down" />
     </span>

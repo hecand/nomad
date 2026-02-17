@@ -3,19 +3,12 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import Component from '@ember/component';
-import { computed } from '@ember/object';
-import { sort } from '@ember/object/computed';
-import { tagName } from '@ember-decorators/component';
+import Component from '@glimmer/component';
+import { get } from '@ember/object';
 
-@tagName('')
 export default class LifecycleChart extends Component {
-  tasks = null;
-  taskStates = null;
-
-  @computed('tasks.@each.lifecycle', 'taskStates.@each.state')
   get lifecyclePhases() {
-    const tasksOrStates = this.taskStates || this.tasks;
+    const tasksOrStates = this.args.taskStates || this.args.tasks;
     const lifecycles = {
       'prestart-ephemerals': [],
       'prestart-sidecars': [],
@@ -34,7 +27,7 @@ export default class LifecycleChart extends Component {
     });
 
     const phases = [];
-    const stateActiveIterator = (state) => state.state === 'running';
+    const stateActiveIterator = (state) => get(state, 'state') === 'running';
 
     if (lifecycles.mains.length < tasksOrStates.length) {
       phases.push({
@@ -63,15 +56,19 @@ export default class LifecycleChart extends Component {
     return phases;
   }
 
-  @sort('taskStates', function (a, b) {
-    return getTaskSortPrefix(a.task).localeCompare(getTaskSortPrefix(b.task));
-  })
-  sortedLifecycleTaskStates;
+  get sortedLifecycleTaskStates() {
+    return (this.args.taskStates || [])
+      .slice()
+      .sort((a, b) =>
+        getTaskSortPrefix(a.task).localeCompare(getTaskSortPrefix(b.task))
+      );
+  }
 
-  @sort('tasks', function (a, b) {
-    return getTaskSortPrefix(a).localeCompare(getTaskSortPrefix(b));
-  })
-  sortedLifecycleTasks;
+  get sortedLifecycleTasks() {
+    return (this.args.tasks || [])
+      .slice()
+      .sort((a, b) => getTaskSortPrefix(a).localeCompare(getTaskSortPrefix(b)));
+  }
 }
 
 const lifecycleNameSortPrefix = {

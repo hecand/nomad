@@ -3,8 +3,6 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import Component from '@ember/component';
-import { tagName } from '@ember-decorators/component';
+import Component from '@glimmer/component';
 
-@tagName('')
 export default class DeploymentMetrics extends Component {}

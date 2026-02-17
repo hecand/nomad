@@ -3,7 +3,7 @@
   SPDX-License-Identifier: BUSL-1.1
 ~}}
 
-{{#each this.attributes.files as |file|}}
+{{#each @attributes.files as |file|}}
   <MetadataKv
     @prefix={{file.prefix}}
     @key={{file.name}}
@@ -13,7 +13,7 @@
     @copyable={{@copyable}}
   />
 {{/each}}
-{{#each-in this.attributes.children as |key value|}}
+{{#each-in @attributes.children as |key value|}}
   <AttributesSection
     @attributes={{value}}
     @key={{key}}

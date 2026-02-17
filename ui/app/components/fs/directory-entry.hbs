@@ -5,16 +5,16 @@
 
 <tr data-test-entry>
   <td>
-    <Fs::Link @allocation={{this.allocation}} @taskState={{this.taskState}} @path={{this.pathToEntry}}>
-      {{#if this.entry.IsDir}}
+    <Fs::Link @allocation={{@allocation}} @taskState={{@taskState}} @path={{this.pathToEntry}}>
+      {{#if @entry.IsDir}}
         <Hds::Icon @name="folder" @isInline={{true}} />
       {{else}}
         <Hds::Icon @name="file" @isInline={{true}} />
       {{/if}}
 
-      <span class="name" data-test-name>{{this.entry.Name}}</span>
+      <span class="name" data-test-name>{{@entry.Name}}</span>
     </Fs::Link>
   </td>
-  <td class="has-text-right" data-test-size>{{#unless this.entry.IsDir}}{{format-bytes this.entry.Size}}{{/unless}}</td>
-  <td class="has-text-right" title={{format-ts this.entry.ModTime}} data-test-last-modified>{{moment-from this.entry.ModTime interval=1000}}</td>
+  <td class="has-text-right" data-test-size>{{#unless @entry.IsDir}}{{format-bytes @entry.Size}}{{/unless}}</td>
+  <td class="has-text-right" title={{format-ts @entry.ModTime}} data-test-last-modified>{{moment-from @entry.ModTime interval=1000}}</td>
 </tr>

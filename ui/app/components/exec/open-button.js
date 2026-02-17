@@ -3,14 +3,12 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import Component from '@ember/component';
+import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import generateExecUrl from 'nomad-ui/utils/generate-exec-url';
 import openExecUrl from 'nomad-ui/utils/open-exec-url';
-import { tagName } from '@ember-decorators/component';
 
-@tagName('')
 export default class OpenButton extends Component {
   @service router;
 
@@ -21,10 +19,10 @@ export default class OpenButton extends Component {
 
   generateUrl() {
     return generateExecUrl(this.router, {
-      job: this.job,
-      taskGroup: this.taskGroup,
-      task: this.task,
-      allocation: this.allocation,
+      job: this.args.job,
+      taskGroup: this.args.taskGroup,
+      task: this.args.task,
+      allocation: this.args.allocation,
     });
   }
 }

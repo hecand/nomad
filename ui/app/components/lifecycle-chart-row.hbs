@@ -3,19 +3,19 @@
   SPDX-License-Identifier: BUSL-1.1
 ~}}
 
-<div class="lifecycle-chart-row {{this.task.lifecycleName}} {{this.activeClass}} {{this.finishedClass}}" data-test-lifecycle-task>
+<div class="lifecycle-chart-row {{@task.lifecycleName}} {{this.activeClass}} {{this.finishedClass}}" data-test-lifecycle-task>
 <Hds::Alert
   @type="inline"
   @color={{this.taskColor}}
-  class="{{if (eq this.taskState.state "pending") "pending"}}"
+  class="{{if (eq @taskState.state "pending") "pending"}}"
   @icon={{this.taskIcon}} as |A|>
   <A.Title class="name" data-test-name>
-    {{#if this.taskState}}
-      <LinkTo @route="allocations.allocation.task" @models={{array this.taskState.allocation this.taskState}}>
-        {{this.task.name}}
+    {{#if @taskState}}
+      <LinkTo @route="allocations.allocation.task" @models={{array @taskState.allocation @taskState}}>
+        {{@task.name}}
       </LinkTo>
     {{else}}
-      {{this.task.name}}
+      {{@task.name}}
     {{/if}}
   </A.Title>
   <A.Description>

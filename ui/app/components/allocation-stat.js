@@ -3,39 +3,33 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import Component from '@ember/component';
-import { computed } from '@ember/object';
-import { alias } from '@ember/object/computed';
+import Component from '@glimmer/component';
 import { formatBytes, formatHertz } from 'nomad-ui/utils/units';
-import { tagName } from '@ember-decorators/component';
 
-@tagName('')
 export default class AllocationStat extends Component {
-  allocation = null;
-  statsTracker = null;
-  isLoading = false;
-  error = null;
-  metric = 'memory'; // Either memory or cpu
+  get metric() {
+    return this.args.metric ?? 'memory';
+  }
 
-  @computed('metric')
   get statClass() {
     return this.metric === 'cpu' ? 'is-info' : 'is-danger';
   }
 
-  @alias('statsTracker.cpu.lastObject') cpu;
-  @alias('statsTracker.memory.lastObject') memory;
+  get cpu() {
+    return this.args.statsTracker?.cpu?.lastObject;
+  }
 
-  @computed('metric', 'cpu', 'memory')
+  get memory() {
+    return this.args.statsTracker?.memory?.lastObject;
+  }
+
   get stat() {
     const { metric } = this;
-    if (metric === 'cpu' || metric === 'memory') {
-      return this[this.metric];
-    }
-
+    if (metric === 'cpu') return this.cpu;
+    if (metric === 'memory') return this.memory;
     return undefined;
   }
 
-  @computed('metric', 'stat.used')
   get formattedStat() {
     if (!this.stat) return undefined;
     if (this.metric === 'memory') return formatBytes(this.stat.used);
@@ -43,12 +37,11 @@ export default class AllocationStat extends Component {
     return undefined;
   }
 
-  @computed('metric', 'statsTracker.{reservedMemory,reservedCPU}')
   get formattedReserved() {
     if (this.metric === 'memory')
-      return formatBytes(this.statsTracker.reservedMemory, 'MiB');
+      return formatBytes(this.args.statsTracker?.reservedMemory, 'MiB');
     if (this.metric === 'cpu')
-      return formatHertz(this.statsTracker.reservedCPU, 'MHz');
+      return formatHertz(this.args.statsTracker?.reservedCPU, 'MHz');
     return undefined;
   }
 }

@@ -3,13 +3,11 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import Component from '@ember/component';
-import { tagName } from '@ember-decorators/component';
+import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import KeyboardShortcutModifier from 'nomad-ui/modifiers/keyboard-shortcut';
 
-@tagName('')
 export default class ListPager extends Component {
   @service router;
 
@@ -18,7 +16,8 @@ export default class ListPager extends Component {
   // only append keyNav to the "next" and "prev" links.
   // We use this to make the modifier conditional, per https://v5.chriskrycho.com/journal/conditional-modifiers-and-helpers-in-emberjs/
   get includeKeyboardNav() {
-    return this.label === 'Next page' || this.label === 'Previous page'
+    return this.args.label === 'Next page' ||
+      this.args.label === 'Previous page'
       ? KeyboardShortcutModifier
       : null;
   }
@@ -26,7 +25,7 @@ export default class ListPager extends Component {
   @action
   gotoRoute() {
     this.router.transitionTo(this.router.currentRouteName, {
-      queryParams: { page: this.page },
+      queryParams: { page: this.args.page },
     });
   }
 }
