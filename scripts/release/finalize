@@ -51,6 +51,7 @@ echo "Merging changes from '$MERGE_FROM' into '$MERGE_INTO'"
     git diff --color=always | /bin/cat
     exit 1
   fi
+echo
 
 echo 'Updating magic strings in magic files'
   if [ -n "$(semver get prerel "$NEW_VERSION")" ]; then
@@ -62,33 +63,35 @@ echo 'Updating magic strings in magic files'
     echo "$NEW_VERSION is not a prerelease; bumping versions"
     next_patch="$(semver bump patch "$NEW_VERSION")"
     sed -i.bak -e "s|\(Version * = *\"\)[^\"]*|\1${next_patch}|g" version/version.go
+
     # previous version to use next time the changelog is generated
-    prev_v='scripts/release/previous.version'
-    echo -e "$(grep '^#' "$prev_v")\n$NEW_VERSION" > "$prev_v"
+    sed -i.bak "s/^[^#].*/$NEW_VERSION/" scripts/release/previous.version
   fi
 
   # set VersionPrerelease back to "dev"
   sed -i.bak -e "s|\(VersionPrerelease * = *\"\)[^\"]*|\1dev|g" version/version.go
 
-  rm -f version/version.go.bak GNUmakefile.bak
+  rm -f version/version.go.bak scripts/release/previous.version.bak
+  git diff --color=always version/version.go scripts/release/previous.version
+  git add version/version.go scripts/release/previous.version
 echo
 
 echo 'Removing generated static assets'
   # These generated files are only needed when building the final
   # binary and should be not be present in the repository afterwards.
-  find . -name '*.generated.go' -exec git rm -f '{}' \;
+  git rm -f ./{nomad,client}/structs/*.generated.go
 echo
 
-echo 'Committing changes'
-  # Display staged and unstaged diffs, skipping deleted files to avoid
-  # cluttering the output with the generated files.
+echo 'Adding any remaining changes'
+  # there shouldn't be anything left to add, but output for debugging,
+  # and add all just in case.
   git status
-  git diff --diff-filter=d --color=always HEAD | /bin/cat
-  git add -A .
-
-  if git diff-index --quiet HEAD --; then
-    echo '::notice::No files were updated'
-  else
-    git commit --message "release: Prepare for next release after $NEW_VERSION"
-  fi
+  git diff --color=always | /bin/cat
+  git add --all .
 echo
+
+# we should always have changed files
+if git diff-index --quiet HEAD --; then
+  echo "::warning::No files were updated by prepare script"
+  exit 1
+fi

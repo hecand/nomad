@@ -41,14 +41,18 @@ echo 'Checking required commands'
   semver --version
   # these are run by `make prerelease`
   go version
-  printf 'buf: '; buf --version
-  printf 'pnpm: '; pnpm --version
+  echo 'buf:' ; buf --version
+  echo 'pnpm:' ; pnpm --version
 echo
 
 echo 'Ensuring source branch'
   git fetch origin "$SOURCE_BRANCH"
   git switch "$SOURCE_BRANCH"
   git pull origin "$SOURCE_BRANCH"
+echo
+
+echo 'Creating new branch'
+  git switch --force-create "$NEW_BRANCH"
 echo
 
 echo 'Updating version.go'
@@ -59,24 +63,28 @@ echo 'Updating version.go'
     -e "s|\(VersionPrerelease * = *\"\)[^\"]*|\1${prerel}|g" \
     version/version.go
   rm -f version/version.go.bak
+  git diff --color=always version.go
+  git add version.go
 echo
 
 echo '::group::Generate static assets'
   make prerelease
-  # add the files now, so `git diff` doesn't show their noisy contents
   git add --force \
     ./{nomad,client}/structs/*.generated.go \
     ./command/agent/bindata_assetfs.go
 echo '::endgroup::'
+echo
 
-echo 'Adding changes'
-  git switch --force-create "$NEW_BRANCH"
+echo 'Adding any remaining changes'
+  # there shouldn't be anything left to add, but output for debugging,
+  # and add all just in case.
   git status
   git diff --color=always | /bin/cat
   git add --all .
-
-  if git diff-index --quiet HEAD --; then
-    echo "::warning::No files were updated by prepare script"
-    exit 1
-  fi
 echo
+
+# we should always have changed files
+if git diff-index --quiet HEAD --; then
+  echo "::warning::No files were updated by prepare script"
+  exit 1
+fi

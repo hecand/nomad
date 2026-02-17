@@ -62,7 +62,8 @@ jobs:
           DEBUG: ${{ runner.debug }}
         run: ./scripts/release/finalize
 
-      - name: Push changes
+      - name: Commit and push changes
         run: |-
+          git commit -m "release: Prepare for next release after ${{ inputs.version }}"
           git switch ${{ inputs.merge-into }}
           git push origin ${{ inputs.merge-into }}

@@ -5,7 +5,7 @@
 # * create a changelog file with only this one version's entry
 #   * we'll store it as a github artifact and use it later
 #     to create a github release.
-# * update and commit CHANGELOG.md
+# * add the entry to CHANGELOG.md and `git add` it
 
 [ -n "$DEBUG" ] && set -x
 set -euo pipefail
@@ -21,7 +21,7 @@ echo 'Checking variables'
   SOURCE_BRANCH="${SOURCE_BRANCH:-$(git branch --show-current)}"
   # LAST_RELEASE is the last released GA or backport version.
   # main branch should have the latest published release, and
-  # release branches should have the latest in their X.Y release line.
+  # release branches should have the latest in their A.B.x release line.
   LAST_RELEASE="${LAST_RELEASE:-$(grep -v '^#' scripts/release/previous.version)}"
   # vars displayed this way for easier troubleshooting
   cat <<VARS
@@ -72,7 +72,6 @@ echo 'Updating CHANGELOG.md'
 echo
 
 echo 'Adding changes'
-  git status
   git diff --color=always | /bin/cat
   git add CHANGELOG.md
   git status
