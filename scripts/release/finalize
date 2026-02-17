@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
 
 # run by the release-finalize.yml github action workflow
-# * merge release/A.B.C branch into release/A.B.x
+# * merge MERGE_FROM branch (release/A.B.C)
+#   into MERGE_INTO (release/A.B.x or main)
+#   * squash release commits if target is main
 # * remove generated static files
 # * update version in version.go and scripts/release/previous.version
-# * commit and merge changes into release/A.B.x
 
 [ -n "$DEBUG" ] && set -x
 set -euo pipefail
 
-source "$(dirname "${BASH_SOURCE[0]}")/check-working-dir"
+source "$(dirname "${BASH_SOURCE[0]}")/shared"
 
 echo 'Checking variables'
   MERGE_FROM="${MERGE_FROM:-$(git branch --show-current)}"
@@ -39,7 +40,6 @@ if [ "$MERGE_INTO" == "${MAIN_BRANCH:-main}" ]; then
   # they're big, and kept for posterity in other branches.
   git log --grep "release:.* ${NEW_VERSION}$" --reverse --pretty='%H' \
     "$MERGE_FROM" | xargs git cherry-pick --no-commit
-  git commit -m "release: $NEW_VERSION"
 
   exit # nothing else to do
 fi
@@ -82,16 +82,4 @@ echo 'Removing generated static assets'
   git rm -f ./{nomad,client}/structs/*.generated.go
 echo
 
-echo 'Adding any remaining changes'
-  # there shouldn't be anything left to add, but output for debugging,
-  # and add all just in case.
-  git status
-  git diff --color=always | /bin/cat
-  git add --all .
-echo
-
-# we should always have changed files
-if git diff-index --quiet HEAD --; then
-  echo "::warning::No files were updated by prepare script"
-  exit 1
-fi
+git_add_check # from source ./shared

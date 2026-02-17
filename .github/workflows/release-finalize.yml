@@ -64,6 +64,11 @@ jobs:
 
       - name: Commit and push changes
         run: |-
-          git commit -m "release: Prepare for next release after ${{ inputs.version }}"
+          msg="release: Prepare for next release after ${{ inputs.version }}"
+          if [ "${{ inputs.merge-into }}" == "${{ inputs.main-branch }}" ]; then
+            msg="release: ${{ inputs.version }}"
+          fi
+          set -x
+          git commit -m "$msg"
           git switch ${{ inputs.merge-into }}
           git push origin ${{ inputs.merge-into }}

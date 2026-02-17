@@ -27,3 +27,19 @@ if [ -z "${ALLOW_DIRTY_WORKTREE:-}" ] && ! git diff-index --quiet HEAD --; then
   echo '==========================='
   exit 1
 fi
+
+git_add_check() {
+  # there shouldn't be anything left to add, but output for debugging,
+  # and add all just in case.
+  echo 'Adding any remaining changes'
+    git status
+    git diff --color=always | /bin/cat
+    git add --all .
+  echo
+
+  # we always expect changed files during the release process.
+  if git diff-index --quiet HEAD --; then
+    echo "::warning::No files were updated by prepare script"
+    return 1
+  fi
+}
