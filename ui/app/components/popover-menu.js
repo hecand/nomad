@@ -7,7 +7,6 @@ import Component from '@ember/component';
 import { action } from '@ember/object';
 import { scheduleOnce } from '@ember/runloop';
 import { classNames } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 
 const TAB = 9;
 const ARROW_DOWN = 40;
@@ -19,7 +18,6 @@ const FOCUSABLE = [
   '[tabindex]:not([disabled]):not([tabindex="-1"])',
 ].join(', ');
 
-@classic
 @classNames('popover')
 export default class PopoverMenu extends Component {
   triggerClass = '';

@@ -17,10 +17,8 @@ import {
   serialize,
   deserializedQueryParam as selection,
 } from 'nomad-ui/utils/qp-serialize';
-import classic from 'ember-classic-decorator';
 import localStorageProperty from 'nomad-ui/utils/properties/local-storage';
 
-@classic
 export default class TaskGroupController extends Controller.extend(
   Sortable,
   Searchable,

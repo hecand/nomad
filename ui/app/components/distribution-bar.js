@@ -17,11 +17,9 @@ import 'd3-transition';
 import WindowResizable from '../mixins/window-resizable';
 import styleStringProperty from '../utils/properties/style-string';
 import { classNames, classNameBindings } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 
 const sumAggregate = (total, val) => total + val;
 
-@classic
 @classNames('chart', 'distribution-bar')
 @classNameBindings('isNarrow:is-narrow')
 export default class DistributionBar extends Component.extend(WindowResizable) {

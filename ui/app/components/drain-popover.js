@@ -10,10 +10,8 @@ import { computed as overridable } from 'ember-overridable-computed';
 import { task } from 'ember-concurrency';
 import Duration from 'duration-js';
 import { tagName } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 import localStorageProperty from 'nomad-ui/utils/properties/local-storage';
 
-@classic
 @tagName('')
 export default class DrainPopover extends Component {
   client = null;

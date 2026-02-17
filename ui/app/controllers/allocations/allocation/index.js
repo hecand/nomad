@@ -15,11 +15,9 @@ import Sortable from 'nomad-ui/mixins/sortable';
 import { lazyClick } from 'nomad-ui/helpers/lazy-click';
 import { watchRecord } from 'nomad-ui/utils/properties/watch';
 import messageForError from 'nomad-ui/utils/message-from-adapter-error';
-import classic from 'ember-classic-decorator';
 import { union } from '@ember/object/computed';
 import { tracked } from '@glimmer/tracking';
 
-@classic
 export default class IndexController extends Controller.extend(Sortable) {
   @service token;
   @service store;

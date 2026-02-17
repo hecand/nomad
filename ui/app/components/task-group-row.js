@@ -13,10 +13,8 @@ import {
   tagName,
   attributeBindings,
 } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 import { lazyClick } from '../helpers/lazy-click';
 
-@classic
 @tagName('tr')
 @classNames('task-group-row', 'is-interactive')
 @attributeBindings('data-test-task-group')

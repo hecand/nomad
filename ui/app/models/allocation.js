@@ -12,7 +12,6 @@ import { fragment, fragmentArray } from 'ember-data-model-fragments/attributes';
 import isEqual from 'lodash.isequal';
 import intersection from 'lodash.intersection';
 import shortUUIDProperty from '../utils/properties/short-uuid';
-import classic from 'ember-classic-decorator';
 
 const STATUS_ORDER = {
   pending: 1,
@@ -23,7 +22,6 @@ const STATUS_ORDER = {
   lost: 6,
 };
 
-@classic
 export default class Allocation extends Model {
   @service token;
   @service store;

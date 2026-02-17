@@ -9,13 +9,11 @@ import { task } from 'ember-concurrency';
 import { inject as service } from '@ember/service';
 import messageFromAdapterError from 'nomad-ui/utils/message-from-adapter-error';
 import { tagName } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 import jsonToHcl from 'nomad-ui/utils/json-to-hcl';
 import { marked } from 'marked';
 import { htmlSafe } from '@ember/template';
 import DOMPurify from 'dompurify';
 
-@classic
 @tagName('')
 export default class Title extends Component {
   @service router;

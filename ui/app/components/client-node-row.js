@@ -10,9 +10,7 @@ import { watchRelationship } from 'nomad-ui/utils/properties/watch';
 import WithVisibilityDetection from 'nomad-ui/mixins/with-component-visibility-detection';
 import { computed } from '@ember/object';
 import { classNames, tagName } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 
-@classic
 @tagName('tr')
 @classNames('client-node-row', 'is-interactive')
 export default class ClientNodeRow extends Component.extend(

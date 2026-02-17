@@ -13,14 +13,12 @@ import { scheduleOnce } from '@ember/runloop';
 import { task, timeout } from 'ember-concurrency';
 import { lazyClick } from '../helpers/lazy-click';
 import AllocationStatsTracker from 'nomad-ui/utils/classes/allocation-stats-tracker';
-import classic from 'ember-classic-decorator';
 import {
   classNames,
   tagName,
   attributeBindings,
 } from '@ember-decorators/component';
 
-@classic
 @tagName('tr')
 @classNames('allocation-row', 'is-interactive')
 @attributeBindings(

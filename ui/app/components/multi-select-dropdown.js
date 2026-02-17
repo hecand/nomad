@@ -8,7 +8,6 @@ import { action } from '@ember/object';
 import { computed as overridable } from 'ember-overridable-computed';
 import { scheduleOnce } from '@ember/runloop';
 import { classNames } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 
 const TAB = 9;
 const ESC = 27;
@@ -16,7 +15,6 @@ const SPACE = 32;
 const ARROW_UP = 38;
 const ARROW_DOWN = 40;
 
-@classic
 @classNames('dropdown')
 export default class MultiSelectDropdown extends Component {
   @overridable(() => []) options;

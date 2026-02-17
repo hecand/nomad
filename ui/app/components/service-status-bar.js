@@ -6,9 +6,7 @@
 import { computed } from '@ember/object';
 import DistributionBar from './distribution-bar';
 import { attributeBindings } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 
-@classic
 @attributeBindings('data-test-service-status-bar')
 export default class ServiceStatusBar extends DistributionBar {
   layoutName = 'components/distribution-bar';

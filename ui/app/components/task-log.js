@@ -11,7 +11,6 @@ import RSVP from 'rsvp';
 import { logger } from 'nomad-ui/utils/classes/log';
 import timeout from 'nomad-ui/utils/timeout';
 import { classNames } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 import localStorageProperty from 'nomad-ui/utils/properties/local-storage';
 
 class MockAbortController {
@@ -20,7 +19,6 @@ class MockAbortController {
   }
 }
 
-@classic
 @classNames('boxed-section', 'task-log')
 export default class TaskLog extends Component {
   @service token;

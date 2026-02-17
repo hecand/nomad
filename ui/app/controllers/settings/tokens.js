@@ -9,7 +9,6 @@ import Controller from '@ember/controller';
 import { getOwner } from '@ember/application';
 import { alias } from '@ember/object/computed';
 import { action } from '@ember/object';
-import classic from 'ember-classic-decorator';
 import { tracked } from '@glimmer/tracking';
 import Ember from 'ember';
 
@@ -18,7 +17,6 @@ import Ember from 'ember';
  */
 const JWT_MATCH_EXPRESSION = /^[a-zA-Z0-9-_]+\.[a-zA-Z0-9-_]+\.[a-zA-Z0-9-_]+$/;
 
-@classic
 export default class Tokens extends Controller {
   @service token;
   @service store;

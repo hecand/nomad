@@ -10,9 +10,7 @@ import { equal } from '@ember/object/computed';
 import { task, waitForEvent } from 'ember-concurrency';
 import RSVP from 'rsvp';
 import { classNames, classNameBindings } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 
-@classic
 @classNames('two-step-button')
 @classNameBindings(
   'inlineText:has-inline-text',

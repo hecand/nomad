@@ -9,9 +9,7 @@ import { action, computed } from '@ember/object';
 import { filterBy, mapBy, or, sort } from '@ember/object/computed';
 import generateExecUrl from 'nomad-ui/utils/generate-exec-url';
 import openExecUrl from 'nomad-ui/utils/open-exec-url';
-import classic from 'ember-classic-decorator';
 
-@classic
 export default class TaskGroupParent extends Component {
   @service router;
 

@@ -137,9 +137,6 @@ importers:
       ember-can:
         specifier: ^4.1.0
         version: 4.2.0(ember-source@3.28.12(@babel/core@7.28.0))
-      ember-classic-decorator:
-        specifier: ^3.0.0
-        version: 3.0.1(@glint/template@1.5.2)
       ember-cli:
         specifier: ~3.28.5
         version: 3.28.6(babel-core@6.26.3)(handlebars@4.7.8)(underscore@1.13.7)
@@ -3411,10 +3408,6 @@ packages:
 
   ember-can@4.2.0:
     resolution: {integrity: sha512-hiaWZspmI4zWeWmmFWgyw1+yEStSo6edGRHHUXCUPR+vBoqlT/hEfmndlfDGso2GFP8IV59DORMVY0KReMcO+w==}
-    engines: {node: 12.* || 14.* || >= 16}
-
-  ember-classic-decorator@3.0.1:
-    resolution: {integrity: sha512-IoocHPX1cY93Sma7VeDGbF0M1+TkBWDJLus+RD01902eD+KHEL2+diwM+iayCyO+1/xaUzdzNGh35J+i+TCxoA==}
     engines: {node: 12.* || 14.* || >= 16}
 
   ember-cli-babel-plugin-helpers@1.1.1:
@@ -11494,16 +11487,6 @@ snapshots:
       ember-inflector: 4.0.3(ember-source@3.28.12(@babel/core@7.28.0))
     transitivePeerDependencies:
       - ember-source
-      - supports-color
-
-  ember-classic-decorator@3.0.1(@glint/template@1.5.2):
-    dependencies:
-      '@embroider/macros': 1.18.0(@glint/template@1.5.2)
-      babel-plugin-filter-imports: 4.0.0
-      ember-cli-babel: 7.26.11
-      ember-cli-htmlbars: 6.3.0
-    transitivePeerDependencies:
-      - '@glint/template'
       - supports-color
 
   ember-cli-babel-plugin-helpers@1.1.1: {}

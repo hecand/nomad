@@ -13,9 +13,7 @@ import {
   serialize,
   deserializedQueryParam as selection,
 } from 'nomad-ui/utils/qp-serialize';
-import classic from 'ember-classic-decorator';
 
-@classic
 export default class AllocationsController extends Controller.extend(
   SortableFactory(['updateTime', 'healthy'])
 ) {

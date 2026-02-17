@@ -7,9 +7,7 @@ import Component from '@ember/component';
 import { computed } from '@ember/object';
 import { sort } from '@ember/object/computed';
 import { tagName } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 
-@classic
 @tagName('')
 export default class LifecycleChart extends Component {
   tasks = null;

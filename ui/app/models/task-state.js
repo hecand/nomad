@@ -12,9 +12,7 @@ import {
   fragmentOwner,
   fragmentArray,
 } from 'ember-data-model-fragments/attributes';
-import classic from 'ember-classic-decorator';
 
-@classic
 export default class TaskState extends Fragment {
   @fragmentOwner() allocation;
 

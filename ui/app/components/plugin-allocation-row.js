@@ -4,10 +4,8 @@
  */
 
 import AllocationRow from 'nomad-ui/components/allocation-row';
-import classic from 'ember-classic-decorator';
 import { attributeBindings } from '@ember-decorators/component';
 
-@classic
 @attributeBindings(
   'data-test-controller-allocation',
   'data-test-node-allocation'

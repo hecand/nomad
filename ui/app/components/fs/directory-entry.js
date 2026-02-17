@@ -7,9 +7,7 @@ import Component from '@ember/component';
 import { computed } from '@ember/object';
 import { isEmpty } from '@ember/utils';
 import { tagName } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 
-@classic
 @tagName('')
 export default class DirectoryEntry extends Component {
   allocation = null;

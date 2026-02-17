@@ -8,11 +8,9 @@ import { action } from '@ember/object';
 import { debounce } from '@ember/runloop';
 import { oneWay } from '@ember/object/computed';
 import { classNames, classNameBindings } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 
 const ESC = 27;
 
-@classic
 @classNames('stepper-input')
 @classNameBindings(
   'class',

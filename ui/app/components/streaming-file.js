@@ -12,11 +12,9 @@ import {
   tagName,
   attributeBindings,
 } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 
 const A_KEY = 65;
 
-@classic
 @tagName('pre')
 @classNames('cli-window')
 @attributeBindings('data-test-log-cli')

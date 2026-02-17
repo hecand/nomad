@@ -13,9 +13,7 @@ import {
   classNameBindings,
   tagName,
 } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 
-@classic
 @tagName('tr')
 @classNames('server-agent-row', 'is-interactive')
 @classNameBindings('isActive:is-active')

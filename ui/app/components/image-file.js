@@ -10,9 +10,7 @@ import {
   tagName,
   attributeBindings,
 } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 
-@classic
 @tagName('figure')
 @classNames('image-file')
 @attributeBindings('data-test-image-file')

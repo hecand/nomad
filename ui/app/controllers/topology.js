@@ -9,7 +9,6 @@ import { computed, action } from '@ember/object';
 import { alias } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
-import classic from 'ember-classic-decorator';
 import { reduceBytes, reduceHertz } from 'nomad-ui/utils/units';
 import {
   serialize,
@@ -24,7 +23,6 @@ const formatter = new Intl.NumberFormat(window.navigator.locale || 'en', {
   maximumFractionDigits: 2,
 });
 
-@classic
 export default class TopologyControllers extends Controller.extend(Searchable) {
   @service userSettings;
 

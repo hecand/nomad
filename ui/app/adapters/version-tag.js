@@ -6,9 +6,7 @@
 // @ts-check
 
 import ApplicationAdapter from './application';
-import classic from 'ember-classic-decorator';
 
-@classic
 export default class VersionTagAdapter extends ApplicationAdapter {
   urlForCreateRecord(_modelName, model) {
     const tagName = model.attr('name');

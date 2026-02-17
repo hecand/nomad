@@ -7,9 +7,7 @@ import Component from '@ember/component';
 import { computed, get } from '@ember/object';
 import { computed as overridable } from 'ember-overridable-computed';
 import { classNames } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 
-@classic
 @classNames('accordion')
 export default class ListAccordion extends Component {
   key = 'id';

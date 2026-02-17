@@ -18,9 +18,7 @@ import {
   serialize,
   deserializedQueryParam as selection,
 } from 'nomad-ui/utils/qp-serialize';
-import classic from 'ember-classic-decorator';
 
-@classic
 export default class IndexController extends Controller.extend(
   SortableFactory(['id', 'name', 'compositeStatus', 'datacenter', 'version']),
   Searchable

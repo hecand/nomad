@@ -6,9 +6,7 @@
 import { inject as service } from '@ember/service';
 import Component from '@ember/component';
 import { action, computed } from '@ember/object';
-import classic from 'ember-classic-decorator';
 
-@classic
 export default class GutterMenu extends Component {
   @service system;
   @service router;

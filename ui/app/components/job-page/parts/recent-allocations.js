@@ -8,10 +8,8 @@ import { action, computed } from '@ember/object';
 import { inject as service } from '@ember/service';
 import PromiseArray from 'nomad-ui/utils/classes/promise-array';
 import { classNames } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 import localStorageProperty from 'nomad-ui/utils/properties/local-storage';
 
-@classic
 @classNames('boxed-section')
 export default class RecentAllocations extends Component {
   @service router;

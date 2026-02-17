@@ -6,9 +6,7 @@
 import Component from '@ember/component';
 import { computed } from '@ember/object';
 import { computed as overridable } from 'ember-overridable-computed';
-import classic from 'ember-classic-decorator';
 
-@classic
 export default class ListPagination extends Component {
   @overridable(() => []) source;
   size = 25;

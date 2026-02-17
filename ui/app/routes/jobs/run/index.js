@@ -6,10 +6,8 @@
 // @ts-check
 import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
-import classic from 'ember-classic-decorator';
 import notifyForbidden from 'nomad-ui/utils/notify-forbidden';
 
-@classic
 export default class JobsRunIndexRoute extends Route {
   @service can;
   @service notifications;

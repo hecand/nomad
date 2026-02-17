@@ -16,9 +16,7 @@ import {
   tagName,
   attributeBindings,
 } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 
-@classic
 @tagName('tr')
 @classNames('task-row', 'is-interactive')
 @attributeBindings('data-test-task-row')

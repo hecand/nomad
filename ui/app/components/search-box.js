@@ -8,9 +8,7 @@ import Component from '@ember/component';
 import { action } from '@ember/object';
 import { debounce } from '@ember/runloop';
 import { classNames } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 
-@classic
 @classNames('search-box', 'field', 'has-addons')
 export default class SearchBox extends Component {
   // Passed to the component (mutable)

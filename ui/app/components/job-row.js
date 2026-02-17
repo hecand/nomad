@@ -12,9 +12,7 @@ import {
   tagName,
   attributeBindings,
 } from '@ember-decorators/component';
-import classic from 'ember-classic-decorator';
 
-@classic
 @tagName('tr')
 @classNames('job-row', 'is-interactive')
 @attributeBindings('data-test-job-row')

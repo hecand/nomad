@@ -16,7 +16,6 @@ import StreamLogger from 'nomad-ui/utils/classes/stream-logger';
 import PollLogger from 'nomad-ui/utils/classes/poll-logger';
 import { decode } from 'nomad-ui/utils/stream-frames';
 import Anser from 'anser';
-import classic from 'ember-classic-decorator';
 
 const MAX_OUTPUT_LENGTH = 50000;
 
@@ -24,7 +23,6 @@ const MAX_OUTPUT_LENGTH = 50000;
 export const fetchFailure = (url) => () =>
   console.warn(`LOG FETCH: Couldn't connect to ${url}`);
 
-@classic
 class Log extends EmberObject.extend(Evented) {
   // Parameters
 
