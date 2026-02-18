@@ -26,8 +26,8 @@ echo 'Checking variables'
   # vars displayed this way for easier troubleshooting
   cat <<VARS
 export NEW_VERSION='$NEW_VERSION'
-export LAST_RELEASE='$LAST_RELEASE'
 export SOURCE_BRANCH='$SOURCE_BRANCH'
+export LAST_RELEASE='$LAST_RELEASE'
 $0
 
 VARS

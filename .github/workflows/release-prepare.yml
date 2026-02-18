@@ -10,23 +10,23 @@ on:
         required: true
     inputs:
       repo:
-        description: 'GitHub repository, e.g. hashicorp/nomad'
+        description: "GitHub repository, e.g. hashicorp/nomad"
         type: string
         required: true
       version:
-        description: 'Version to be released'
+        description: "Version to be released"
         type: string
         required: true
       source-branch:
-        description: 'Source branch to cut the release branch from, e.g. release/1.11.x'
+        description: "Source branch to cut the release branch from, e.g. release/1.11.x"
         type: string
         required: true
     outputs:
       build-sha:
-        description: 'git sha of the commit to use in the build workflow'
+        description: "git sha of the commit to use in the build workflow"
         value: ${{ jobs.prepare.outputs.build-sha }}
       new-branch:
-        description: 'name of the new branch created for this release'
+        description: "name of the new branch created for this release"
         value: ${{ jobs.prepare.outputs.new-branch }}
 
 jobs:
@@ -67,7 +67,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@f111f3307d8850f501ac008e886eec1fd1932a34 # v5.3.0
         with:
-          go-version-file: '.go-version'
+          go-version-file: ".go-version"
 
       - name: Update changelog
         id: changelog # output: file
@@ -84,7 +84,7 @@ jobs:
       - name: Store changelog
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
-          name: 'changelog'
+          name: "changelog"
           path: ${{ steps.changelog.outputs.file }}
           overwrite: true
           compression-level: 0
@@ -100,7 +100,7 @@ jobs:
         env:
           NEW_VERSION: ${{ inputs.version }}
           GO_TAGS: release ${{ endsWith(inputs.version, '+ent') && 'ent consulent' }}
-          GOPRIVATE: 'github.com/hashicorp'
+          GOPRIVATE: "github.com/hashicorp"
           ALLOW_DIRTY_WORKTREE: true
           DEBUG: ${{ runner.debug }}
         run: ./scripts/release/prepare
