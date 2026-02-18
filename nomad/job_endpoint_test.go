@@ -7,9 +7,12 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"math/rand"
+	"os"
 	"reflect"
 	"slices"
 	"sort"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -24,6 +27,7 @@ import (
 	"github.com/hashicorp/nomad/helper/pointer"
 	"github.com/hashicorp/nomad/helper/uuid"
 	"github.com/hashicorp/nomad/nomad/mock"
+	"github.com/hashicorp/nomad/nomad/state"
 	"github.com/hashicorp/nomad/nomad/structs"
 	"github.com/hashicorp/nomad/testutil"
 	"github.com/hashicorp/raft"
@@ -8689,7 +8693,7 @@ func TestJob_TagVersion(t *testing.T) {
 	must.NotNil(t, resp3.TaggedTime)
 }
 
-func TestIntegration_SystemDeploymentHealth(t *testing.T) {
+func TestIntegration_SystemDeploymentCanaryHealth(t *testing.T) {
 
 	srv, token, cleanupSrv := TestACLServer(t, func(c *Config) {
 		c.NumSchedulers = 1
@@ -8969,8 +8973,6 @@ func TestIntegration_SystemDeploymentHealth(t *testing.T) {
 		wait.Gap(time.Millisecond*10),
 	))
 
-	time.Sleep(time.Second)
-
 	err = srv.workers[0].invokeScheduler(snap, eval, evalToken)
 	if err != nil { // this is racy with the deployment watcher, so we won't always see it
 		t.Log("scheduler had write skew with deployment")
@@ -9049,4 +9051,207 @@ func TestIntegration_SystemDeploymentHealth(t *testing.T) {
 	must.Eq(t, canaryIDs, gotCanaryIds)
 	must.True(t, dstate.Promoted)
 
+}
+
+func TestIntegration_SystemDeploymentHealth(t *testing.T) {
+
+	srv, token, cleanupSrv := TestACLServer(t, func(c *Config) {
+		c.NumSchedulers = 1
+	})
+	defer cleanupSrv()
+	codec := rpcClient(t, srv)
+	region := srv.Region()
+	testutil.WaitForKeyring(t, srv.RPC, region)
+
+	// pause the eval broker so we have precise control over when scheduling happens
+	srv.evalBroker.SetEnabled(false)
+
+	// disable the deployment watcher so we have precise control
+	srv.deploymentWatcher.SetEnabled(false, nil)
+
+	// we'll need this a lot
+	wr := structs.WriteRequest{AuthToken: token.SecretID, Region: region}
+
+	for range 4 {
+		node := mock.Node()
+		req := &structs.NodeRegisterRequest{
+			Node:         node,
+			WriteRequest: structs.WriteRequest{Region: region},
+		}
+		resp := &structs.NodeUpdateResponse{}
+		err := msgpackrpc.CallWithCodec(codec, "Node.Register", req, resp)
+		must.NoError(t, err)
+	}
+
+	// have to get the version we wrote to state
+	nodes := map[string]*structs.Node{}
+	iter, _ := srv.State().Nodes(nil)
+	for {
+		raw := iter.Next()
+		if raw == nil {
+			break
+		}
+		node := raw.(*structs.Node)
+		nodes[node.ID] = node
+	}
+
+	job := mock.SystemJob()
+	strat := structs.DefaultUpdateStrategy.Copy()
+	strat.MaxParallel = 4 // all nodes
+	job.Update = *strat
+	job.TaskGroups[0].Update = strat
+
+	newEval := func() *structs.Evaluation {
+		now := time.Now().UnixNano()
+		return &structs.Evaluation{
+			ID:          uuid.Generate(),
+			Namespace:   job.Namespace,
+			Priority:    50,
+			Type:        job.Type,
+			TriggeredBy: structs.EvalTriggerDeploymentWatcher, // doesn't matter
+			JobID:       job.ID,
+			Status:      structs.EvalStatusPending,
+			CreateTime:  now,
+			ModifyTime:  now,
+		}
+	}
+
+	// simulates an evaluation being dequeued but not yet processed. returns the
+	// snapshot we used and the eval token
+	dequeueEval := func(eval *structs.Evaluation) (*state.StateSnapshot, string) {
+		evalToken := uuid.Generate()
+		_, _, err := srv.raftApply(structs.EvalUpdateRequestType, &structs.EvalUpdateRequest{
+			Evals:        []*structs.Evaluation{eval},
+			WriteRequest: wr,
+			EvalToken:    evalToken,
+		})
+		must.NoError(t, err)
+		snap, err := srv.State().Snapshot()
+		must.NoError(t, err)
+		srv.evalBroker.unack[eval.ID] = &unackEval{
+			Eval:      eval,
+			Token:     evalToken,
+			NackTimer: time.NewTimer(time.Minute),
+		}
+		return snap, evalToken
+	}
+
+	// simulates updates of allocs from client
+	healthyAllocs := map[string]struct{}{}
+
+	updateFromClient := func(alloc *structs.Allocation, healthyYet bool) {
+		codec := rpcClient(t, srv)
+		stripped := &structs.Allocation{
+			ID:           alloc.ID,
+			NodeID:       alloc.NodeID,
+			ClientStatus: structs.AllocClientStatusRunning,
+		}
+		if healthyYet {
+			stripped.DeploymentStatus = &structs.AllocDeploymentStatus{
+				Healthy: pointer.Of(true),
+			}
+			healthyAllocs[alloc.ID] = struct{}{}
+		}
+
+		nodeSecretID := nodes[alloc.NodeID].SecretID
+		must.NotEq(t, "", nodeSecretID, must.Sprint("node secret must exist"))
+
+		req := &structs.AllocUpdateRequest{
+			Alloc:        []*structs.Allocation{stripped},
+			WriteRequest: structs.WriteRequest{AuthToken: nodeSecretID, Region: region},
+		}
+		resp := &structs.GenericResponse{}
+		err := msgpackrpc.CallWithCodec(codec, "Node.UpdateAlloc", req, resp)
+		must.NoError(t, err)
+	}
+
+	promote := func(dID string, eval *structs.Evaluation) {
+		_, _, err := srv.raftApply(structs.EvalUpdateRequestType, &structs.ApplyDeploymentPromoteRequest{
+			DeploymentPromoteRequest: structs.DeploymentPromoteRequest{
+				DeploymentID: dID,
+				All:          true,
+				Groups:       []string{"web"},
+				PromotedAt:   time.Now().Unix(),
+				WriteRequest: wr,
+			},
+			Eval: eval,
+		})
+		must.NoError(t, err)
+	}
+
+	t.Log("submitting job")
+	jobReq := &structs.JobRegisterRequest{Job: job, WriteRequest: wr}
+	jobResp := &structs.JobRegisterResponse{}
+	err := msgpackrpc.CallWithCodec(codec, "Job.Register", jobReq, jobResp)
+	must.NoError(t, err)
+
+	evalID := jobResp.EvalID
+
+	t.Log("initial eval from job registration")
+	eval, _ := srv.State().EvalByID(nil, evalID)
+	snap, evalToken := dequeueEval(eval)
+	err = srv.workers[0].invokeScheduler(snap, eval, evalToken)
+	must.NoError(t, err)
+
+	eval, _ = srv.State().EvalByID(nil, evalID)
+	must.NotEq(t, "", eval.DeploymentID)
+	must.Eq(t, structs.EvalStatusComplete, eval.Status)
+	dID := eval.DeploymentID
+
+	timeout := time.NewTimer(5 * time.Second)
+
+	seedCfg := os.Getenv("SEED")
+	seed, err := strconv.ParseInt(seedCfg, 10, 64)
+	if err != nil {
+		seed = time.Now().UnixNano()
+	}
+	r := rand.New(rand.NewSource(seed))
+	t.Logf("SEED %d", seed)
+
+	for {
+		d, _ := srv.State().DeploymentByID(nil, dID)
+		if d.Status == structs.DeploymentStatusSuccessful {
+			break
+		}
+		select {
+		case <-timeout.C:
+			t.Fatal("test timed out without deployment being successful")
+		default:
+		}
+
+		t.Log("simulating an eval being dequeued but not processed before all allocs healthy")
+		eval := newEval()
+		snap, evalToken := dequeueEval(eval)
+
+		allocs, _ := srv.State().AllocsByJob(nil, job.Namespace, job.ID, true)
+
+		numHealthy := r.Intn(5) // need to get between 0-4
+		healthyCount := len(healthyAllocs)
+		for i, alloc := range allocs {
+			if healthyCount >= numHealthy {
+				break
+			}
+			if _, ok := healthyAllocs[alloc.ID]; ok {
+				continue
+			}
+			t.Logf("sending healthy for alloc %d", i)
+			updateFromClient(alloc, true)
+			healthyCount++
+		}
+
+		nonHealthUpdates := r.Intn(4)
+		for i := range nonHealthUpdates {
+			t.Logf("sending non-health update for alloc %d", i)
+			updateFromClient(allocs[i], false)
+		}
+
+		if len(healthyAllocs) == len(allocs) {
+			t.Log("promoting from deploymentwatcher")
+			promote(dID, eval)
+		}
+
+		t.Log("invoking scheduler with stale snapshot")
+		err = srv.workers[0].invokeScheduler(snap, eval, evalToken)
+		must.NoError(t, err)
+	}
 }
