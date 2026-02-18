@@ -38,7 +38,7 @@ echo
 # commit messages in release-{prepare,finalize}.yml workflows match this format.
 msg="^release:.* ${NEW_VERSION}$"
 commits="$(git log --grep "$msg" --reverse --pretty='%H' "$MERGE_FROM")"
-[ -n "$commits" ] || { echo "found no commits for '$msg'"; exit 1; }
+[ -n "$commits" ] || { echo "::error::found no commits for '$msg'"; exit 1; }
 echo -e "commits:\n$commits"
 
 # if the target is main, we cherry-pick from the source and call it a day.

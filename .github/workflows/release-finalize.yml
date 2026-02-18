@@ -69,6 +69,6 @@ jobs:
             msg="release: ${{ inputs.version }}"
           fi
           set -x
-          git commit -m "$msg"
           git switch ${{ inputs.merge-into }}
+          git commit -m "$msg"
           git push origin ${{ inputs.merge-into }}

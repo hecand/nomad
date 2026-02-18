@@ -114,7 +114,7 @@ jobs:
           branch="$(git branch --show-current)"
           sha="$(git rev-parse HEAD)"
 
-          git push origin -f "$branch"
+          git push origin --force "$branch"
 
           # summarize and output
 
