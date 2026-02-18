@@ -3,32 +3,37 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import Component from '@ember/component';
-import { action, computed } from '@ember/object';
+import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
+import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import PromiseArray from 'nomad-ui/utils/classes/promise-array';
-import { classNames } from '@ember-decorators/component';
-import localStorageProperty from 'nomad-ui/utils/properties/local-storage';
 
-@classNames('boxed-section')
 export default class RecentAllocations extends Component {
   @service router;
 
   sortProperty = 'modifyIndex';
   sortDescending = true;
 
-  @localStorageProperty('nomadShowSubTasks', true) showSubTasks;
+  @tracked _showSubTasks = null;
+
+  get showSubTasks() {
+    if (this._showSubTasks !== null) return this._showSubTasks;
+    const persistedValue = window.localStorage.getItem('nomadShowSubTasks');
+    return persistedValue ? JSON.parse(persistedValue) : true;
+  }
 
   @action
   toggleShowSubTasks(e) {
     e.preventDefault();
-    this.set('showSubTasks', !this.get('showSubTasks'));
+    const newValue = !this.showSubTasks;
+    window.localStorage.setItem('nomadShowSubTasks', JSON.stringify(newValue));
+    this._showSubTasks = newValue;
   }
 
-  @computed('job.allocations.@each.modifyIndex')
   get sortedAllocations() {
     return PromiseArray.create({
-      promise: this.get('job.allocations').then((allocations) =>
+      promise: this.args.job.allocations.then((allocations) =>
         allocations.sortBy('modifyIndex').reverse().slice(0, 5)
       ),
     });

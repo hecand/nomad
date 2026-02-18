@@ -3,17 +3,18 @@
   SPDX-License-Identifier: BUSL-1.1
 ~}}
 
+<div class="accordion" ...attributes>
 {{#each this.decoratedSource as |item|}}
 {{yield (hash
     head=(component "list-accordion/accordion-head"
       isOpen=item.isOpen
       onOpen=(queue
         (fn (mut item.isOpen) true)
-        (fn this.onToggle item.item item.isOpen)
+        (fn this.handleToggle item.item item.isOpen)
       )
       onClose=(queue
         (fn (mut item.isOpen) false)
-        (fn this.onToggle item.item item.isOpen)
+        (fn this.handleToggle item.item item.isOpen)
       )
     )
     body=(component "list-accordion/accordion-body" isOpen=item.isOpen)
@@ -22,3 +23,4 @@
     close=(fn (mut item.isOpen) false)
   )}}
 {{/each}}
+</div>

@@ -3,12 +3,14 @@
   SPDX-License-Identifier: BUSL-1.1
 ~}}
 
-<div
-  data-test-json-viewer
-  {{code-mirror
-    content=(stringify-object @json)
-    theme="hashi-read-only"
-    readOnly=true
-    screenReaderLabel="JSON Viewer"
-  }}
-/>
+<div class="json-viewer {{if @fluidHeight 'has-fluid-height'}}" ...attributes>
+  <div
+    data-test-json-viewer
+    {{code-mirror
+      content=(stringify-object @json)
+      theme="hashi-read-only"
+      readOnly=true
+      screenReaderLabel="JSON Viewer"
+    }}
+  />
+</div>

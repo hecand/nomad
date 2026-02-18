@@ -154,9 +154,9 @@
           @onSelect={{action this.setFacetQueryParam "qpClient"}}
         />
         <SearchBox
-          @searchTerm={{mut this.searchTerm}}
+          @searchTerm={{this.searchTerm}}
           @placeholder="Search allocations..."
-          @onChange={{action this.resetPagination}}
+          @onChange={{queue (fn (mut this.searchTerm)) (action this.resetPagination)}}
           @class="is-padded"
           @inputClass="is-compact"
         />

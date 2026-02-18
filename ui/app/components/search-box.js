@@ -3,41 +3,33 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import { reads } from '@ember/object/computed';
-import Component from '@ember/component';
+import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
 import { action } from '@ember/object';
 import { debounce } from '@ember/runloop';
-import { classNames } from '@ember-decorators/component';
 
-@classNames('search-box', 'field', 'has-addons')
 export default class SearchBox extends Component {
-  // Passed to the component (mutable)
-  searchTerm = null;
-
-  // Used as a debounce buffer
-  @reads('searchTerm') _searchTerm;
+  @tracked _searchTerm = this.args.searchTerm;
 
   // Used to throttle sets to searchTerm
-  debounce = 150;
-
-  // A hook that's called when the search value changes
-  onChange() {}
+  get debounceInterval() {
+    return this.args.debounce ?? 150;
+  }
 
   @action
   setSearchTerm(e) {
-    this.set('_searchTerm', e.target.value);
-    debounce(this, updateSearch, this.debounce);
+    this._searchTerm = e.target.value;
+    debounce(this, this._updateSearch, this.debounceInterval);
   }
 
   @action
   clear() {
-    this.set('_searchTerm', '');
-    debounce(this, updateSearch, this.debounce);
+    this._searchTerm = '';
+    debounce(this, this._updateSearch, this.debounceInterval);
   }
-}
 
-function updateSearch() {
-  const newTerm = this._searchTerm;
-  this.onChange(newTerm);
-  this.set('searchTerm', newTerm);
+  _updateSearch() {
+    const newTerm = this._searchTerm;
+    this.args.onChange?.(newTerm);
+  }
 }

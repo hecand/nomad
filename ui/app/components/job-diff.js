@@ -3,22 +3,18 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import { equal } from '@ember/object/computed';
-import Component from '@ember/component';
-import { classNames, classNameBindings } from '@ember-decorators/component';
+import Component from '@glimmer/component';
 
-@classNames('job-diff')
-@classNameBindings(
-  'isEdited:is-edited',
-  'isAdded:is-added',
-  'isDeleted:is-deleted'
-)
 export default class JobDiff extends Component {
-  diff = null;
+  get isEdited() {
+    return this.args.diff?.Type === 'Edited';
+  }
 
-  verbose = true;
+  get isAdded() {
+    return this.args.diff?.Type === 'Added';
+  }
 
-  @equal('diff.Type', 'Edited') isEdited;
-  @equal('diff.Type', 'Added') isAdded;
-  @equal('diff.Type', 'Deleted') isDeleted;
+  get isDeleted() {
+    return this.args.diff?.Type === 'Deleted';
+  }
 }

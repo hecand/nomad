@@ -22,7 +22,8 @@
     {{#unless this.isHidden}}
       <SearchBox
         data-test-history-search
-        @searchTerm={{mut this.searchTerm}}
+        @searchTerm={{this.searchTerm}}
+        @onChange={{fn (mut this.searchTerm)}}
         @placeholder="Search events..."
       />
     {{/unless}}

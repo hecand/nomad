@@ -3,9 +3,10 @@
   SPDX-License-Identifier: BUSL-1.1
 ~}}
 
+<div class="boxed-section" ...attributes>
 <ListAccordion
   data-test-job-summary
-  @source={{array this.job}}
+  @source={{array @job}}
   @key="id"
   @startExpanded={{this.isExpanded}}
   @onToggle={{this.persist}} as |a|
@@ -54,3 +55,4 @@
     <JobPage::Parts::SummaryChart @job={{a.item}} />
   </a.body>
 </ListAccordion>
+</div>

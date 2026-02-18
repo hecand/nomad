@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import Component from '@ember/component';
-import { action, computed } from '@ember/object';
+import Component from '@glimmer/component';
+import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 
 export default class RegionSwitcher extends Component {
@@ -13,17 +13,14 @@ export default class RegionSwitcher extends Component {
   @service store;
   @service token;
 
-  @computed('system.regions')
   get sortedRegions() {
-    return this.get('system.regions').toArray().sort();
+    return (this.system.regions || []).toArray().sort();
   }
 
   @action
   async gotoRegion(region) {
-    // Note: redundant but as long as we're using PowerSelect, the implicit set('activeRegion')
-    // is not something we can await, so we do it explicitly here.
     this.system.set('activeRegion', region);
-    await this.get('token.fetchSelfTokenAndPolicies').perform().catch();
+    await this.token.fetchSelfTokenAndPolicies.perform().catch();
 
     this.router.transitionTo({ queryParams: { region } });
   }

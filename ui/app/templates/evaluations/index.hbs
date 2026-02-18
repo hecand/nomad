@@ -10,8 +10,8 @@
       <div class="toolbar-item">
         <SearchBox
           data-test-evaluations-search
-          @searchTerm={{mut this.searchTerm}}
-          @onChange={{this._resetTokens}}
+          @searchTerm={{this.searchTerm}}
+          @onChange={{queue (fn (mut this.searchTerm)) this._resetTokens}}
           @placeholder="Search evaluations..."
         />
       </div>

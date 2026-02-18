@@ -11,8 +11,8 @@
       <div class="toolbar-item">
         <SearchBox
           data-test-allocations-search
-          @searchTerm={{mut this.searchTerm}}
-          @onChange={{action this.resetPagination}}
+          @searchTerm={{this.searchTerm}}
+          @onChange={{queue (fn (mut this.searchTerm)) (action this.resetPagination)}}
           @placeholder="Search allocations..." />
       </div>
       <div class="toolbar-item is-right-aligned">
@@ -83,7 +83,7 @@
           </t.head>
           <t.body as |row|>
             <AllocationRow
-              {{keyboard-shortcut 
+              {{keyboard-shortcut
                 enumerated=true
                 action=(action "gotoAllocation" row.model)
               }}

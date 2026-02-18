@@ -3,18 +3,13 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import Component from '@ember/component';
+import Component from '@glimmer/component';
 import { inject as service } from '@ember/service';
-import { attributeBindings } from '@ember-decorators/component';
 import { htmlSafe } from '@ember/template';
 
-@attributeBindings('data-test-global-header')
 export default class GlobalHeader extends Component {
   @service config;
   @service system;
-
-  'data-test-global-header' = true;
-  onHamburgerClick() {}
 
   get labelStyles() {
     return htmlSafe(

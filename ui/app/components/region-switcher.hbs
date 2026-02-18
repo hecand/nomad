@@ -3,6 +3,7 @@
   SPDX-License-Identifier: BUSL-1.1
 ~}}
 
+<div ...attributes>
 {{keyboard-commands this.keyCommands}}
 
 {{#if this.system.shouldShowRegions}}
@@ -12,7 +13,7 @@
       @ariaLabel="label-region-switcher"
       @ariaLabelledBy="label-region-switcher"
       @tagName="div"
-      @triggerClass={{this.decoration}}
+      @triggerClass={{@decoration}}
       @options={{this.sortedRegions}}
       @selected={{or this.system.activeRegion 'Select a Region'}}
       @searchEnabled={{false}}
@@ -28,3 +29,4 @@
     <span>Region: </span>{{this.system.activeRegion}}
   </div>
 {{/if}}
+</div>

@@ -3,11 +3,15 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import Component from '@ember/component';
-import { classNames } from '@ember-decorators/component';
+import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
+import { action } from '@ember/object';
 
-@classNames('job-deployment', 'boxed-section')
 export default class JobDeployment extends Component {
-  deployment = null;
-  isOpen = false;
+  @tracked isOpen = false;
+
+  @action
+  toggleOpen() {
+    this.isOpen = !this.isOpen;
+  }
 }

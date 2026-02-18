@@ -3,6 +3,7 @@
   SPDX-License-Identifier: BUSL-1.1
 ~}}
 
+<div data-test-global-header ...attributes>
 {{! template-lint-disable no-duplicate-landmark-elements }}
 <nav class="navbar is-primary" title="navigation">
   <div class="navbar-brand">
@@ -11,7 +12,7 @@
       class="gutter-toggle"
       aria-label="menu"
       role="img"
-      {{on "click" this.onHamburgerClick}}
+      {{on "click" @onHamburgerClick}}
     >
       <HamburgerMenu />
     </span>
@@ -73,4 +74,5 @@
       {{yield}}
     </ul>
   </nav>
+</div>
 </div>

@@ -480,7 +480,8 @@
               {{#if this.model.nodes.length}}
                 <SearchBox
                   @inputClass="node-search"
-                  @searchTerm={{mut this.searchTerm}}
+                  @searchTerm={{this.searchTerm}}
+                  @onChange={{fn (mut this.searchTerm)}}
                   @placeholder="Search clients..."
                 />
               {{/if}}

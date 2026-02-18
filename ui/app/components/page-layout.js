@@ -3,10 +3,9 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import Component from '@ember/component';
-import { classNames } from '@ember-decorators/component';
+import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
 
-@classNames('page-layout')
 export default class PageLayout extends Component {
-  isGutterOpen = false;
+  @tracked isGutterOpen = false;
 }

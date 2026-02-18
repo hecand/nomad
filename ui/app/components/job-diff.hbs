@@ -3,40 +3,41 @@
   SPDX-License-Identifier: BUSL-1.1
 ~}}
 
+<div class="job-diff {{if this.isEdited 'is-edited'}} {{if this.isAdded 'is-added'}} {{if this.isDeleted 'is-deleted'}}" ...attributes>
 {{! Job heading }}
 {{! template-lint-disable simple-unless }}
 <div
   data-test-diff-section-label="job"
-  data-test-diff-field="{{lowercase this.diff.Type}}"
+  data-test-diff-field="{{lowercase @diff.Type}}"
   class="{{if
-      this.diff.Type
-      (concat 'diff-section-label is-' (lowercase this.diff.Type))
+      @diff.Type
+      (concat 'diff-section-label is-' (lowercase @diff.Type))
     }}"
 >
-  <span class="marker {{concat 'is-' (lowercase this.diff.Type)}}">
-    {{#if (eq (lowercase this.diff.Type) "added")}}
+  <span class="marker {{concat 'is-' (lowercase @diff.Type)}}">
+    {{#if (eq (lowercase @diff.Type) "added")}}
       +
-    {{else if (eq (lowercase this.diff.Type) "deleted")}}
+    {{else if (eq (lowercase @diff.Type) "deleted")}}
       -
-    {{else if (eq (lowercase this.diff.Type) "edited")}}
+    {{else if (eq (lowercase @diff.Type) "edited")}}
       +/-
     {{/if}}
   </span>
-  <span class="diff-section-bold">Job: "{{this.diff.ID}}"</span>
+  <span class="diff-section-bold">Job: "{{@diff.ID}}"</span>
 </div>
 
 {{! Show job field and object diffs if the job is edited }}
-{{#if (or this.verbose (eq (lowercase this.diff.Type) "edited"))}}
+{{#if (or @verbose (eq (lowercase @diff.Type) "edited"))}}
   <div data-test-diff-section-label="job-diff" class="diff-section-label">
     <JobDiffFieldsAndObjects
-      @fields={{this.diff.Fields}}
-      @objects={{this.diff.Objects}}
+      @fields={{@diff.Fields}}
+      @objects={{@diff.Objects}}
     />
   </div>
 {{/if}}
 
 {{! Each task group }}
-{{#each this.diff.TaskGroups as |group|}}
+{{#each @diff.TaskGroups as |group|}}
   <div
     data-test-diff-section-label="task-group"
     class="{{if
@@ -100,7 +101,7 @@
             {{#unless (eq index (dec task.Annotations.length))}},{{/unless}}
           {{/each~}})
         {{/if}}
-        {{#if (or this.verbose (eq (lowercase task.Type) "edited"))}}
+        {{#if (or @verbose (eq (lowercase task.Type) "edited"))}}
           <JobDiffFieldsAndObjects
             @fields={{task.Fields}}
             @objects={{task.Objects}}
@@ -110,3 +111,4 @@
     {{/each}}
   </div>
 {{/each}}
+</div>

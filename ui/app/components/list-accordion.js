@@ -3,27 +3,28 @@
  * SPDX-License-Identifier: BUSL-1.1
  */
 
-import Component from '@ember/component';
-import { computed, get } from '@ember/object';
-import { computed as overridable } from 'ember-overridable-computed';
-import { classNames } from '@ember-decorators/component';
+import Component from '@glimmer/component';
+import { action } from '@ember/object';
+import { get } from '@ember/object';
 
-@classNames('accordion')
 export default class ListAccordion extends Component {
-  key = 'id';
-  @overridable(() => []) source;
+  // Not @tracked — this is an internal cache to preserve open/close state
+  // across re-renders. The getter re-runs when args change (autotracked).
+  _stateCache = [];
 
-  onToggle /* item, isOpen */() {}
-  startExpanded = false;
+  @action
+  handleToggle(item, isOpen) {
+    this.args.onToggle?.(item, isOpen);
+  }
 
-  @computed('key', 'source.[]', 'startExpanded', 'stateCache')
   get decoratedSource() {
-    const stateCache = this.stateCache;
-    const key = this.key;
+    const stateCache = this._stateCache;
+    const key = this.args.key || 'id';
     const deepKey = `item.${key}`;
-    const startExpanded = this.startExpanded;
+    const startExpanded = this.args.startExpanded;
+    const source = this.args.source || [];
 
-    const decoratedSource = this.source.map((item) => {
+    const decoratedSource = source.map((item) => {
       const cacheItem = stateCache.findBy(deepKey, get(item, key));
       return {
         item,
@@ -32,11 +33,7 @@ export default class ListAccordion extends Component {
     });
 
     // eslint-disable-next-line ember/no-side-effects
-    this.set('stateCache', decoratedSource);
+    this._stateCache = decoratedSource;
     return decoratedSource;
   }
-
-  // When source updates come in, the state cache is used to preserve
-  // open/close state.
-  @overridable(() => []) stateCache;
 }

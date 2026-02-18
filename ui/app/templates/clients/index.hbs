@@ -12,8 +12,8 @@
       <div class="toolbar-item">
         {{#if this.nodes.length}}
           <SearchBox
-            @searchTerm={{mut this.searchTerm}}
-            @onChange={{action this.resetPagination}}
+            @searchTerm={{this.searchTerm}}
+            @onChange={{queue (fn (mut this.searchTerm)) (action this.resetPagination)}}
             @placeholder="Search clients..."
           />
         {{/if}}
