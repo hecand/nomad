@@ -9,7 +9,7 @@
 [ -n "$DEBUG" ] && set -x
 set -euo pipefail
 
-source "$(dirname "${BASH_SOURCE[0]}")/check-working-dir"
+source "$(dirname "${BASH_SOURCE[0]}")/shared"
 
 echo 'Checking variables'
   # starting with a release line branch like 'release/A.B.x'
@@ -36,6 +36,8 @@ export GOPRIVATE='${GOPRIVATE:-}'
 $0
 
 VARS
+
+trap check_unstaged_changes EXIT
 
 echo 'Checking required commands'
   semver --version
@@ -75,11 +77,3 @@ echo '::group::Generate static assets'
     ./command/agent/bindata_assetfs.go
 echo '::endgroup::'
 echo
-
-# there should be no stray unexpected changes
-if ! git diff --color=always --exit-code; then
-  git status
-  echo "::error::Unexpected changes left unstaged by prepare script"
-  exit 1
-fi
-

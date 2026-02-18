@@ -10,7 +10,7 @@
 [ -n "$DEBUG" ] && set -x
 set -euo pipefail
 
-source "$(dirname "${BASH_SOURCE[0]}")/check-working-dir"
+source "$(dirname "${BASH_SOURCE[0]}")/shared"
 
 echo 'Checking variables'
   MERGE_FROM="${MERGE_FROM:-$(git branch --show-current)}"
@@ -23,6 +23,8 @@ $0
 
 VARS
 
+trap check_unstaged_changes EXIT
+
 echo 'Ensuring branches'
   # merge-into second, so we proceed from there.
   for b in "$MERGE_FROM" "$MERGE_INTO"; do
@@ -32,24 +34,22 @@ echo 'Ensuring branches'
   done
 echo
 
+# find commits for this release in source branch.
+# commit messages in release-{prepare,finalize}.yml workflows match this format.
+msg="^release:.* ${NEW_VERSION}$"
+commits="$(git log --grep "$msg" --reverse --pretty='%H' "$MERGE_FROM")"
+[ -n "$commits" ] || { echo "found no commits for '$msg'"; exit 1; }
+echo -e "commits:\n$commits"
+
 # if the target is main, we cherry-pick from the source and call it a day.
 if [ "$MERGE_INTO" == "${MAIN_BRANCH:-main}" ]; then
-  echo 'Target branch is main; squash-merging release commits'
-
-  # squash to exclude the generated files from git history entirely;
-  # they're big, and kept for posterity in other branches.
-  # commit messages from release workflows match this pattern.
-  msg="^release:.* ${NEW_VERSION}$"
-  commits="$(git log --grep "$msg" --reverse --pretty='%H' "$MERGE_FROM")"
-  [ -n "$commits" ] || { echo "found no commits for '$msg'"; exit 1; }
-
-  echo "$commits" | xargs git cherry-pick --no-commit || {
+  echo 'Target branch is main; squashing release commits'
+  # squash (--no-commit) to exclude the generated files from git history;
+  # they're huge, and remain in other branches for posterity.
+  if ! echo "$commits" | xargs git cherry-pick --no-commit; then
     echo "::error::failed to cherry-pick release commits"
-    echo -e "commit IDs:\n$commits"
-    git status
-    git diff --color=always | /bin/cat
     exit 1
-  }
+  fi
 
   exit # nothing else to do
 fi
@@ -57,8 +57,6 @@ fi
 echo "Merging changes from '$MERGE_FROM' into '$MERGE_INTO'"
   if ! git merge --no-edit "$MERGE_FROM"; then
     echo "::error::failed to merge $MERGE_FROM into $MERGE_INTO"
-    git status
-    git diff --color=always | /bin/cat
     exit 1
   fi
 echo
@@ -91,10 +89,3 @@ echo 'Removing generated static assets'
   # binary and should be not be present in the repository afterwards.
   git rm -f ./{nomad,client}/structs/*.generated.go
 echo
-
-# there should be no stray unexpected changes
-if ! git diff --color=always --exit-code; then
-  git status
-  echo "::error::Unexpected changes left unstaged by finalize script"
-  exit 1
-fi

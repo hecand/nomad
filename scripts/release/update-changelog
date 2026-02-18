@@ -10,7 +10,7 @@
 [ -n "$DEBUG" ] && set -x
 set -euo pipefail
 
-source "$(dirname "${BASH_SOURCE[0]}")/check-working-dir"
+source "$(dirname "${BASH_SOURCE[0]}")/shared"
 # note also that changelog-build is not `git worktree` friendly.
 # https://github.com/hashicorp/go-changelog/pull/49
 # -> https://github.com/go-git/go-git/issues/1812
@@ -53,7 +53,7 @@ echo "Generating the changelog from v$LAST_RELEASE to HEAD ($(git rev-parse HEAD
 
   # changelog-build does checkouts, so return to source branch
   git switch "$SOURCE_BRANCH"
-  
+
   lines="$(wc -l "$cl_file" | awk '{print$1}')"
   if [ "$lines" -eq 0 ]; then
     echo "::error::Generated changelog is empty"

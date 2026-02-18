@@ -27,3 +27,17 @@ if [ -z "${ALLOW_DIRTY_WORKTREE:-}" ] && ! git diff-index --quiet HEAD --; then
   echo '==========================='
   exit 1
 fi
+
+# trapped on exit in prepare and finalize scripts
+check_unstaged_changes() {
+  local exit_code=$?
+  # ls-files --modified also catches merge/cherry-pick conflicts
+  local unstaged="$(git ls-files --modified)"
+  if [ -n "$unstaged" ]; then
+    git diff --color=always | /bin/cat
+    git status
+    echo "::error::Unexpected changes left unstaged"
+    exit_code=1
+  fi
+  exit "$exit_code"
+}
