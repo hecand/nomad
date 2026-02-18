@@ -38,8 +38,18 @@ if [ "$MERGE_INTO" == "${MAIN_BRANCH:-main}" ]; then
 
   # squash to exclude the generated files from git history entirely;
   # they're big, and kept for posterity in other branches.
-  git log --grep "release:.* ${NEW_VERSION}$" --reverse --pretty='%H' \
-    "$MERGE_FROM" | xargs git cherry-pick --no-commit
+  # commit messages from release workflows match this pattern.
+  msg="^release:.* ${NEW_VERSION}$"
+  commits="$(git log --grep "$msg" --reverse --pretty='%H' "$MERGE_FROM")"
+  [ -n "$commits" ] || { echo "found no commits for '$msg'"; exit 1; }
+
+  echo "$commits" | xargs git cherry-pick --no-commit || {
+    echo "::error::failed to cherry-pick release commits"
+    echo -e "commit IDs:\n$commits"
+    git status
+    git diff --color=always | /bin/cat
+    exit 1
+  }
 
   exit # nothing else to do
 fi
